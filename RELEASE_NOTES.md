@@ -2,8 +2,8 @@
 
 Fork **ventoy-fork** (https://github.com/Endymi0n74/ventoy-fork), base
 **v1.1.17 upstream exacte** (`7cbdc5cf`, « 1.1.17 release »).
-Tag : `v1.1.17-ventoy-sort` → commit `ac114e58`
-(un seul commit de fork sur la base upstream).
+Tag : `v1.1.17-ventoy-sort` → commit `2551c3b7`
+(code : un commit de fork `ac114e58` sur la base upstream ; docs incluses).
 
 ## Contenu
 
@@ -62,16 +62,28 @@ ventoy/_build_sort_test/ventoy_sort_test.exe --sweep 30
 
 Les deux modes passent avec `-Wall -Wextra -Werror`, arbre propre.
 
+Environnement requis : **clang** (`C:\Program Files\LLVM\bin\clang.exe`) et
+**Python 3** — rien d'autre. Pas de Docker, pas de WSL, pas de machine
+virtuelle. (Sur une autre machine, ajuster le chemin `CLANG` dans
+`build_sort_test.py` et `Makefile`.)
+
 ## Périmètre de la validation (et limites)
 
 Validé : la logique du tri et sa parité structurelle avec le code de
 production (mêmes algorithmes, mêmes séquences de liaison).
 
 Non validé : un boot réel sur clé USB avec ce code. Le build complet
-de l'ISO (GRUB recompilé dans l'arbre 2.04, via Docker/CentOS 7) a été
-écarté — le déploiement passe par les runtimes officiels v1.1.17.
+de l'ISO (GRUB recompilé dans l'arbre 2.04) a été écarté — le déploiement
+passe par les runtimes officiels v1.1.17.
+
+Aucun conteneur requis : Docker a été abandonné et désinstallé. La
+validation repose uniquement sur le harnais natif Windows (clang +
+Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
 
 ## Historique du fork
 
-Un commit sur la base upstream : `ac114e58`
-« Add sort test harness and stable merge sort for menu images ».
+- `ac114e58` — commit fonctionnel sur la base upstream : harnais + tri
+  fusion stable pour les images du menu.
+- `2551c3b7` — mise à jour RELEASE_NOTES / README (renommage ventoy-fork,
+  base v1.1.17 exacte) ; le tag `v1.1.17-ventoy-sort` pointe ici.
+- `bbf4676f` — .gitignore : ignorer la config runtime INSTALL/Ventoy2Disk.ini.
