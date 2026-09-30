@@ -96,7 +96,7 @@ Please refer to [BuildVentoyFromSource.txt](DOC/BuildVentoyFromSource.txt)
 [![CI](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
 
-Latest release: **[v1.1.17-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.17-ventoy-sort)**
+Latest release: **[v1.1.18-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.18-ventoy-sort)**
 — full source archives (zip / tar.gz) with a `SHA256SUMS` checksum file.
 
 Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`) with one change:
@@ -117,10 +117,11 @@ the sweep takes several minutes — set `SKIP_SWEEP=1` to skip it, and
 `SWEEP_OUT=<dir>` to keep the sweep reference log).
 
 Publishing a new release in one command: `dist\make_release.cmd <tag>`
-(e.g. `v1.1.18-ventoy-sort`) sanity-checks the tree, creates and pushes
-the annotated tag, exports the archives, writes `SHA256SUMS` and creates
-the GitHub release with `RELEASE_NOTES.md` as body. `DRY_RUN=1` previews
-it with no side effects; follow with `dist\check_release.cmd` to validate.
+sanity-checks the tree, creates and pushes the annotated tag, exports
+the archives, writes `SHA256SUMS` and publishes the GitHub release with
+`RELEASE_NOTES.md` as body. Set `PRERELEASE=1` for a test/RC release;
+`DRY_RUN=1` previews without side effects. Follow with
+`dist\check_release.cmd` to validate.
 
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
 

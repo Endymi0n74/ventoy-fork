@@ -7,6 +7,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 defaults:
   run:
     shell: cmd
@@ -46,5 +49,6 @@ jobs:
       - name: End-to-end release check (download, SHA256SUMS, extract, sweep, harness)
         env:
           GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.event.release.tag_name }}
         run: dist\check_release.cmd

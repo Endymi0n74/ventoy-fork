@@ -10,27 +10,33 @@ rem //      available, target tag does not exist yet
 rem //   1. create the annotated tag on HEAD and push it
 rem //   2. export the archives from the tag (zip + tar.gz)
 rem //   3. write SHA256SUMS over the archives
-rem //   4. create/upload the GitHub release and set its notes
-rem //      to RELEASE_NOTES.md (edited with the new tag name)
+rem //   4. create a draft release, upload all assets, then publish
+rem //      it with RELEASE_NOTES.md as the body (avoids firing the
+rem //      release-e2e CI before assets are ready)
+rem //      PRERELEASE=1 creates a prerelease (for RC/testing tags)
 rem //
 rem // Usage (from the repo root or the workspace root):
 rem //   dist\make_release.cmd v1.1.18-ventoy-sort
 rem //   set DRY_RUN=1
-rem //   dist\make_release.cmd v1.1.18-ventoy-sort   (no side effects)
+rem //   dist\make_release.cmd v1.1.19-ventoy-sort-rc1   (no side effects)
+rem //   set PRERELEASE=1 ^& dist\make_release.cmd v1.1.19-ventoy-sort-rc1
 rem //
 rem // Optional env: DIST_DIR (default: sibling "dist" of the repo,
-rem // i.e. ..\dist), RELEASE_TITLE (default "Ventoy <tag> (ventoy-fork)").
+rem // i.e. ..\dist), RELEASE_TITLE (default "Ventoy <tag> (ventoy-fork)"),
+rem // PRERELEASE=1 for a prerelease.
 rem // Requires: git, gh, python 3. Exits 0 on success.
 rem // ============================================================
 
 if "%~1"=="" (
-    echo Usage: %~nx0 ^<tag^>   e.g. v1.1.18-ventoy-sort
-    echo Env:   DRY_RUN=1, GH_REPO=owner/name, DIST_DIR=^<dir^>, RELEASE_TITLE="..."
+    echo Usage: %~nx0 ^<tag^>   e.g. v1.1.19-ventoy-sort-rc1
+    echo Env:   DRY_RUN=1, PRERELEASE=1, GH_REPO=owner/name, DIST_DIR=^<dir^>, RELEASE_TITLE="..."
     exit /b 1
 )
 set "TAG=%~1"
 if not defined GH_REPO set "GH_REPO=Endymi0n74/ventoy-fork"
 if not defined RELEASE_TITLE set "RELEASE_TITLE=Ventoy %TAG% (ventoy-fork)"
+set "PRE_FLAG="
+if /i "%PRERELEASE%"=="1" set "PRE_FLAG=--prerelease"
 
 where git >nul 2>nul   || (echo [make_release] ERROR: git not found.   & exit /b 1)
 where gh  >nul 2>nul   || (echo [make_release] ERROR: gh not found.    & exit /b 1)
@@ -55,8 +61,12 @@ echo.
 rem // ---- 0. sanity ----------------------------------------------------
 echo [make_release] 0/4 sanity checks...
 pushd "%REPO%"
-git diff --quiet || (echo [make_release] ERROR: working tree has unstaged changes. & goto :fail_pushd)
-git diff --cached --quiet || (echo [make_release] ERROR: working tree has staged changes. & goto :fail_pushd)
+set "DIRTY="
+for /f "delims=" %%A in ('git status --porcelain') do set "DIRTY=1"
+if not defined DIRTY goto :clean_tree
+echo [make_release] ERROR: working tree is not clean ^(tracked or untracked changes^).
+goto :fail_pushd
+:clean_tree
 git fetch origin --quiet 2>nul
 for /f %%A in ('git rev-parse HEAD')  do set "LOCAL_HEAD=%%A"
 for /f %%A in ('git rev-parse origin/master') do set "ORIGIN_HEAD=%%A"
@@ -64,16 +74,19 @@ if not "%LOCAL_HEAD%"=="%ORIGIN_HEAD%" (
     echo [make_release] ERROR: HEAD is not origin/master ^(push first^).
     goto :fail_pushd
 )
-git rev-parse -q --verify "refs/tags/%TAG%" >nul 2>nul && (
-    echo [make_release] ERROR: tag %TAG% already exists ^(use a new name^).
-    goto :fail_pushd
-)
-if not exist "%REPO%\RELEASE_NOTES.md" (
-    echo [make_release] ERROR: RELEASE_NOTES.md not found at repo root.
-    goto :fail_pushd
-)
+git rev-parse -q --verify "refs/tags/%TAG%" >nul 2>nul
+if not errorlevel 1 goto :tag_exists
+if exist "%REPO%\RELEASE_NOTES.md" goto :notes_exist
+echo [make_release] ERROR: RELEASE_NOTES.md not found at repo root.
+goto :fail_pushd
+:notes_exist
 echo [make_release] sanity OK ^(HEAD=%LOCAL_HEAD:~0,8%, clean, synced, tag free^).
 popd
+goto :sanity_done
+:tag_exists
+echo [make_release] ERROR: tag %TAG% already exists ^(use a new name^).
+goto :fail_pushd
+:sanity_done
 
 if defined DRY_RUN (
     echo.
@@ -82,7 +95,7 @@ if defined DRY_RUN (
     echo   git archive --format=zip    --prefix=Ventoy-%TAG%/ -o %DIST_DIR%\Ventoy-%TAG%.zip %TAG%
     echo   git archive --format=tar.gz --prefix=Ventoy-%TAG%/ -o %DIST_DIR%\Ventoy-%TAG%.tar.gz %TAG%
     echo   sha256sum over the 2 archives -^> %DIST_DIR%\SHA256SUMS
-    echo   gh release create %TAG% --title "%RELEASE_TITLE%" --notes-file ^& upload --clobber
+    echo   gh release create %TAG% --draft --title "%RELEASE_TITLE%" %PRE_FLAG% --notes-file ^& upload --clobber ^& gh release edit %TAG% --draft=false %PRE_FLAG%
     echo [make_release] DRY-RUN OK - nothing was done.
     exit /b 0
 )
@@ -116,11 +129,13 @@ if not "%SHA_RC%"=="0" goto :fail_tagged
 
 rem // ---- 4. release ------------------------------------------------------
 echo [make_release] 4/4 creating the GitHub release...
-rem // RELEASE_NOTES.md is written generically (it covers its own tag),
-rem // so it is used verbatim as the body.
-gh release create "%TAG%" --repo "%GH_REPO%" --title "%RELEASE_TITLE%" --notes-file "%REPO%\RELEASE_NOTES.md"
+rem // Create as a draft so the release-published workflow cannot race
+rem // the asset upload. RELEASE_NOTES.md is used verbatim as the body.
+gh release create "%TAG%" --repo "%GH_REPO%" --draft --title "%RELEASE_TITLE%" %PRE_FLAG% --notes-file "%REPO%\RELEASE_NOTES.md"
 if errorlevel 1 goto :fail_tagged
 gh release upload "%TAG%" --repo "%GH_REPO%" --clobber "%DIST_DIR%\Ventoy-%TAG%.zip" "%DIST_DIR%\Ventoy-%TAG%.tar.gz" "%DIST_DIR%\SHA256SUMS"
+if errorlevel 1 goto :fail_tagged
+gh release edit "%TAG%" --repo "%GH_REPO%" --draft=false %PRE_FLAG% --notes-file "%REPO%\RELEASE_NOTES.md"
 if errorlevel 1 goto :fail_tagged
 
 echo.

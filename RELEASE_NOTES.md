@@ -1,8 +1,8 @@
-# Notes de version — v1.1.18-ventoy-sort
+# Notes de version — v1.1.19-ventoy-sort-rc1
 
 Fork **ventoy-fork** (https://github.com/Endymi0n74/ventoy-fork), base
 **v1.1.17 upstream exacte** (`7cbdc5cf`, « 1.1.17 release »).
-Tag : `v1.1.18-ventoy-sort` (tag annoté, posé sur le commit de release).
+Tag de test : `v1.1.19-ventoy-sort-rc1` (prerelease destinée à valider le job release-e2e GitHub Actions).
 Code : un commit de fork `ac114e58` sur la base upstream, suivi des
 commits docs/tooling ci-dessous.
 
@@ -105,9 +105,15 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
 - `0fa9fe8f` — script de publication `dist/make_release.cmd <tag>`
   (sanity, tag annoté, archives, SHA256SUMS, gh release create/upload)
   avec `DRY_RUN=1` ; README : lien release + procédures make/check.
+- `4487890b` — workflow GitHub Actions `CI` : harnais sur push,
+  job `release-e2e` à la publication d'une release.
+- `b410a353` — vérification : après désactivation du workflow Gitee,
+  seul `CI` se déclenche sur push.
 
-Le tag `v1.1.18-ventoy-sort` est annoté sur le commit de release
+Le tag `v1.1.19-ventoy-sort-rc1` est annoté sur le commit de release
 (qui inclut cette mise à jour des notes) ; les archives
 (`git archive`) et le `SHA256SUMS` publiés correspondent
-exactement à ce commit. La validation e2e de la release se rejoue
+exactement à ce commit. Cette prerelease sert à vérifier le déclenchement
+et l'exécution du job `release-e2e` (download, checksums, extraction,
+sweep 30 seeds et harnais) après publication. La validation se rejoue
 avec : `dist\check_release.cmd`.
