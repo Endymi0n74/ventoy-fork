@@ -62,10 +62,12 @@ ventoy/_build_sort_test/ventoy_sort_test.exe --sweep 30
 
 Les deux modes passent avec `-Wall -Wextra -Werror`, arbre propre.
 
-Environnement requis : **clang** (`C:\Program Files\LLVM\bin\clang.exe`) et
-**Python 3** — rien d'autre. Pas de Docker, pas de WSL, pas de machine
-virtuelle. (Sur une autre machine, ajuster le chemin `CLANG` dans
-`build_sort_test.py` et `Makefile`.)
+Environnement requis : **clang** et **Python 3** — rien d'autre.
+Pas de Docker, pas de WSL, pas de machine virtuelle. Le chemin de clang
+est résolu ainsi : variable d'environnement `CLANG` si définie, puis
+`C:\Program Files\LLVM\bin\clang.exe`, puis `clang` sur le `PATH`
+(sur une autre machine, définir simplement `CLANG` ou mettre clang
+dans le `PATH`).
 
 ## Périmètre de la validation (et limites)
 

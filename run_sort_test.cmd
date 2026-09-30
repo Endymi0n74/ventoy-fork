@@ -1,7 +1,7 @@
 @echo off
 rem // One-command local validation for the Ventoy sort test harness.
-rem // Compiles and runs ventoy_sort_test.exe using the clang found on
-rem // this machine (C:\Program Files\LLVM\bin\clang.exe).
+rem // Uses clang from the CLANG environment variable when set, then
+rem // C:\Program Files\LLVM\bin\clang.exe, then `clang` on PATH.
 rem //
 rem // Usage:   run_sort_test.cmd          # correctness tests only
 rem //    or:   run_sort_test.cmd --perf   # also run perf comparison

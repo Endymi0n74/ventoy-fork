@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
 Build and run the Ventoy sort test harness.
-Uses the clang found on this machine at C:\\Program Files\\LLVM\\bin.
+Uses the clang from the CLANG environment variable when set, then
+C:\\Program Files\\LLVM\\bin, then a plain `clang` on PATH.
 """
 
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -15,7 +17,25 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 SRC = SCRIPT_DIR / "ventoy_sort_test.c"
 OUTDIR = SCRIPT_DIR / "_build_sort_test"
 OUT = OUTDIR / "ventoy_sort_test.exe"
-CLANG = Path(r"C:\Program Files\LLVM\bin\clang.exe")
+DEFAULT_CLANG = Path(r"C:\Program Files\LLVM\bin\clang.exe")
+
+
+def resolve_clang() -> str | None:
+    """Return the clang to use: $CLANG, then the default LLVM path,
+    then `clang` on PATH. None if nothing is found."""
+    env_clang = os.environ.get("CLANG", "").strip()
+    if env_clang:
+        candidate = Path(env_clang)
+        if candidate.is_file():
+            return str(candidate)
+        print(f"ERROR: CLANG={env_clang} not found (set CLANG to the full "
+              "path of clang.exe, or unset it to use the default lookup)")
+        return None
+    if DEFAULT_CLANG.is_file():
+        return str(DEFAULT_CLANG)
+    found = shutil.which("clang")
+    return found
+
 
 
 def main() -> int:
@@ -54,9 +74,11 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    if not CLANG.is_file():
-        print(f"ERROR: clang not found at {CLANG}")
-        print("Please adjust the CLANG path in this script.")
+    clang = resolve_clang()
+    if clang is None:
+        print("ERROR: clang not found. Set the CLANG environment variable "
+              "to the full path of clang.exe, or install clang and make "
+              "sure it is on PATH.")
         return 1
 
     if not SRC.is_file():
@@ -66,7 +88,7 @@ def main() -> int:
     OUTDIR.mkdir(parents=True, exist_ok=True)
 
     cmd = [
-        str(CLANG),
+        clang,
         "-o", str(OUT),
         str(SRC),
         "-std=c11",

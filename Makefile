@@ -1,6 +1,8 @@
 # One-command local validation for ventoy_sort_test.exe.
-# Requires Python 3 and clang at C:\Program Files\LLVM\bin\clang.exe
-# (the clang found on this machine).
+# Requires Python 3 and clang. The clang path is resolved as:
+#   1. the CLANG variable / environment variable when set,
+#   2. the default C:\Program Files\LLVM\bin\clang.exe,
+#   3. a plain `clang` on PATH.
 #
 # Usage:
 #   python build_sort_test.py              # correctness tests
@@ -17,6 +19,13 @@ SEED ?= 1
 
 SRCDIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 OUT := $(SRCDIR)/_build_sort_test/ventoy_sort_test.exe
+
+# Only forward CLANG when explicitly provided (make CLANG=... or an
+# environment variable); otherwise let build_sort_test.py apply its
+# own lookup ($CLANG, default LLVM path, then PATH).
+ifdef CLANG
+export CLANG
+endif
 
 .PHONY: test_sort test_sort_perf clean_sort
 

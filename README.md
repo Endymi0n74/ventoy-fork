@@ -107,9 +107,11 @@ python ventoy/build_sort_test.py --perf    # + perf comparison vs naive sort
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
 
 No Docker or Linux toolchain is required: the harness builds and runs natively
-on Windows with only **clang** (expected at `C:\Program Files\LLVM\bin\clang.exe`)
-and **Python 3** — no containers, no WSL, no VM. Building the boot ISO was
-deliberately dropped; deployment uses the official v1.1.17 runtimes.
+on Windows with only **clang** and **Python 3** — no containers, no WSL, no VM.
+The clang path is resolved as: the `CLANG` environment variable when set, then
+the default `C:\Program Files\LLVM\bin\clang.exe`, then a plain `clang` on
+`PATH`. Building the boot ISO was deliberately dropped; deployment uses the
+official v1.1.17 runtimes.
 
 # Document
 Title | Link
