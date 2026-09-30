@@ -115,6 +115,12 @@ the latest release assets, verifies `SHA256SUMS`, extracts the zip, runs the
 the sweep takes several minutes — set `SKIP_SWEEP=1` to skip it, and
 `SWEEP_OUT=<dir>` to keep the sweep reference log).
 
+Publishing a new release in one command: `dist\make_release.cmd <tag>`
+(e.g. `v1.1.18-ventoy-sort`) sanity-checks the tree, creates and pushes
+the annotated tag, exports the archives, writes `SHA256SUMS` and creates
+the GitHub release with `RELEASE_NOTES.md` as body. `DRY_RUN=1` previews
+it with no side effects; follow with `dist\check_release.cmd` to validate.
+
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
 
 No Docker or Linux toolchain is required: the harness builds and runs natively
