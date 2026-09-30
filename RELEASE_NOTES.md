@@ -109,6 +109,8 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
   job `release-e2e` à la publication d'une release.
 - `b410a353` — vérification : après désactivation du workflow Gitee,
   seul `CI` se déclenche sur push.
+- `b8964e67` — support des prereleases dans `make_release.cmd`
+  (draft → upload → publish) et `GH_TOKEN` fourni au job `release-e2e`.
 
 Le tag `v1.1.19-ventoy-sort-rc1` est annoté sur le commit de release
 (qui inclut cette mise à jour des notes) ; les archives
