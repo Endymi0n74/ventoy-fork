@@ -1,7 +1,9 @@
 # Notes de version — v1.1.17-ventoy-sort
 
-Release locale basée sur **v1.1.17** upstream (`ca552e14`).
-Tag : `v1.1.17-ventoy-sort` → commit `5ecb76a8` (merge de `perf/menu-build`).
+Fork **ventoy-fork** (https://github.com/Endymi0n74/ventoy-fork), base
+**v1.1.17 upstream exacte** (`7cbdc5cf`, « 1.1.17 release »).
+Tag : `v1.1.17-ventoy-sort` → commit `ac114e58`
+(un seul commit de fork sur la base upstream).
 
 ## Contenu
 
@@ -60,22 +62,16 @@ ventoy/_build_sort_test/ventoy_sort_test.exe --sweep 30
 
 Les deux modes passent avec `-Wall -Wextra -Werror`, arbre propre.
 
-## Fichiers de la release
+## Périmètre de la validation (et limites)
 
-| Chemin | Rôle |
-|---|---|
-| `GRUB2/.../ventoy_cmd.c` | tri fusion + garde-fou (seul fichier production) |
-| `ventoy/ventoy_sort_test.c` | harnais de régressions + parité |
-| `ventoy/build_sort_test.py`, `run_sort_test.cmd`, `Makefile` | pilotes de build/validation |
-| `ventoy/PERF_FINDINGS.md` | mesures et méthodologie |
-| `ventoy/sweep30_ext_*.txt` | logs bruts du sweep de référence |
-| `ventoy/.gitignore` | artefacts locaux |
+Validé : la logique du tri et sa parité structurelle avec le code de
+production (mêmes algorithmes, mêmes séquences de liaison).
 
-## Historique
+Non validé : un boot réel sur clé USB avec ce code. Le build complet
+de l'ISO (GRUB recompilé dans l'arbre 2.04, via Docker/CentOS 7) a été
+écarté — le déploiement passe par les runtimes officiels v1.1.17.
 
-Neuf commits + merge, poussés sur `origin` (Endymi0n74/Ventoy) :
-harnais (`865f3dbe`) → régressions/seed (`513e2842`) → sweep+QPC
-(`6f969b41`) → timing stabilisé (`c8a4b6b9`) → preuves (`d1463dc3`) →
-**correction production (`736dada4`)** → sweep étendu (`87218cd8`) →
-parité (`4a74ea90`) → gitignore (`e763d774`) → garde comptage
-(`7006449a`).
+## Historique du fork
+
+Un commit sur la base upstream : `ac114e58`
+« Add sort test harness and stable merge sort for menu images ».

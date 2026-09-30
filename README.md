@@ -91,6 +91,21 @@ See [https://www.ventoy.net/en/doc_start.html](https://www.ventoy.net/en/doc_sta
 # Compile Instructions
 Please refer to [BuildVentoyFromSource.txt](DOC/BuildVentoyFromSource.txt)
 
+# About this fork (ventoy-fork)
+
+Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`) with one change:
+the menu image list is sorted by a **stable merge sort** (O(n log n)) instead of the
+original O(n²) selection sort, plus a count/length consistency guard before sorting.
+
+It ships with a standalone validation harness — run it from the repo root:
+
+```
+python ventoy/build_sort_test.py           # regression suite (RC=0 expected)
+python ventoy/build_sort_test.py --perf    # + perf comparison vs naive sort
+```
+
+Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
+
 # Document
 Title | Link
 -|-
