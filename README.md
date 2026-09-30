@@ -93,6 +93,11 @@ Please refer to [BuildVentoyFromSource.txt](DOC/BuildVentoyFromSource.txt)
 
 # About this fork (ventoy-fork)
 
+[![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
+
+Latest release: **[v1.1.17-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.17-ventoy-sort)**
+— full source archives (zip / tar.gz) with a `SHA256SUMS` checksum file.
+
 Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`) with one change:
 the menu image list is sorted by a **stable merge sort** (O(n log n)) instead of the
 original O(n²) selection sort, plus a count/length consistency guard before sorting.
