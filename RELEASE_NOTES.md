@@ -96,7 +96,12 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
 - `61efabfa` — chemin clang configurable via `CLANG` (env → défaut →
   PATH) dans build_sort_test.py / Makefile.
 - `b70db59a` — README : badge + lien vers la release GitHub.
+- `0f7ebecc` — script e2e réutilisable `dist/check_release.cmd`
+  (download des assets + vérification SHA256SUMS + extraction +
+  harnais, exit 0 = PASS).
 
-Le tag `v1.1.17-ventoy-sort` est annoté sur le commit de release ;
-les archives (`git archive`) et le `SHA256SUMS` publiés correspondent
-exactement à ce commit.
+Le tag `v1.1.17-ventoy-sort` est annoté sur le commit de release
+(qui inclut cette mise à jour des notes) ; les archives
+(`git archive`) et le `SHA256SUMS` publiés correspondent
+exactement à ce commit. La validation e2e de la release se rejoue
+avec : `dist\check_release.cmd`.
