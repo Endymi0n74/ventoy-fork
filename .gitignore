@@ -1,0 +1,15 @@
+# Local sort-harness build artifacts (created by build_sort_test.py /
+# run_sort_test.cmd / make test_sort*).
+_build_sort_test/
+
+# Local scratch experiments (leading underscore marks throwaway files).
+_*.c
+
+# Local build log produced under INSTALL/.
+INSTALL/log.txt
+INSTALL/boot/
+INSTALL/ventoy/languages.json
+INSTALL/ventoy/plugson.tar.xz
+INSTALL/ventoy/ventoy.disk.img.xz
+INSTALL/ventoy/ventoy_4k.disk.img.xz
+INSTALL/ventoy/version

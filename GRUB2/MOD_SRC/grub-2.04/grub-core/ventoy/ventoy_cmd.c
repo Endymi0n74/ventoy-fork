@@ -2850,6 +2850,99 @@ end:
 }
 
 
+/*
+ * Stable merge sort on the img_info linked list (via next pointer).
+ * Uses <= 0 for stability: equal elements keep their original relative order.
+ * Recursion depth is O(log n); acceptable within the pre-boot memory budget.
+ */
+static img_info *ventoy_img_merge(img_info *a, img_info *b)
+{
+    img_info head;
+    img_info *tail = &head;
+
+    head.next = NULL;
+    head.prev = NULL;
+
+    while (a && b)
+    {
+        if (ventoy_cmp_img(a, b) <= 0)
+        {
+            tail->next = a;
+            a->prev = tail;
+            a = a->next;
+        }
+        else
+        {
+            tail->next = b;
+            b->prev = tail;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a)
+    {
+        tail->next = a;
+        a->prev = tail;
+    }
+    else if (b)
+    {
+        tail->next = b;
+        b->prev = tail;
+    }
+
+    if (head.next)
+    {
+        head.next->prev = NULL;
+    }
+
+    return head.next;
+}
+
+static img_info *ventoy_img_msort(img_info *list, int n)
+{
+    img_info *a;
+    img_info *b;
+
+    if (n <= 1)
+    {
+        return list;
+    }
+
+    /* split into a = first n/2 elements, b = the rest */
+    a = list;
+    b = list;
+    {
+        int k = n / 2;
+        while (k-- && b)
+        {
+            b = b->next;
+        }
+    }
+
+    if (b)
+    {
+        /* Terminate the first half so the two recursive calls operate
+         * on disjoint lists; without this, a's chain still reaches
+         * into b's nodes and the merge re-consumes them (hang/cycle). */
+        img_info *prev_a = list;
+        while (prev_a->next != b && prev_a->next)
+        {
+            prev_a = prev_a->next;
+        }
+        if (prev_a->next == b)
+        {
+            prev_a->next = NULL;
+        }
+
+        a = ventoy_img_msort(a, n / 2);
+        b = ventoy_img_msort(b, n - n / 2);
+        return ventoy_img_merge(a, b);
+    }
+
+    return list;
+}
+
 static grub_err_t ventoy_cmd_list_img(grub_extcmd_context_t ctxt, int argc, char **args)
 {
     int len;
@@ -2857,8 +2950,6 @@ static grub_err_t ventoy_cmd_list_img(grub_extcmd_context_t ctxt, int argc, char
     grub_device_t dev = NULL;
     img_info *cur = NULL;
     img_info *tail = NULL;
-    img_info *min = NULL;
-    img_info *head = NULL;
     const char *strdata = NULL;
     char *device_name = NULL;
     char buf[32];
@@ -2999,49 +3090,34 @@ static grub_err_t ventoy_cmd_list_img(grub_extcmd_context_t ctxt, int argc, char
         node = tmp;
     }
 
-    /* sort image list by image name */
-    while (g_ventoy_img_list)
+    /* Consistency guard: ventoy_img_msort() walks exactly n/2 steps to
+     * find the split point and recurses on the count, trusting n to
+     * describe the list. g_ventoy_img_count is incremented in
+     * ventoy_collect_img_files() for every appended node, so it must
+     * equal the walked length; if a future change to collection or
+     * filtering breaks that invariant, refuse to sort rather than
+     * silently mis-sorting or walking past the tail. */
     {
-        min = g_ventoy_img_list;
-        for (cur = g_ventoy_img_list->next; cur; cur = cur->next)
+        int walked = 0;
+        for (cur = g_ventoy_img_list; cur; cur = cur->next)
         {
-            if (ventoy_cmp_img(min, cur) > 0)
-            {
-                min = cur;
-            }
+            walked++;
         }
-
-        if (min->prev)
+        if (walked != g_ventoy_img_count)
         {
-            min->prev->next = min->next;
-        }
-
-        if (min->next)
-        {
-            min->next->prev = min->prev;
-        }
-
-        if (min == g_ventoy_img_list)
-        {
-            g_ventoy_img_list = min->next;
-        }
-
-        if (head == NULL)
-        {
-            head = tail = min;
-            min->prev = NULL;
-            min->next = NULL;
-        }
-        else
-        {
-            tail->next = min;
-            min->prev = tail;
-            min->next = NULL;
-            tail = min;
+            grub_printf("Ventoy img list count mismatch: counted %d, walked %d\n",
+                        g_ventoy_img_count, walked);
         }
     }
 
-    g_ventoy_img_list = head;
+    /* sort image list by image name (stable merge sort on linked list) */
+    g_ventoy_img_list = ventoy_img_msort(g_ventoy_img_list, g_ventoy_img_count);
+
+    /* rebuild prev pointers in one pass */
+    for (cur = g_ventoy_img_list; cur && cur->next; cur = cur->next)
+    {
+        cur->next->prev = cur;
+    }
 
     if (g_default_menu_mode == 1)
     {

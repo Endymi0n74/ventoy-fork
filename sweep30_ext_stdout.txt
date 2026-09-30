@@ -1,0 +1,39 @@
+seed=1
+OK: test_cmp_img_case_sensitive
+OK: test_cmp_img_case_insensitive
+OK: test_cmp_img_equal_names
+OK: test_cmp_img_prefix_equal_stability_tie
+OK: test_msort_empty
+OK: test_msort_single
+OK: test_msort_reverse_order
+OK: test_msort_duplicate_names_stable
+OK large random sort (4096 items, 0.001000 sec)
+OK: test_msort_large_random
+OK: test_make_item_long_name_copies_and_truncates
+OK: test_cmp_img_long_names_differing_after_byte64
+OK: test_msort_long_names_stable_and_ordered
+OK: test_swap_preserves_neighbors
+OK: test_plugin_list_index_mode
+OK: test_cmp_subdir_parent_before_child
+OK: test_cmp_subdir_deep_child_last
+OK: test_cmp_subdir_equal_dirs
+OK: test_cmp_subdir_case_insensitive
+OK: test_cmp_subdir_case_sensitive
+OK: test_cmp_subdir_plugin_list_mode
+OK: test_cmp_subdir_empty_dir_vs_nonempty
+OK: test_cmp_subdir_equal_dirs_preserve_insertion_order
+OK: test_cmp_subdir_equal_dirs_msort_preserves_order
+OK: test_toggle_case_sensitive_does_not_corrupt_order
+OK: test_toggle_case_sensitive_stress_multi_phase
+SWEEP-IMG N=32 seeds=30 merge mean=0.000001421 min=0.000001294 max=0.000001534 | naive mean=0.000001987 min=0.000001562 max=0.000002501 sec
+SWEEP-IMG N=128 seeds=30 merge mean=0.000008404 min=0.000007891 max=0.000009647 | naive mean=0.000031246 min=0.000027570 max=0.000035058 sec
+SWEEP-IMG N=512 seeds=30 merge mean=0.000054959 min=0.000051318 max=0.000061731 | naive mean=0.000477112 min=0.000444088 max=0.000527610 sec
+SWEEP-IMG N=2048 seeds=30 merge mean=0.000348142 min=0.000323296 max=0.000388172 | naive mean=0.007660838 min=0.007164700 max=0.008296440 sec
+SWEEP-IMG N=8192 seeds=30 merge mean=0.001878197 min=0.001748620 max=0.002086674 | naive mean=0.127108513 min=0.119348100 max=0.135459500 sec
+SWEEP-IMG N=16384 seeds=30 merge mean=0.004342094 min=0.004104513 max=0.005076544 | naive mean=0.547126453 min=0.528732300 max=0.594172300 sec
+SWEEP-SUBDIR N=32 seeds=30 merge mean=0.000001316 min=0.000001195 max=0.000001565 | naive mean=0.000001963 min=0.000001689 max=0.000002260 sec
+SWEEP-SUBDIR N=128 seeds=30 merge mean=0.000008238 min=0.000007442 max=0.000009359 | naive mean=0.000030813 min=0.000027915 max=0.000037780 sec
+SWEEP-SUBDIR N=512 seeds=30 merge mean=0.000048181 min=0.000043527 max=0.000053308 | naive mean=0.000522970 min=0.000484141 max=0.000610366 sec
+SWEEP-SUBDIR N=2048 seeds=30 merge mean=0.000351120 min=0.000331801 max=0.000378471 | naive mean=0.007843967 min=0.007348600 max=0.008274700 sec
+SWEEP-SUBDIR N=8192 seeds=30 merge mean=0.001847575 min=0.001743872 max=0.001951500 | naive mean=0.125049420 min=0.119779800 max=0.130131900 sec
+SWEEP-SUBDIR N=16384 seeds=30 merge mean=0.004093320 min=0.003819827 max=0.004422800 | naive mean=0.547235130 min=0.533123000 max=0.571887900 sec
