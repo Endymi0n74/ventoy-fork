@@ -93,6 +93,7 @@ Please refer to [BuildVentoyFromSource.txt](DOC/BuildVentoyFromSource.txt)
 
 # About this fork (ventoy-fork)
 
+[![CI](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
 
 Latest release: **[v1.1.17-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.17-ventoy-sort)**

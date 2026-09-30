@@ -1,37 +1,50 @@
-name: Ventoy CI
+name: CI
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-  
+    branches: [master]
+  release:
+    types: [published]
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: cmd
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  harness:
+    name: Sort harness (clang + Python, native Windows)
+    runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Run docker compose up
-      run: docker compose up
-    - uses: actions/upload-artifact@v4
-      with:
-        name: ventoy-windows
-        path: INSTALL/ventoy-*windows*
-    - uses: actions/upload-artifact@v4
-      with:
-        name: ventoy-linux
-        path: INSTALL/ventoy-*linux*
-    - uses: actions/upload-artifact@v4
-      with:
-        name: ventoy-livecd
-        path: INSTALL/ventoy-*livecd*
-    - uses: actions/upload-artifact@v4
-      with:
-        name: SHA256SUM
-        path: INSTALL/sha256.txt
-    - uses: actions/upload-artifact@v4
-      with:
-        name: xxx-build-log
-        path: DOC/build.log
+      - uses: actions/checkout@v4
+
+      - name: Install clang (LLVM)
+        run: winget install --id LLVM.LLVM --exact --silent --accept-package-agreements --accept-source-agreements
+
+      - name: Add clang to PATH
+        run: echo "%ProgramFiles%\LLVM\bin">>"%GITHUB_PATH%"
+
+      - name: Regression suite (default)
+        run: python build_sort_test.py
+
+      - name: Regression suite + perf comparison
+        run: python build_sort_test.py --perf
+
+  release-e2e:
+    name: E2E check of the published release
+    if: github.event_name == 'release'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang (LLVM)
+        run: winget install --id LLVM.LLVM --exact --silent --accept-package-agreements --accept-source-agreements
+
+      - name: Add clang to PATH
+        run: echo "%ProgramFiles%\LLVM\bin">>"%GITHUB_PATH%"
+
+      - name: End-to-end release check (download, SHA256SUMS, extract, sweep, harness)
+        env:
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: dist\check_release.cmd
