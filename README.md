@@ -109,6 +109,10 @@ python ventoy/build_sort_test.py           # regression suite (RC=0 expected)
 python ventoy/build_sort_test.py --perf    # + perf comparison vs naive sort
 ```
 
+End-to-end release check in one command: `dist\check_release.cmd` downloads
+the latest release assets, verifies `SHA256SUMS`, extracts the zip and runs
+the harness from the extraction (exits 0 on PASS).
+
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
 
 No Docker or Linux toolchain is required: the harness builds and runs natively
