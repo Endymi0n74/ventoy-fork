@@ -1,0 +1,44 @@
+[build] C:\Program Files\LLVM\bin\clang.exe -o C:\Users\endymion\AppData\Local\Temp\check_release_25154\Ventoy-v1.1.17-ventoy-sort\_build_sort_test\ventoy_sort_test.exe C:\Users\endymion\AppData\Local\Temp\check_release_25154\Ventoy-v1.1.17-ventoy-sort\ventoy_sort_test.c -std=c11 -O0 -Wall -Wextra -Werror -DVENTOY_SORT_TEST_PERF=1
+[run] C:\Users\endymion\AppData\Local\Temp\check_release_25154\Ventoy-v1.1.17-ventoy-sort\_build_sort_test\ventoy_sort_test.exe --seed 1 --sweep 30
+seed=1
+OK: test_cmp_img_case_sensitive
+OK: test_cmp_img_case_insensitive
+OK: test_cmp_img_equal_names
+OK: test_cmp_img_prefix_equal_stability_tie
+OK: test_msort_empty
+OK: test_msort_single
+OK: test_msort_reverse_order
+OK: test_msort_duplicate_names_stable
+OK large random sort (4096 items, 0.001000 sec)
+OK: test_msort_large_random
+OK: test_prod_msort_parity
+OK: test_make_item_long_name_copies_and_truncates
+OK: test_cmp_img_long_names_differing_after_byte64
+OK: test_msort_long_names_stable_and_ordered
+OK: test_swap_preserves_neighbors
+OK: test_plugin_list_index_mode
+OK: test_cmp_subdir_parent_before_child
+OK: test_cmp_subdir_deep_child_last
+OK: test_cmp_subdir_equal_dirs
+OK: test_cmp_subdir_case_insensitive
+OK: test_cmp_subdir_case_sensitive
+OK: test_cmp_subdir_plugin_list_mode
+OK: test_cmp_subdir_empty_dir_vs_nonempty
+OK: test_cmp_subdir_equal_dirs_preserve_insertion_order
+OK: test_cmp_subdir_equal_dirs_msort_preserves_order
+OK: test_toggle_case_sensitive_does_not_corrupt_order
+OK: test_toggle_case_sensitive_stress_multi_phase
+SWEEP-IMG N=32 seeds=30 merge mean=0.000001720 min=0.000001360 max=0.000002285 | naive mean=0.000002399 min=0.000001535 max=0.000004007 sec
+SWEEP-IMG N=128 seeds=30 merge mean=0.000010238 min=0.000008326 max=0.000012249 | naive mean=0.000037650 min=0.000029661 max=0.000052082 sec
+SWEEP-IMG N=512 seeds=30 merge mean=0.000068082 min=0.000055205 max=0.000079500 | naive mean=0.000593351 min=0.000469195 max=0.000761952 sec
+SWEEP-IMG N=2048 seeds=30 merge mean=0.000432497 min=0.000341475 max=0.000657085 | naive mean=0.009619949 min=0.007651717 max=0.016258367 sec
+SWEEP-IMG N=8192 seeds=30 merge mean=0.002498943 min=0.001879960 max=0.003583000 | naive mean=0.158460670 min=0.127238100 max=0.197887800 sec
+SWEEP-IMG N=16384 seeds=30 merge mean=0.006728954 min=0.004180691 max=0.012832020 | naive mean=0.716044540 min=0.571944400 max=1.093007700 sec
+SWEEP-SUBDIR N=32 seeds=30 merge mean=0.000002190 min=0.000001294 max=0.000022838 | naive mean=0.000002149 min=0.000001711 max=0.000002741 sec
+SWEEP-SUBDIR N=128 seeds=30 merge mean=0.000009416 min=0.000007831 max=0.000019760 | naive mean=0.000034269 min=0.000028110 max=0.000048167 sec
+SWEEP-SUBDIR N=512 seeds=30 merge mean=0.000054179 min=0.000043929 max=0.000068733 | naive mean=0.000575641 min=0.000491635 max=0.001080107 sec
+SWEEP-SUBDIR N=2048 seeds=30 merge mean=0.000405051 min=0.000347425 max=0.000778450 | naive mean=0.008703639 min=0.007789283 max=0.010846120 sec
+SWEEP-SUBDIR N=8192 seeds=30 merge mean=0.002113326 min=0.001862948 max=0.002845996 | naive mean=0.144197280 min=0.123606400 max=0.187669100 sec
+SWEEP-SUBDIR N=16384 seeds=30 merge mean=0.004635676 min=0.003968067 max=0.005895013 | naive mean=0.636515987 min=0.555281300 max=0.981646800 sec
+
+ventoy_sort_test: all checks passed.

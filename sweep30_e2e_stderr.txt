@@ -1,0 +1,1080 @@
+PERF: N=32 merge reps=21739
+PERF: N=32 naive reps=7575 restore_overhead=0.1%
+SWEEP-IMG seed=1 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3787
+PERF: N=128 naive reps=1295 restore_overhead=0.0%
+SWEEP-IMG seed=1 N=128 merge=0.000010 naive=0.000035 sec
+PERF: N=512 merge reps=751
+PERF: N=512 naive reps=71 restore_overhead=0.0%
+SWEEP-IMG seed=1 N=512 merge=0.000069 naive=0.000549 sec
+PERF: N=2048 merge reps=136
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=1 N=2048 merge=0.000398 naive=0.008819 sec
+PERF: N=8192 merge reps=19
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=1 N=8192 merge=0.002349 naive=0.166652 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=1 N=16384 merge=0.006633 naive=0.836751 sec
+PERF: N=32 merge reps=10416
+PERF: N=32 naive reps=7692 restore_overhead=0.2%
+SWEEP-IMG seed=2 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3164
+PERF: N=128 naive reps=1282 restore_overhead=0.0%
+SWEEP-IMG seed=2 N=128 merge=0.000010 naive=0.000036 sec
+PERF: N=512 merge reps=473
+PERF: N=512 naive reps=80 restore_overhead=0.0%
+SWEEP-IMG seed=2 N=512 merge=0.000064 naive=0.000551 sec
+PERF: N=2048 merge reps=97
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=2 N=2048 merge=0.000420 naive=0.009129 sec
+PERF: N=8192 merge reps=14
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=2 N=8192 merge=0.002521 naive=0.197084 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=2 N=16384 merge=0.007046 naive=0.696654 sec
+PERF: N=32 merge reps=14285
+PERF: N=32 naive reps=7575 restore_overhead=0.1%
+SWEEP-IMG seed=3 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3787
+PERF: N=128 naive reps=1253 restore_overhead=0.0%
+SWEEP-IMG seed=3 N=128 merge=0.000009 naive=0.000037 sec
+PERF: N=512 merge reps=480
+PERF: N=512 naive reps=92 restore_overhead=0.0%
+SWEEP-IMG seed=3 N=512 merge=0.000065 naive=0.000559 sec
+PERF: N=2048 merge reps=111
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=3 N=2048 merge=0.000394 naive=0.009045 sec
+PERF: N=8192 merge reps=16
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=3 N=8192 merge=0.002224 naive=0.153589 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=3 N=16384 merge=0.005649 naive=0.754518 sec
+PERF: N=32 merge reps=16129
+PERF: N=32 naive reps=8196 restore_overhead=0.1%
+SWEEP-IMG seed=4 N=32 merge=0.000001 naive=0.000002 sec
+PERF: N=128 merge reps=3067
+PERF: N=128 naive reps=1072 restore_overhead=0.0%
+SWEEP-IMG seed=4 N=128 merge=0.000010 naive=0.000036 sec
+PERF: N=512 merge reps=748
+PERF: N=512 naive reps=102 restore_overhead=0.0%
+SWEEP-IMG seed=4 N=512 merge=0.000067 naive=0.000548 sec
+PERF: N=2048 merge reps=132
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=4 N=2048 merge=0.000399 naive=0.008971 sec
+PERF: N=8192 merge reps=18
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=4 N=8192 merge=0.003583 naive=0.166196 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=4 N=16384 merge=0.007798 naive=0.679097 sec
+PERF: N=32 merge reps=13888
+PERF: N=32 naive reps=8620 restore_overhead=0.2%
+SWEEP-IMG seed=5 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=2403
+PERF: N=128 naive reps=924 restore_overhead=0.0%
+SWEEP-IMG seed=5 N=128 merge=0.000010 naive=0.000044 sec
+PERF: N=512 merge reps=757
+PERF: N=512 naive reps=62 restore_overhead=0.0%
+SWEEP-IMG seed=5 N=512 merge=0.000074 naive=0.000583 sec
+PERF: N=2048 merge reps=115
+PERF: N=2048 naive reps=4 restore_overhead=0.0%
+SWEEP-IMG seed=5 N=2048 merge=0.000428 naive=0.011273 sec
+PERF: N=8192 merge reps=11
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=5 N=8192 merge=0.003040 naive=0.146568 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=5 N=16384 merge=0.005797 naive=0.697471 sec
+PERF: N=32 merge reps=14705
+PERF: N=32 naive reps=9090 restore_overhead=0.1%
+SWEEP-IMG seed=6 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=3378
+PERF: N=128 naive reps=1228 restore_overhead=0.0%
+SWEEP-IMG seed=6 N=128 merge=0.000011 naive=0.000043 sec
+PERF: N=512 merge reps=586
+PERF: N=512 naive reps=98 restore_overhead=0.0%
+SWEEP-IMG seed=6 N=512 merge=0.000071 naive=0.000606 sec
+PERF: N=2048 merge reps=141
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=6 N=2048 merge=0.000394 naive=0.008869 sec
+PERF: N=8192 merge reps=15
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=6 N=8192 merge=0.002075 naive=0.170876 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=6 N=16384 merge=0.008095 naive=0.685902 sec
+PERF: N=32 merge reps=13888
+PERF: N=32 naive reps=8196 restore_overhead=0.1%
+SWEEP-IMG seed=7 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3731
+PERF: N=128 naive reps=1199 restore_overhead=0.0%
+SWEEP-IMG seed=7 N=128 merge=0.000010 naive=0.000036 sec
+PERF: N=512 merge reps=351
+PERF: N=512 naive reps=76 restore_overhead=0.0%
+SWEEP-IMG seed=7 N=512 merge=0.000074 naive=0.000549 sec
+PERF: N=2048 merge reps=109
+PERF: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-IMG seed=7 N=2048 merge=0.000421 naive=0.009327 sec
+PERF: N=8192 merge reps=18
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=7 N=8192 merge=0.002275 naive=0.144263 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=7 N=16384 merge=0.006443 naive=0.751413 sec
+PERF: N=32 merge reps=14705
+PERF: N=32 naive reps=9433 restore_overhead=0.2%
+SWEEP-IMG seed=8 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3205
+PERF: N=128 naive reps=1278 restore_overhead=0.0%
+SWEEP-IMG seed=8 N=128 merge=0.000011 naive=0.000037 sec
+PERF: N=512 merge reps=766
+PERF: N=512 naive reps=70 restore_overhead=0.0%
+SWEEP-IMG seed=8 N=512 merge=0.000080 naive=0.000619 sec
+PERF: N=2048 merge reps=95
+PERF: N=2048 naive reps=4 restore_overhead=0.0%
+SWEEP-IMG seed=8 N=2048 merge=0.000428 naive=0.009288 sec
+PERF: N=8192 merge reps=22
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=8 N=8192 merge=0.002211 naive=0.154946 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=8 N=16384 merge=0.009220 naive=0.725490 sec
+PERF: N=32 merge reps=14705
+PERF: N=32 naive reps=8333 restore_overhead=0.2%
+SWEEP-IMG seed=9 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3816
+PERF: N=128 naive reps=1312 restore_overhead=0.0%
+SWEEP-IMG seed=9 N=128 merge=0.000011 naive=0.000052 sec
+PERF: N=512 merge reps=593
+PERF: N=512 naive reps=58 restore_overhead=0.0%
+SWEEP-IMG seed=9 N=512 merge=0.000077 naive=0.000717 sec
+PERF: N=2048 merge reps=104
+PERF: N=2048 naive reps=4 restore_overhead=0.0%
+SWEEP-IMG seed=9 N=2048 merge=0.000509 naive=0.008983 sec
+PERF: N=8192 merge reps=17
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=9 N=8192 merge=0.003195 naive=0.197888 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=9 N=16384 merge=0.006057 naive=0.877730 sec
+PERF: N=32 merge reps=17241
+PERF: N=32 naive reps=7352 restore_overhead=0.2%
+SWEEP-IMG seed=10 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3164
+PERF: N=128 naive reps=1043 restore_overhead=0.0%
+SWEEP-IMG seed=10 N=128 merge=0.000010 naive=0.000036 sec
+PERF: N=512 merge reps=564
+PERF: N=512 naive reps=71 restore_overhead=0.0%
+SWEEP-IMG seed=10 N=512 merge=0.000073 naive=0.000694 sec
+PERF: N=2048 merge reps=121
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=10 N=2048 merge=0.000446 naive=0.009014 sec
+PERF: N=8192 merge reps=11
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=10 N=8192 merge=0.002656 naive=0.159074 sec
+PERF: N=16384 merge reps=4
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=10 N=16384 merge=0.007811 naive=0.885974 sec
+PERF: N=32 merge reps=13888
+PERF: N=32 naive reps=7246 restore_overhead=0.1%
+SWEEP-IMG seed=11 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=2958
+PERF: N=128 naive reps=1094 restore_overhead=0.0%
+SWEEP-IMG seed=11 N=128 merge=0.000011 naive=0.000038 sec
+PERF: N=512 merge reps=672
+PERF: N=512 naive reps=91 restore_overhead=0.0%
+SWEEP-IMG seed=11 N=512 merge=0.000068 naive=0.000689 sec
+PERF: N=2048 merge reps=100
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=11 N=2048 merge=0.000443 naive=0.009697 sec
+PERF: N=8192 merge reps=17
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=11 N=8192 merge=0.002299 naive=0.163908 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=11 N=16384 merge=0.007804 naive=0.813638 sec
+PERF: N=32 merge reps=14705
+PERF: N=32 naive reps=10869 restore_overhead=0.2%
+SWEEP-IMG seed=12 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=3067
+PERF: N=128 naive reps=766 restore_overhead=0.0%
+SWEEP-IMG seed=12 N=128 merge=0.000012 naive=0.000046 sec
+PERF: N=512 merge reps=733
+PERF: N=512 naive reps=71 restore_overhead=0.0%
+SWEEP-IMG seed=12 N=512 merge=0.000073 naive=0.000655 sec
+PERF: N=2048 merge reps=130
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=12 N=2048 merge=0.000486 naive=0.009741 sec
+PERF: N=8192 merge reps=12
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=12 N=8192 merge=0.002466 naive=0.163796 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=12 N=16384 merge=0.007779 naive=0.634798 sec
+PERF: N=32 merge reps=11111
+PERF: N=32 naive reps=9259 restore_overhead=0.1%
+SWEEP-IMG seed=13 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3816
+PERF: N=128 naive reps=1126 restore_overhead=0.0%
+SWEEP-IMG seed=13 N=128 merge=0.000009 naive=0.000033 sec
+PERF: N=512 merge reps=759
+PERF: N=512 naive reps=80 restore_overhead=0.0%
+SWEEP-IMG seed=13 N=512 merge=0.000059 naive=0.000640 sec
+PERF: N=2048 merge reps=79
+PERF: N=2048 naive reps=3 restore_overhead=0.1%
+SWEEP-IMG seed=13 N=2048 merge=0.000462 naive=0.011532 sec
+PERF: N=8192 merge reps=15
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=13 N=8192 merge=0.003037 naive=0.153870 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=13 N=16384 merge=0.007594 naive=0.815543 sec
+PERF: N=32 merge reps=10204
+PERF: N=32 naive reps=7812 restore_overhead=0.1%
+SWEEP-IMG seed=14 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=3787
+PERF: N=128 naive reps=1043 restore_overhead=0.0%
+SWEEP-IMG seed=14 N=128 merge=0.000010 naive=0.000037 sec
+PERF: N=512 merge reps=578
+PERF: N=512 naive reps=102 restore_overhead=0.0%
+SWEEP-IMG seed=14 N=512 merge=0.000072 naive=0.000621 sec
+PERF: N=2048 merge reps=100
+PERF: N=2048 naive reps=4 restore_overhead=0.0%
+SWEEP-IMG seed=14 N=2048 merge=0.000448 naive=0.011493 sec
+PERF: N=8192 merge reps=16
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=14 N=8192 merge=0.002601 naive=0.157842 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=14 N=16384 merge=0.007245 naive=0.712892 sec
+PERF: N=32 merge reps=14285
+PERF: N=32 naive reps=11904 restore_overhead=0.3%
+SWEEP-IMG seed=15 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3906
+PERF: N=128 naive reps=1043 restore_overhead=0.0%
+SWEEP-IMG seed=15 N=128 merge=0.000010 naive=0.000036 sec
+PERF: N=512 merge reps=626
+PERF: N=512 naive reps=77 restore_overhead=0.0%
+SWEEP-IMG seed=15 N=512 merge=0.000062 naive=0.000625 sec
+PERF: N=2048 merge reps=148
+PERF: N=2048 naive reps=4 restore_overhead=0.0%
+SWEEP-IMG seed=15 N=2048 merge=0.000657 naive=0.011094 sec
+PERF: N=8192 merge reps=19
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=15 N=8192 merge=0.002220 naive=0.158316 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=15 N=16384 merge=0.005686 naive=0.657166 sec
+PERF: N=32 merge reps=14705
+PERF: N=32 naive reps=8928 restore_overhead=0.1%
+SWEEP-IMG seed=16 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=3067
+PERF: N=128 naive reps=1253 restore_overhead=0.0%
+SWEEP-IMG seed=16 N=128 merge=0.000010 naive=0.000039 sec
+PERF: N=512 merge reps=630
+PERF: N=512 naive reps=54 restore_overhead=0.0%
+SWEEP-IMG seed=16 N=512 merge=0.000066 naive=0.000539 sec
+PERF: N=2048 merge reps=117
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=16 N=2048 merge=0.000439 naive=0.008248 sec
+PERF: N=8192 merge reps=23
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=16 N=8192 merge=0.002273 naive=0.140865 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=16 N=16384 merge=0.006660 naive=1.093008 sec
+PERF: N=32 merge reps=12195
+PERF: N=32 naive reps=6756 restore_overhead=0.2%
+SWEEP-IMG seed=17 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3378
+PERF: N=128 naive reps=1285 restore_overhead=0.0%
+SWEEP-IMG seed=17 N=128 merge=0.000010 naive=0.000035 sec
+PERF: N=512 merge reps=748
+PERF: N=512 naive reps=92 restore_overhead=0.0%
+SWEEP-IMG seed=17 N=512 merge=0.000066 naive=0.000762 sec
+PERF: N=2048 merge reps=79
+PERF: N=2048 naive reps=3 restore_overhead=0.0%
+SWEEP-IMG seed=17 N=2048 merge=0.000482 naive=0.016258 sec
+PERF: N=8192 merge reps=11
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=17 N=8192 merge=0.003446 naive=0.158462 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=17 N=16384 merge=0.006394 naive=0.666676 sec
+PERF: N=32 merge reps=12195
+PERF: N=32 naive reps=8620 restore_overhead=0.2%
+SWEEP-IMG seed=18 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=2604
+PERF: N=128 naive reps=711 restore_overhead=0.0%
+SWEEP-IMG seed=18 N=128 merge=0.000011 naive=0.000038 sec
+PERF: N=512 merge reps=477
+PERF: N=512 naive reps=62 restore_overhead=0.0%
+SWEEP-IMG seed=18 N=512 merge=0.000076 naive=0.000650 sec
+PERF: N=2048 merge reps=114
+PERF: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-IMG seed=18 N=2048 merge=0.000386 naive=0.008695 sec
+PERF: N=8192 merge reps=21
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=18 N=8192 merge=0.002298 naive=0.143316 sec
+PERF: N=16384 merge reps=8
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=18 N=16384 merge=0.005326 naive=0.653460 sec
+PERF: N=32 merge reps=17241
+PERF: N=32 naive reps=8474 restore_overhead=0.2%
+SWEEP-IMG seed=19 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3246
+PERF: N=128 naive reps=836 restore_overhead=0.0%
+SWEEP-IMG seed=19 N=128 merge=0.000011 naive=0.000040 sec
+PERF: N=512 merge reps=755
+PERF: N=512 naive reps=80 restore_overhead=0.0%
+SWEEP-IMG seed=19 N=512 merge=0.000077 naive=0.000631 sec
+PERF: N=2048 merge reps=97
+PERF: N=2048 naive reps=4 restore_overhead=0.0%
+SWEEP-IMG seed=19 N=2048 merge=0.000500 naive=0.010892 sec
+PERF: N=8192 merge reps=17
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=19 N=8192 merge=0.003427 naive=0.175893 sec
+PERF: N=16384 merge reps=4
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=19 N=16384 merge=0.010745 naive=0.768408 sec
+PERF: N=32 merge reps=13513
+PERF: N=32 naive reps=10000 restore_overhead=0.2%
+SWEEP-IMG seed=20 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=2976
+PERF: N=128 naive reps=794 restore_overhead=0.0%
+SWEEP-IMG seed=20 N=128 merge=0.000012 naive=0.000038 sec
+PERF: N=512 merge reps=383
+PERF: N=512 naive reps=98 restore_overhead=0.0%
+SWEEP-IMG seed=20 N=512 merge=0.000071 naive=0.000576 sec
+PERF: N=2048 merge reps=85
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=20 N=2048 merge=0.000448 naive=0.009707 sec
+PERF: N=8192 merge reps=12
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=20 N=8192 merge=0.002333 naive=0.164333 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=20 N=16384 merge=0.008491 naive=0.721954 sec
+PERF: N=32 merge reps=14285
+PERF: N=32 naive reps=8474 restore_overhead=0.1%
+SWEEP-IMG seed=21 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=3759
+PERF: N=128 naive reps=397 restore_overhead=0.0%
+SWEEP-IMG seed=21 N=128 merge=0.000011 naive=0.000038 sec
+PERF: N=512 merge reps=595
+PERF: N=512 naive reps=100 restore_overhead=0.0%
+SWEEP-IMG seed=21 N=512 merge=0.000064 naive=0.000631 sec
+PERF: N=2048 merge reps=99
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=21 N=2048 merge=0.000420 naive=0.010066 sec
+PERF: N=8192 merge reps=15
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=21 N=8192 merge=0.002428 naive=0.187184 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=21 N=16384 merge=0.004984 naive=0.620190 sec
+PERF: N=32 merge reps=12500
+PERF: N=32 naive reps=10638 restore_overhead=0.2%
+SWEEP-IMG seed=22 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3125
+PERF: N=128 naive reps=1004 restore_overhead=0.0%
+SWEEP-IMG seed=22 N=128 merge=0.000009 naive=0.000034 sec
+PERF: N=512 merge reps=606
+PERF: N=512 naive reps=103 restore_overhead=0.0%
+SWEEP-IMG seed=22 N=512 merge=0.000062 naive=0.000477 sec
+PERF: N=2048 merge reps=113
+PERF: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-IMG seed=22 N=2048 merge=0.000390 naive=0.007668 sec
+PERF: N=8192 merge reps=19
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=22 N=8192 merge=0.002068 naive=0.139962 sec
+PERF: N=16384 merge reps=10
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=22 N=16384 merge=0.004645 naive=0.644403 sec
+PERF: N=32 merge reps=13513
+PERF: N=32 naive reps=8196 restore_overhead=0.1%
+SWEEP-IMG seed=23 N=32 merge=0.000002 naive=0.000004 sec
+PERF: N=128 merge reps=1529
+PERF: N=128 naive reps=426 restore_overhead=0.0%
+SWEEP-IMG seed=23 N=128 merge=0.000012 naive=0.000042 sec
+PERF: N=512 merge reps=664
+PERF: N=512 naive reps=80 restore_overhead=0.0%
+SWEEP-IMG seed=23 N=512 merge=0.000071 naive=0.000581 sec
+PERF: N=2048 merge reps=136
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=23 N=2048 merge=0.000419 naive=0.008854 sec
+PERF: N=8192 merge reps=17
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=23 N=8192 merge=0.002376 naive=0.153514 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=23 N=16384 merge=0.005558 naive=0.588496 sec
+PERF: N=32 merge reps=10869
+PERF: N=32 naive reps=9433 restore_overhead=0.2%
+SWEEP-IMG seed=24 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3125
+PERF: N=128 naive reps=1111 restore_overhead=0.0%
+SWEEP-IMG seed=24 N=128 merge=0.000008 naive=0.000030 sec
+PERF: N=512 merge reps=603
+PERF: N=512 naive reps=95 restore_overhead=0.0%
+SWEEP-IMG seed=24 N=512 merge=0.000058 naive=0.000564 sec
+PERF: N=2048 merge reps=150
+PERF: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-IMG seed=24 N=2048 merge=0.000341 naive=0.007652 sec
+PERF: N=8192 merge reps=21
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=24 N=8192 merge=0.002185 naive=0.134654 sec
+PERF: N=16384 merge reps=8
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=24 N=16384 merge=0.005144 naive=0.580009 sec
+PERF: N=32 merge reps=11904
+PERF: N=32 naive reps=8474 restore_overhead=0.1%
+SWEEP-IMG seed=25 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=3164
+PERF: N=128 naive reps=1154 restore_overhead=0.0%
+SWEEP-IMG seed=25 N=128 merge=0.000010 naive=0.000038 sec
+PERF: N=512 merge reps=744
+PERF: N=512 naive reps=102 restore_overhead=0.0%
+SWEEP-IMG seed=25 N=512 merge=0.000061 naive=0.000507 sec
+PERF: N=2048 merge reps=149
+PERF: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-IMG seed=25 N=2048 merge=0.000346 naive=0.008053 sec
+PERF: N=8192 merge reps=24
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=25 N=8192 merge=0.001964 naive=0.143678 sec
+PERF: N=16384 merge reps=11
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=25 N=16384 merge=0.004829 naive=0.571944 sec
+PERF: N=32 merge reps=14285
+PERF: N=32 naive reps=10416 restore_overhead=0.2%
+SWEEP-IMG seed=26 N=32 merge=0.000001 naive=0.000002 sec
+PERF: N=128 merge reps=2808
+PERF: N=128 naive reps=1039 restore_overhead=0.0%
+SWEEP-IMG seed=26 N=128 merge=0.000009 naive=0.000031 sec
+PERF: N=512 merge reps=758
+PERF: N=512 naive reps=108 restore_overhead=0.0%
+SWEEP-IMG seed=26 N=512 merge=0.000064 naive=0.000494 sec
+PERF: N=2048 merge reps=144
+PERF: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-IMG seed=26 N=2048 merge=0.000347 naive=0.008307 sec
+PERF: N=8192 merge reps=20
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=26 N=8192 merge=0.001880 naive=0.127238 sec
+PERF: N=16384 merge reps=11
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=26 N=16384 merge=0.004181 naive=0.671854 sec
+PERF: N=32 merge reps=18518
+PERF: N=32 naive reps=8771 restore_overhead=0.1%
+SWEEP-IMG seed=27 N=32 merge=0.000001 naive=0.000003 sec
+PERF: N=128 merge reps=3875
+PERF: N=128 naive reps=1190 restore_overhead=0.0%
+SWEEP-IMG seed=27 N=128 merge=0.000008 naive=0.000032 sec
+PERF: N=512 merge reps=755
+PERF: N=512 naive reps=100 restore_overhead=0.0%
+SWEEP-IMG seed=27 N=512 merge=0.000055 naive=0.000469 sec
+PERF: N=2048 merge reps=140
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=27 N=2048 merge=0.000443 naive=0.008621 sec
+PERF: N=8192 merge reps=13
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=27 N=8192 merge=0.002214 naive=0.156011 sec
+PERF: N=16384 merge reps=6
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=27 N=16384 merge=0.005159 naive=0.709985 sec
+PERF: N=32 merge reps=13888
+PERF: N=32 naive reps=10204 restore_overhead=0.2%
+SWEEP-IMG seed=28 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=3048
+PERF: N=128 naive reps=961 restore_overhead=0.0%
+SWEEP-IMG seed=28 N=128 merge=0.000011 naive=0.000036 sec
+PERF: N=512 merge reps=722
+PERF: N=512 naive reps=81 restore_overhead=0.0%
+SWEEP-IMG seed=28 N=512 merge=0.000065 naive=0.000595 sec
+PERF: N=2048 merge reps=106
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=28 N=2048 merge=0.000390 naive=0.009766 sec
+PERF: N=8192 merge reps=18
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=28 N=8192 merge=0.002168 naive=0.163661 sec
+PERF: N=16384 merge reps=8
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=28 N=16384 merge=0.005328 naive=0.709027 sec
+PERF: N=32 merge reps=14285
+PERF: N=32 naive reps=7812 restore_overhead=0.1%
+SWEEP-IMG seed=29 N=32 merge=0.000002 naive=0.000003 sec
+PERF: N=128 merge reps=3787
+PERF: N=128 naive reps=1123 restore_overhead=0.0%
+SWEEP-IMG seed=29 N=128 merge=0.000011 naive=0.000039 sec
+PERF: N=512 merge reps=576
+PERF: N=512 naive reps=75 restore_overhead=0.0%
+SWEEP-IMG seed=29 N=512 merge=0.000074 naive=0.000590 sec
+PERF: N=2048 merge reps=107
+PERF: N=2048 naive reps=4 restore_overhead=0.0%
+SWEEP-IMG seed=29 N=2048 merge=0.000472 naive=0.010083 sec
+PERF: N=8192 merge reps=13
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=29 N=8192 merge=0.002811 naive=0.175954 sec
+PERF: N=16384 merge reps=8
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=29 N=16384 merge=0.004937 naive=0.639308 sec
+PERF: N=32 merge reps=11363
+PERF: N=32 naive reps=8333 restore_overhead=0.2%
+SWEEP-IMG seed=30 N=32 merge=0.000002 naive=0.000002 sec
+PERF: N=128 merge reps=4000
+PERF: N=128 naive reps=1004 restore_overhead=0.0%
+SWEEP-IMG seed=30 N=128 merge=0.000009 naive=0.000036 sec
+PERF: N=512 merge reps=751
+PERF: N=512 naive reps=100 restore_overhead=0.0%
+SWEEP-IMG seed=30 N=512 merge=0.000063 naive=0.000528 sec
+PERF: N=2048 merge reps=98
+PERF: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-IMG seed=30 N=2048 merge=0.000420 naive=0.009455 sec
+PERF: N=8192 merge reps=18
+PERF: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=30 N=8192 merge=0.002343 naive=0.134227 sec
+PERF: N=16384 merge reps=5
+PERF: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-IMG seed=30 N=16384 merge=0.012832 naive=0.617576 sec
+PERF-SUBDIR: N=32 merge reps=9803
+PERF-SUBDIR: N=32 naive reps=15625 restore_overhead=0.2%
+SWEEP-SUBDIR seed=1 N=32 merge=0.000002 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=2590
+PERF-SUBDIR: N=128 naive reps=1193 restore_overhead=0.0%
+SWEEP-SUBDIR seed=1 N=128 merge=0.000009 naive=0.000031 sec
+PERF-SUBDIR: N=512 merge reps=592
+PERF-SUBDIR: N=512 naive reps=96 restore_overhead=0.0%
+SWEEP-SUBDIR seed=1 N=512 merge=0.000054 naive=0.000620 sec
+PERF-SUBDIR: N=2048 merge reps=119
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=1 N=2048 merge=0.000395 naive=0.008668 sec
+PERF-SUBDIR: N=8192 merge reps=25
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=1 N=8192 merge=0.002054 naive=0.140627 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=1 N=16384 merge=0.003968 naive=0.599240 sec
+PERF-SUBDIR: N=32 merge reps=10416
+PERF-SUBDIR: N=32 naive reps=13157 restore_overhead=0.3%
+SWEEP-SUBDIR seed=2 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=611
+PERF-SUBDIR: N=128 naive reps=1193 restore_overhead=0.0%
+SWEEP-SUBDIR seed=2 N=128 merge=0.000011 naive=0.000042 sec
+PERF-SUBDIR: N=512 merge reps=550
+PERF-SUBDIR: N=512 naive reps=104 restore_overhead=0.0%
+SWEEP-SUBDIR seed=2 N=512 merge=0.000061 naive=0.000546 sec
+PERF-SUBDIR: N=2048 merge reps=139
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=2 N=2048 merge=0.000401 naive=0.009055 sec
+PERF-SUBDIR: N=8192 merge reps=23
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=2 N=8192 merge=0.002045 naive=0.153076 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=2 N=16384 merge=0.005260 naive=0.611054 sec
+PERF-SUBDIR: N=32 merge reps=15625
+PERF-SUBDIR: N=32 naive reps=12820 restore_overhead=0.3%
+SWEEP-SUBDIR seed=3 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=2673
+PERF-SUBDIR: N=128 naive reps=1492 restore_overhead=0.0%
+SWEEP-SUBDIR seed=3 N=128 merge=0.000010 naive=0.000034 sec
+PERF-SUBDIR: N=512 merge reps=537
+PERF-SUBDIR: N=512 naive reps=105 restore_overhead=0.0%
+SWEEP-SUBDIR seed=3 N=512 merge=0.000058 naive=0.000537 sec
+PERF-SUBDIR: N=2048 merge reps=128
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=3 N=2048 merge=0.000399 naive=0.008207 sec
+PERF-SUBDIR: N=8192 merge reps=27
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=3 N=8192 merge=0.002210 naive=0.171566 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=3 N=16384 merge=0.004973 naive=0.845312 sec
+PERF-SUBDIR: N=32 merge reps=12820
+PERF-SUBDIR: N=32 naive reps=12820 restore_overhead=0.2%
+SWEEP-SUBDIR seed=4 N=32 merge=0.000002 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=2604
+PERF-SUBDIR: N=128 naive reps=1089 restore_overhead=0.0%
+SWEEP-SUBDIR seed=4 N=128 merge=0.000010 naive=0.000038 sec
+PERF-SUBDIR: N=512 merge reps=481
+PERF-SUBDIR: N=512 naive reps=103 restore_overhead=0.0%
+SWEEP-SUBDIR seed=4 N=512 merge=0.000053 naive=0.000578 sec
+PERF-SUBDIR: N=2048 merge reps=138
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=4 N=2048 merge=0.000409 naive=0.008815 sec
+PERF-SUBDIR: N=8192 merge reps=22
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=4 N=8192 merge=0.002141 naive=0.146188 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=4 N=16384 merge=0.004739 naive=0.627732 sec
+PERF-SUBDIR: N=32 merge reps=13513
+PERF-SUBDIR: N=32 naive reps=12195 restore_overhead=0.1%
+SWEEP-SUBDIR seed=5 N=32 merge=0.000002 naive=0.000003 sec
+PERF-SUBDIR: N=128 merge reps=3246
+PERF-SUBDIR: N=128 naive reps=1089 restore_overhead=0.0%
+SWEEP-SUBDIR seed=5 N=128 merge=0.000009 naive=0.000036 sec
+PERF-SUBDIR: N=512 merge reps=606
+PERF-SUBDIR: N=512 naive reps=81 restore_overhead=0.0%
+SWEEP-SUBDIR seed=5 N=512 merge=0.000061 naive=0.000600 sec
+PERF-SUBDIR: N=2048 merge reps=98
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=5 N=2048 merge=0.000390 naive=0.009296 sec
+PERF-SUBDIR: N=8192 merge reps=22
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=5 N=8192 merge=0.002257 naive=0.143018 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=5 N=16384 merge=0.004553 naive=0.629801 sec
+PERF-SUBDIR: N=32 merge reps=15625
+PERF-SUBDIR: N=32 naive reps=12195 restore_overhead=0.2%
+SWEEP-SUBDIR seed=6 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3225
+PERF-SUBDIR: N=128 naive reps=1483 restore_overhead=0.0%
+SWEEP-SUBDIR seed=6 N=128 merge=0.000009 naive=0.000028 sec
+PERF-SUBDIR: N=512 merge reps=531
+PERF-SUBDIR: N=512 naive reps=92 restore_overhead=0.0%
+SWEEP-SUBDIR seed=6 N=512 merge=0.000060 naive=0.000560 sec
+PERF-SUBDIR: N=2048 merge reps=136
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=6 N=2048 merge=0.000382 naive=0.008603 sec
+PERF-SUBDIR: N=8192 merge reps=27
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=6 N=8192 merge=0.001943 naive=0.138200 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=6 N=16384 merge=0.004094 naive=0.595417 sec
+PERF-SUBDIR: N=32 merge reps=12820
+PERF-SUBDIR: N=32 naive reps=10416 restore_overhead=0.1%
+SWEEP-SUBDIR seed=7 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3184
+PERF-SUBDIR: N=128 naive reps=1291 restore_overhead=0.0%
+SWEEP-SUBDIR seed=7 N=128 merge=0.000009 naive=0.000036 sec
+PERF-SUBDIR: N=512 merge reps=674
+PERF-SUBDIR: N=512 naive reps=72 restore_overhead=0.0%
+SWEEP-SUBDIR seed=7 N=512 merge=0.000054 naive=0.000624 sec
+PERF-SUBDIR: N=2048 merge reps=139
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=7 N=2048 merge=0.000414 naive=0.008566 sec
+PERF-SUBDIR: N=8192 merge reps=20
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=7 N=8192 merge=0.002170 naive=0.159912 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=7 N=16384 merge=0.004646 naive=0.615237 sec
+PERF-SUBDIR: N=32 merge reps=15625
+PERF-SUBDIR: N=32 naive reps=9803 restore_overhead=0.2%
+SWEEP-SUBDIR seed=8 N=32 merge=0.000002 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=2415
+PERF-SUBDIR: N=128 naive reps=1457 restore_overhead=0.0%
+SWEEP-SUBDIR seed=8 N=128 merge=0.000010 naive=0.000033 sec
+PERF-SUBDIR: N=512 merge reps=620
+PERF-SUBDIR: N=512 naive reps=101 restore_overhead=0.0%
+SWEEP-SUBDIR seed=8 N=512 merge=0.000053 naive=0.000577 sec
+PERF-SUBDIR: N=2048 merge reps=129
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=8 N=2048 merge=0.000406 naive=0.008947 sec
+PERF-SUBDIR: N=8192 merge reps=23
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=8 N=8192 merge=0.002217 naive=0.144213 sec
+PERF-SUBDIR: N=16384 merge reps=11
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=8 N=16384 merge=0.005084 naive=0.589181 sec
+PERF-SUBDIR: N=32 merge reps=13513
+PERF-SUBDIR: N=32 naive reps=13157 restore_overhead=0.3%
+SWEEP-SUBDIR seed=9 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=2762
+PERF-SUBDIR: N=128 naive reps=1165 restore_overhead=0.0%
+SWEEP-SUBDIR seed=9 N=128 merge=0.000009 naive=0.000040 sec
+PERF-SUBDIR: N=512 merge reps=524
+PERF-SUBDIR: N=512 naive reps=67 restore_overhead=0.0%
+SWEEP-SUBDIR seed=9 N=512 merge=0.000058 naive=0.000556 sec
+PERF-SUBDIR: N=2048 merge reps=97
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=9 N=2048 merge=0.000399 naive=0.008689 sec
+PERF-SUBDIR: N=8192 merge reps=19
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=9 N=8192 merge=0.002075 naive=0.168425 sec
+PERF-SUBDIR: N=16384 merge reps=8
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=9 N=16384 merge=0.004950 naive=0.674280 sec
+PERF-SUBDIR: N=32 merge reps=15151
+PERF-SUBDIR: N=32 naive reps=11111 restore_overhead=0.1%
+SWEEP-SUBDIR seed=10 N=32 merge=0.000023 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3184
+PERF-SUBDIR: N=128 naive reps=1291 restore_overhead=0.0%
+SWEEP-SUBDIR seed=10 N=128 merge=0.000011 naive=0.000039 sec
+PERF-SUBDIR: N=512 merge reps=520
+PERF-SUBDIR: N=512 naive reps=72 restore_overhead=0.0%
+SWEEP-SUBDIR seed=10 N=512 merge=0.000056 naive=0.000596 sec
+PERF-SUBDIR: N=2048 merge reps=122
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=10 N=2048 merge=0.000397 naive=0.008440 sec
+PERF-SUBDIR: N=8192 merge reps=24
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=10 N=8192 merge=0.002331 naive=0.187669 sec
+PERF-SUBDIR: N=16384 merge reps=12
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=10 N=16384 merge=0.004877 naive=0.641400 sec
+PERF-SUBDIR: N=32 merge reps=12820
+PERF-SUBDIR: N=32 naive reps=9803 restore_overhead=0.2%
+SWEEP-SUBDIR seed=11 N=32 merge=0.000002 naive=0.000003 sec
+PERF-SUBDIR: N=128 merge reps=2262
+PERF-SUBDIR: N=128 naive reps=1333 restore_overhead=0.0%
+SWEEP-SUBDIR seed=11 N=128 merge=0.000009 naive=0.000036 sec
+PERF-SUBDIR: N=512 merge reps=683
+PERF-SUBDIR: N=512 naive reps=65 restore_overhead=0.0%
+SWEEP-SUBDIR seed=11 N=512 merge=0.000059 naive=0.000589 sec
+PERF-SUBDIR: N=2048 merge reps=126
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=11 N=2048 merge=0.000396 naive=0.010846 sec
+PERF-SUBDIR: N=8192 merge reps=21
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=11 N=8192 merge=0.002079 naive=0.160242 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=11 N=16384 merge=0.004805 naive=0.718149 sec
+PERF-SUBDIR: N=32 merge reps=14285
+PERF-SUBDIR: N=32 naive reps=9615 restore_overhead=0.1%
+SWEEP-SUBDIR seed=12 N=32 merge=0.000002 naive=0.000003 sec
+PERF-SUBDIR: N=128 merge reps=2923
+PERF-SUBDIR: N=128 naive reps=1305 restore_overhead=0.0%
+SWEEP-SUBDIR seed=12 N=128 merge=0.000009 naive=0.000038 sec
+PERF-SUBDIR: N=512 merge reps=418
+PERF-SUBDIR: N=512 naive reps=87 restore_overhead=0.0%
+SWEEP-SUBDIR seed=12 N=512 merge=0.000059 naive=0.000570 sec
+PERF-SUBDIR: N=2048 merge reps=139
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=12 N=2048 merge=0.000425 naive=0.008362 sec
+PERF-SUBDIR: N=8192 merge reps=20
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=12 N=8192 merge=0.002198 naive=0.161672 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=12 N=16384 merge=0.005095 naive=0.981647 sec
+PERF-SUBDIR: N=32 merge reps=12820
+PERF-SUBDIR: N=32 naive reps=11904 restore_overhead=0.2%
+SWEEP-SUBDIR seed=13 N=32 merge=0.000002 naive=0.000003 sec
+PERF-SUBDIR: N=128 merge reps=2645
+PERF-SUBDIR: N=128 naive reps=1028 restore_overhead=0.0%
+SWEEP-SUBDIR seed=13 N=128 merge=0.000020 naive=0.000048 sec
+PERF-SUBDIR: N=512 merge reps=527
+PERF-SUBDIR: N=512 naive reps=75 restore_overhead=0.0%
+SWEEP-SUBDIR seed=13 N=512 merge=0.000069 naive=0.001080 sec
+PERF-SUBDIR: N=2048 merge reps=101
+PERF-SUBDIR: N=2048 naive reps=3 restore_overhead=0.0%
+SWEEP-SUBDIR seed=13 N=2048 merge=0.000778 naive=0.010767 sec
+PERF-SUBDIR: N=8192 merge reps=22
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=13 N=8192 merge=0.002342 naive=0.141366 sec
+PERF-SUBDIR: N=16384 merge reps=8
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=13 N=16384 merge=0.005895 naive=0.683348 sec
+PERF-SUBDIR: N=32 merge reps=9803
+PERF-SUBDIR: N=32 naive reps=13513 restore_overhead=0.2%
+SWEEP-SUBDIR seed=14 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3086
+PERF-SUBDIR: N=128 naive reps=1319 restore_overhead=0.0%
+SWEEP-SUBDIR seed=14 N=128 merge=0.000008 naive=0.000031 sec
+PERF-SUBDIR: N=512 merge reps=672
+PERF-SUBDIR: N=512 naive reps=73 restore_overhead=0.0%
+SWEEP-SUBDIR seed=14 N=512 merge=0.000050 naive=0.000544 sec
+PERF-SUBDIR: N=2048 merge reps=140
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=14 N=2048 merge=0.000381 naive=0.008593 sec
+PERF-SUBDIR: N=8192 merge reps=25
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=14 N=8192 merge=0.002117 naive=0.132185 sec
+PERF-SUBDIR: N=16384 merge reps=11
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=14 N=16384 merge=0.004465 naive=0.714242 sec
+PERF-SUBDIR: N=32 merge reps=10204
+PERF-SUBDIR: N=32 naive reps=14705 restore_overhead=0.2%
+SWEEP-SUBDIR seed=15 N=32 merge=0.000002 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3205
+PERF-SUBDIR: N=128 naive reps=1362 restore_overhead=0.0%
+SWEEP-SUBDIR seed=15 N=128 merge=0.000009 naive=0.000031 sec
+PERF-SUBDIR: N=512 merge reps=675
+PERF-SUBDIR: N=512 naive reps=97 restore_overhead=0.0%
+SWEEP-SUBDIR seed=15 N=512 merge=0.000054 naive=0.000537 sec
+PERF-SUBDIR: N=2048 merge reps=133
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=15 N=2048 merge=0.000396 naive=0.008334 sec
+PERF-SUBDIR: N=8192 merge reps=28
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=15 N=8192 merge=0.002040 naive=0.137200 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=15 N=16384 merge=0.004393 naive=0.593251 sec
+PERF-SUBDIR: N=32 merge reps=10869
+PERF-SUBDIR: N=32 naive reps=12500 restore_overhead=0.2%
+SWEEP-SUBDIR seed=16 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3048
+PERF-SUBDIR: N=128 naive reps=1305 restore_overhead=0.0%
+SWEEP-SUBDIR seed=16 N=128 merge=0.000009 naive=0.000036 sec
+PERF-SUBDIR: N=512 merge reps=540
+PERF-SUBDIR: N=512 naive reps=83 restore_overhead=0.0%
+SWEEP-SUBDIR seed=16 N=512 merge=0.000054 naive=0.000550 sec
+PERF-SUBDIR: N=2048 merge reps=139
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=16 N=2048 merge=0.000365 naive=0.008415 sec
+PERF-SUBDIR: N=8192 merge reps=22
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=16 N=8192 merge=0.001958 naive=0.145853 sec
+PERF-SUBDIR: N=16384 merge reps=11
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=16 N=16384 merge=0.004472 naive=0.594814 sec
+PERF-SUBDIR: N=32 merge reps=15625
+PERF-SUBDIR: N=32 naive reps=11363 restore_overhead=0.3%
+SWEEP-SUBDIR seed=17 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3401
+PERF-SUBDIR: N=128 naive reps=1412 restore_overhead=0.0%
+SWEEP-SUBDIR seed=17 N=128 merge=0.000009 naive=0.000035 sec
+PERF-SUBDIR: N=512 merge reps=300
+PERF-SUBDIR: N=512 naive reps=82 restore_overhead=0.0%
+SWEEP-SUBDIR seed=17 N=512 merge=0.000067 naive=0.000557 sec
+PERF-SUBDIR: N=2048 merge reps=140
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=17 N=2048 merge=0.000408 naive=0.009461 sec
+PERF-SUBDIR: N=8192 merge reps=22
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=17 N=8192 merge=0.002213 naive=0.141690 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=17 N=16384 merge=0.004778 naive=0.638263 sec
+PERF-SUBDIR: N=32 merge reps=12820
+PERF-SUBDIR: N=32 naive reps=12195 restore_overhead=0.1%
+SWEEP-SUBDIR seed=18 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3289
+PERF-SUBDIR: N=128 naive reps=1154 restore_overhead=0.0%
+SWEEP-SUBDIR seed=18 N=128 merge=0.000008 naive=0.000033 sec
+PERF-SUBDIR: N=512 merge reps=381
+PERF-SUBDIR: N=512 naive reps=105 restore_overhead=0.0%
+SWEEP-SUBDIR seed=18 N=512 merge=0.000049 naive=0.000512 sec
+PERF-SUBDIR: N=2048 merge reps=128
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=18 N=2048 merge=0.000354 naive=0.007845 sec
+PERF-SUBDIR: N=8192 merge reps=24
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=18 N=8192 merge=0.002846 naive=0.155248 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=18 N=16384 merge=0.005314 naive=0.698238 sec
+PERF-SUBDIR: N=32 merge reps=15151
+PERF-SUBDIR: N=32 naive reps=12500 restore_overhead=0.3%
+SWEEP-SUBDIR seed=19 N=32 merge=0.000002 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=567
+PERF-SUBDIR: N=128 naive reps=1240 restore_overhead=0.0%
+SWEEP-SUBDIR seed=19 N=128 merge=0.000011 naive=0.000035 sec
+PERF-SUBDIR: N=512 merge reps=492
+PERF-SUBDIR: N=512 naive reps=87 restore_overhead=0.0%
+SWEEP-SUBDIR seed=19 N=512 merge=0.000051 naive=0.000617 sec
+PERF-SUBDIR: N=2048 merge reps=128
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=19 N=2048 merge=0.000400 naive=0.009173 sec
+PERF-SUBDIR: N=8192 merge reps=26
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=19 N=8192 merge=0.002074 naive=0.132631 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=19 N=16384 merge=0.004155 naive=0.618755 sec
+PERF-SUBDIR: N=32 merge reps=13157
+PERF-SUBDIR: N=32 naive reps=11111 restore_overhead=0.1%
+SWEEP-SUBDIR seed=20 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3311
+PERF-SUBDIR: N=128 naive reps=1168 restore_overhead=0.0%
+SWEEP-SUBDIR seed=20 N=128 merge=0.000009 naive=0.000031 sec
+PERF-SUBDIR: N=512 merge reps=587
+PERF-SUBDIR: N=512 naive reps=103 restore_overhead=0.0%
+SWEEP-SUBDIR seed=20 N=512 merge=0.000044 naive=0.000531 sec
+PERF-SUBDIR: N=2048 merge reps=131
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=20 N=2048 merge=0.000403 naive=0.008544 sec
+PERF-SUBDIR: N=8192 merge reps=26
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=20 N=8192 merge=0.002070 naive=0.130240 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=20 N=16384 merge=0.004474 naive=0.568465 sec
+PERF-SUBDIR: N=32 merge reps=14705
+PERF-SUBDIR: N=32 naive reps=12195 restore_overhead=0.3%
+SWEEP-SUBDIR seed=21 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3086
+PERF-SUBDIR: N=128 naive reps=1408 restore_overhead=0.0%
+SWEEP-SUBDIR seed=21 N=128 merge=0.000008 naive=0.000030 sec
+PERF-SUBDIR: N=512 merge reps=582
+PERF-SUBDIR: N=512 naive reps=76 restore_overhead=0.0%
+SWEEP-SUBDIR seed=21 N=512 merge=0.000047 naive=0.000546 sec
+PERF-SUBDIR: N=2048 merge reps=141
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=21 N=2048 merge=0.000383 naive=0.008600 sec
+PERF-SUBDIR: N=8192 merge reps=21
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=21 N=8192 merge=0.002025 naive=0.130716 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=21 N=16384 merge=0.004292 naive=0.584294 sec
+PERF-SUBDIR: N=32 merge reps=12820
+PERF-SUBDIR: N=32 naive reps=11111 restore_overhead=0.1%
+SWEEP-SUBDIR seed=22 N=32 merge=0.000002 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3246
+PERF-SUBDIR: N=128 naive reps=1084 restore_overhead=0.0%
+SWEEP-SUBDIR seed=22 N=128 merge=0.000009 naive=0.000036 sec
+PERF-SUBDIR: N=512 merge reps=664
+PERF-SUBDIR: N=512 naive reps=98 restore_overhead=0.0%
+SWEEP-SUBDIR seed=22 N=512 merge=0.000050 naive=0.000527 sec
+PERF-SUBDIR: N=2048 merge reps=93
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=22 N=2048 merge=0.000347 naive=0.008139 sec
+PERF-SUBDIR: N=8192 merge reps=27
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=22 N=8192 merge=0.002090 naive=0.123606 sec
+PERF-SUBDIR: N=16384 merge reps=11
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=22 N=16384 merge=0.004121 naive=0.555281 sec
+PERF-SUBDIR: N=32 merge reps=14705
+PERF-SUBDIR: N=32 naive reps=12195 restore_overhead=0.2%
+SWEEP-SUBDIR seed=23 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=2145
+PERF-SUBDIR: N=128 naive reps=1388 restore_overhead=0.0%
+SWEEP-SUBDIR seed=23 N=128 merge=0.000009 naive=0.000029 sec
+PERF-SUBDIR: N=512 merge reps=531
+PERF-SUBDIR: N=512 naive reps=105 restore_overhead=0.0%
+SWEEP-SUBDIR seed=23 N=512 merge=0.000045 naive=0.000514 sec
+PERF-SUBDIR: N=2048 merge reps=135
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=23 N=2048 merge=0.000360 naive=0.008033 sec
+PERF-SUBDIR: N=8192 merge reps=28
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=23 N=8192 merge=0.002087 naive=0.129330 sec
+PERF-SUBDIR: N=16384 merge reps=12
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=23 N=16384 merge=0.004263 naive=0.568724 sec
+PERF-SUBDIR: N=32 merge reps=13157
+PERF-SUBDIR: N=32 naive reps=10204 restore_overhead=0.1%
+SWEEP-SUBDIR seed=24 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3289
+PERF-SUBDIR: N=128 naive reps=1453 restore_overhead=0.0%
+SWEEP-SUBDIR seed=24 N=128 merge=0.000008 naive=0.000030 sec
+PERF-SUBDIR: N=512 merge reps=539
+PERF-SUBDIR: N=512 naive reps=79 restore_overhead=0.0%
+SWEEP-SUBDIR seed=24 N=512 merge=0.000053 naive=0.000516 sec
+PERF-SUBDIR: N=2048 merge reps=138
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=24 N=2048 merge=0.000374 naive=0.008818 sec
+PERF-SUBDIR: N=8192 merge reps=22
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=24 N=8192 merge=0.002041 naive=0.143696 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=24 N=16384 merge=0.004675 naive=0.571361 sec
+PERF-SUBDIR: N=32 merge reps=10869
+PERF-SUBDIR: N=32 naive reps=12500 restore_overhead=0.2%
+SWEEP-SUBDIR seed=25 N=32 merge=0.000002 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=2604
+PERF-SUBDIR: N=128 naive reps=1091 restore_overhead=0.0%
+SWEEP-SUBDIR seed=25 N=128 merge=0.000009 naive=0.000031 sec
+PERF-SUBDIR: N=512 merge reps=675
+PERF-SUBDIR: N=512 naive reps=89 restore_overhead=0.0%
+SWEEP-SUBDIR seed=25 N=512 merge=0.000049 naive=0.000492 sec
+PERF-SUBDIR: N=2048 merge reps=128
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=25 N=2048 merge=0.000363 naive=0.007789 sec
+PERF-SUBDIR: N=8192 merge reps=24
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=25 N=8192 merge=0.001950 naive=0.126274 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=25 N=16384 merge=0.004152 naive=0.591365 sec
+PERF-SUBDIR: N=32 merge reps=15625
+PERF-SUBDIR: N=32 naive reps=11111 restore_overhead=0.2%
+SWEEP-SUBDIR seed=26 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3424
+PERF-SUBDIR: N=128 naive reps=1082 restore_overhead=0.0%
+SWEEP-SUBDIR seed=26 N=128 merge=0.000009 naive=0.000034 sec
+PERF-SUBDIR: N=512 merge reps=670
+PERF-SUBDIR: N=512 naive reps=106 restore_overhead=0.0%
+SWEEP-SUBDIR seed=26 N=512 merge=0.000050 naive=0.000548 sec
+PERF-SUBDIR: N=2048 merge reps=116
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=26 N=2048 merge=0.000386 naive=0.008509 sec
+PERF-SUBDIR: N=8192 merge reps=20
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=26 N=8192 merge=0.002185 naive=0.154219 sec
+PERF-SUBDIR: N=16384 merge reps=9
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=26 N=16384 merge=0.004670 naive=0.599763 sec
+PERF-SUBDIR: N=32 merge reps=14285
+PERF-SUBDIR: N=32 naive reps=10869 restore_overhead=0.2%
+SWEEP-SUBDIR seed=27 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3378
+PERF-SUBDIR: N=128 naive reps=1084 restore_overhead=0.0%
+SWEEP-SUBDIR seed=27 N=128 merge=0.000008 naive=0.000033 sec
+PERF-SUBDIR: N=512 merge reps=669
+PERF-SUBDIR: N=512 naive reps=94 restore_overhead=0.0%
+SWEEP-SUBDIR seed=27 N=512 merge=0.000053 naive=0.000550 sec
+PERF-SUBDIR: N=2048 merge reps=113
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=27 N=2048 merge=0.000397 naive=0.008444 sec
+PERF-SUBDIR: N=8192 merge reps=27
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=27 N=8192 merge=0.001863 naive=0.127724 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=27 N=16384 merge=0.005014 naive=0.586910 sec
+PERF-SUBDIR: N=32 merge reps=16129
+PERF-SUBDIR: N=32 naive reps=13157 restore_overhead=0.2%
+SWEEP-SUBDIR seed=28 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3355
+PERF-SUBDIR: N=128 naive reps=1319 restore_overhead=0.0%
+SWEEP-SUBDIR seed=28 N=128 merge=0.000008 naive=0.000034 sec
+PERF-SUBDIR: N=512 merge reps=665
+PERF-SUBDIR: N=512 naive reps=84 restore_overhead=0.0%
+SWEEP-SUBDIR seed=28 N=512 merge=0.000055 naive=0.000523 sec
+PERF-SUBDIR: N=2048 merge reps=134
+PERF-SUBDIR: N=2048 naive reps=6 restore_overhead=0.0%
+SWEEP-SUBDIR seed=28 N=2048 merge=0.000429 naive=0.008193 sec
+PERF-SUBDIR: N=8192 merge reps=22
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=28 N=8192 merge=0.001864 naive=0.124513 sec
+PERF-SUBDIR: N=16384 merge reps=10
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=28 N=16384 merge=0.004172 naive=0.629502 sec
+PERF-SUBDIR: N=32 merge reps=10638
+PERF-SUBDIR: N=32 naive reps=11111 restore_overhead=0.1%
+SWEEP-SUBDIR seed=29 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3246
+PERF-SUBDIR: N=128 naive reps=1440 restore_overhead=0.0%
+SWEEP-SUBDIR seed=29 N=128 merge=0.000008 naive=0.000031 sec
+PERF-SUBDIR: N=512 merge reps=443
+PERF-SUBDIR: N=512 naive reps=98 restore_overhead=0.0%
+SWEEP-SUBDIR seed=29 N=512 merge=0.000051 naive=0.000578 sec
+PERF-SUBDIR: N=2048 merge reps=111
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=29 N=2048 merge=0.000384 naive=0.008273 sec
+PERF-SUBDIR: N=8192 merge reps=23
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=29 N=8192 merge=0.001920 naive=0.134316 sec
+PERF-SUBDIR: N=16384 merge reps=12
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=29 N=16384 merge=0.004510 naive=0.576504 sec
+PERF-SUBDIR: N=32 merge reps=11904
+PERF-SUBDIR: N=32 naive reps=12500 restore_overhead=0.2%
+SWEEP-SUBDIR seed=30 N=32 merge=0.000001 naive=0.000002 sec
+PERF-SUBDIR: N=128 merge reps=3246
+PERF-SUBDIR: N=128 naive reps=1305 restore_overhead=0.0%
+SWEEP-SUBDIR seed=30 N=128 merge=0.000008 naive=0.000028 sec
+PERF-SUBDIR: N=512 merge reps=685
+PERF-SUBDIR: N=512 naive reps=90 restore_overhead=0.0%
+SWEEP-SUBDIR seed=30 N=512 merge=0.000047 naive=0.000592 sec
+PERF-SUBDIR: N=2048 merge reps=130
+PERF-SUBDIR: N=2048 naive reps=5 restore_overhead=0.0%
+SWEEP-SUBDIR seed=30 N=2048 merge=0.000430 naive=0.008685 sec
+PERF-SUBDIR: N=8192 merge reps=24
+PERF-SUBDIR: N=8192 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=30 N=8192 merge=0.001996 naive=0.140298 sec
+PERF-SUBDIR: N=16384 merge reps=12
+PERF-SUBDIR: N=16384 naive reps=1 restore_overhead=0.0%
+SWEEP-SUBDIR seed=30 N=16384 merge=0.004213 naive=0.593949 sec

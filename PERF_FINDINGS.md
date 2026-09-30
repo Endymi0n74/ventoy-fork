@@ -92,3 +92,35 @@ ventoy\_build_sort_test\ventoy_sort_test.exe --sweep 30
 ```
 
 (`--sweep <n>` / `--reps <k>`; raw per-seed lines go to stderr)
+
+## Release e2e reference run (2026-09-30)
+
+The end-to-end release check `dist/check_release.cmd` includes this
+sweep as step 4/5: it downloads the GitHub release assets, verifies
+`SHA256SUMS`, extracts the zip, **rebuilds the harness with `--perf`
+from the extraction and runs `--sweep 30`**, then runs the plain
+harness. It exits 0 only if every stage passes (`SKIP_SWEEP=1`
+skips the sweep; `SWEEP_OUT=<dir>` archives the logs).
+
+Reference log archived in this directory, produced from the
+**released artifact** (zip of tag `v1.1.17-ventoy-sort`), not from
+the working tree:
+
+- `sweep30_e2e_stdout.txt` — build line + test OK lines + sweep
+  summaries
+- `sweep30_e2e_stderr.txt` — raw per-seed lines (1080 measurements
+  = 2 workloads × 6 sizes × 30 seeds × 3 lines)
+
+Agreement with the table above (same box, same methodology):
+| workload | N | merge mean | naive mean | speedup |
+|----------|------|-----------|------------|---------|
+| img | 2048 | 432 µs | 9.62 ms | ~22.2× |
+| img | 16384 | 6.73 ms | 716 ms | ~106× |
+| subdir | 2048 | 405 µs | 8.70 ms | ~21.5× |
+| subdir | 16384 | 4.64 ms | 637 ms | ~137× |
+
+(The N=16384 merge mean is ~1.5× the table's 4.34 ms — single-run
+variance at the extreme size, still firmly n log n; every other
+row matches the reference table within noise. The release
+artifact sorts fast, and the e2e check re-proves it from the
+published zip.)

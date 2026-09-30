@@ -110,8 +110,10 @@ python ventoy/build_sort_test.py --perf    # + perf comparison vs naive sort
 ```
 
 End-to-end release check in one command: `dist\check_release.cmd` downloads
-the latest release assets, verifies `SHA256SUMS`, extracts the zip and runs
-the harness from the extraction (exits 0 on PASS).
+the latest release assets, verifies `SHA256SUMS`, extracts the zip, runs the
+30-seed perf sweep and the harness from the extraction (exits 0 on PASS;
+the sweep takes several minutes — set `SKIP_SWEEP=1` to skip it, and
+`SWEEP_OUT=<dir>` to keep the sweep reference log).
 
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
 
