@@ -1,8 +1,8 @@
-# Notes de version — v1.1.17-ventoy-sort
+# Notes de version — v1.1.18-ventoy-sort
 
 Fork **ventoy-fork** (https://github.com/Endymi0n74/ventoy-fork), base
 **v1.1.17 upstream exacte** (`7cbdc5cf`, « 1.1.17 release »).
-Tag : `v1.1.17-ventoy-sort` (tag annoté, posé sur le commit de release).
+Tag : `v1.1.18-ventoy-sort` (tag annoté, posé sur le commit de release).
 Code : un commit de fork `ac114e58` sur la base upstream, suivi des
 commits docs/tooling ci-dessous.
 
@@ -99,8 +99,14 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
 - `0f7ebecc` — script e2e réutilisable `dist/check_release.cmd`
   (download des assets + vérification SHA256SUMS + extraction +
   harnais, exit 0 = PASS).
+- `202aba17` — le e2e intègre le sweep perf `--sweep 30` (étape 4/5)
+  et archive le log de référence : `sweep30_e2e_*.txt` + section
+  « Release e2e reference run » dans PERF_FINDINGS.md.
+- `0fa9fe8f` — script de publication `dist/make_release.cmd <tag>`
+  (sanity, tag annoté, archives, SHA256SUMS, gh release create/upload)
+  avec `DRY_RUN=1` ; README : lien release + procédures make/check.
 
-Le tag `v1.1.17-ventoy-sort` est annoté sur le commit de release
+Le tag `v1.1.18-ventoy-sort` est annoté sur le commit de release
 (qui inclut cette mise à jour des notes) ; les archives
 (`git archive`) et le `SHA256SUMS` publiés correspondent
 exactement à ce commit. La validation e2e de la release se rejoue
