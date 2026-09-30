@@ -5,8 +5,10 @@ _build_sort_test/
 # Local scratch experiments (leading underscore marks throwaway files).
 _*.c
 
-# Local build log produced under INSTALL/.
+# Local build log and runtime state produced under INSTALL/
+# (Ventoy2Disk.exe writes its config next to the official runtimes).
 INSTALL/log.txt
+INSTALL/Ventoy2Disk.ini
 INSTALL/boot/
 INSTALL/ventoy/languages.json
 INSTALL/ventoy/plugson.tar.xz
