@@ -2,8 +2,9 @@
 
 Fork **ventoy-fork** (https://github.com/Endymi0n74/ventoy-fork), base
 **v1.1.17 upstream exacte** (`7cbdc5cf`, « 1.1.17 release »).
-Tag : `v1.1.17-ventoy-sort` → commit `2551c3b7`
-(code : un commit de fork `ac114e58` sur la base upstream ; docs incluses).
+Tag : `v1.1.17-ventoy-sort` (tag annoté, posé sur le commit de release).
+Code : un commit de fork `ac114e58` sur la base upstream, suivi des
+commits docs/tooling ci-dessous.
 
 ## Contenu
 
@@ -86,6 +87,16 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
 
 - `ac114e58` — commit fonctionnel sur la base upstream : harnais + tri
   fusion stable pour les images du menu.
-- `2551c3b7` — mise à jour RELEASE_NOTES / README (renommage ventoy-fork,
-  base v1.1.17 exacte) ; le tag `v1.1.17-ventoy-sort` pointe ici.
-- `bbf4676f` — .gitignore : ignorer la config runtime INSTALL/Ventoy2Disk.ini.
+- `2551c3b7` — RELEASE_NOTES / README : renommage ventoy-fork, base
+  v1.1.17 exacte.
+- `bbf4676f` — .gitignore : ignorer la config runtime
+  INSTALL/Ventoy2Disk.ini.
+- `d872c0be` — docs : prérequis du harnais (clang + Python, pas de
+  Docker/WSL/VM).
+- `61efabfa` — chemin clang configurable via `CLANG` (env → défaut →
+  PATH) dans build_sort_test.py / Makefile.
+- `b70db59a` — README : badge + lien vers la release GitHub.
+
+Le tag `v1.1.17-ventoy-sort` est annoté sur le commit de release ;
+les archives (`git archive`) et le `SHA256SUMS` publiés correspondent
+exactement à ce commit.
