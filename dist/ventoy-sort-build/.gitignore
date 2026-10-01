@@ -1,0 +1,18 @@
+# Tout est ignoré par défaut dans ce dossier de build : seuls les scripts, la
+# documentation et le harnais sont versionnés. Les artefacts (paquets, empreintes,
+# manifestes, clé MOK privée, certificat, snapshots de preuve, arbres de build,
+# journaux) restent strictement locaux.
+/*
+!/.gitignore
+!/build_ventoy_sort_windows.sh
+!/build_ventoy_sort_windows.cmd
+!/build_ventoy_sort_linux.sh
+!/build_ventoy_sort_linux.cmd
+!/PROCEDURE-SECURE-BOOT.md
+!/_run.sh
+!/_run_linux.sh
+!/_cmp_runs.sh
+!/_strip_exes.py
+!/_qemu
+/_qemu/*
+!/_qemu/*.sh

@@ -93,21 +93,29 @@ Please refer to [BuildVentoyFromSource.txt](DOC/BuildVentoyFromSource.txt)
 
 # About this fork (ventoy-fork)
 
+**Language / Langue:** English | [Français](README.fr.md)
+
 [![CI](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
 
 Latest release: **[v1.1.18-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.18-ventoy-sort)**
 — full source archives (zip / tar.gz) with a `SHA256SUMS` checksum file.
 
-Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`) with one change:
-the menu image list is sorted by a **stable merge sort** (O(n log n)) instead of the
-original O(n²) selection sort, plus a count/length consistency guard before sorting.
+Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`) with a focused improvement to menu image sorting:
+
+- Replaces the original O(n²) selection sort with a **stable O(n log n) merge sort**. Equal names keep their discovery order.
+- Checks that the recorded image count matches the actual list length before sorting, and reports mismatches while continuing safely.
+- Fixes a list-splitting bug that could hang boot-menu construction with three or more images.
+
+The stable release is **[v1.1.18-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.18-ventoy-sort)**. The **[v1.1.19-ventoy-sort-rc1 prerelease](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1)** exercises the release end-to-end CI; it is a test prerelease, not the stable release.
+
+The change is validated by a standalone regression harness with production-parity checks and a 30-seed performance sweep. Validation requires only clang and Python 3 on Windows—no Docker, WSL, or virtual machine. A real USB boot with the modified GRUB and a full ISO build have **not** been validated; deployment uses the official v1.1.17 runtime payload.
 
 It ships with a standalone validation harness — run it from the repo root:
 
 ```
-python ventoy/build_sort_test.py           # regression suite (RC=0 expected)
-python ventoy/build_sort_test.py --perf    # + perf comparison vs naive sort
+python build_sort_test.py           # regression suite (RC=0 expected)
+python build_sort_test.py --perf    # + perf comparison vs naive sort
 ```
 
 End-to-end release check in one command: `dist\check_release.cmd` downloads
