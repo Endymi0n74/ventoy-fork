@@ -144,6 +144,8 @@ dafb5c09942a780e34c71daf5a5f17bd48d52c8929be9298dfb006b6e3373818  ventoy-1.1.18-
 
 Avec le bras arm64 (remplacement et signature de `BOOTAA64.EFI` dans l’image), le zip de référence devient `cf50aa74d3b66e50e4aedcfeb7b5b2f2e543646d2aaf101ecf3d3eb934493501` ; l’empreinte ci-dessus reste celle du build **sans** bras arm64.
 
+**Réserve observée (MSVC, honnête)** : sur deux builds complets consécutifs du même jour, `altexe/Ventoy2Disk_X64.exe` a différé une fois (le code généré s’écarte de quelques centaines d’octets dispersés malgré `/Brepro` — observé sous charge machine ; le relink isolé reproduit ensuite la référence). Chargeurs GRUB, image disque, `core.img` et exe Win32 restent reproductibles bit à bit (vérifiés sur trois runs). En cas d’écart sur ce fichier : relancer le build ; l’empreinte `SHA256SUMS` publiée fait foi pour l’archive publiée.
+
 ### Ce qui rend le build déterministe
 
 - **MSVC** : `/Brepro`, `WholeProgramOptimization=false`, PDB supprimés avant l’édition de liens (âge CodeView).
