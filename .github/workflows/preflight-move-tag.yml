@@ -1,0 +1,156 @@
+name: Preflight move-tag
+
+# Validates that an existing tag/release may be safely MOVED (make_release.cmd
+# MOVE_TAG=1) before anything is done locally: the tag must exist, a GitHub
+# release must be attached to it, and that release must be mutable (not
+# GitHub-immutable, state readable = fail closed, same rule as the script).
+# Run it from the Actions tab with the target tag, then run MOVE_TAG locally.
+#
+# Note on permissions: `contents: write` is required ONLY because the releases
+# listing hides drafts from read-only tokens (get-by-tag 404s drafts anyway) and
+# drafts are exactly what a repaired MOVE_TAG leaves behind. This workflow
+# performs no writes whatsoever.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag/release to move (e.g. v1.1.18-ventoy-sort)
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  preflight:
+    name: Validate tag and release state
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.preflight.outputs.release_id }}
+      tag_sha: ${{ steps.preflight.outputs.tag_sha }}
+      commit_sha: ${{ steps.preflight.outputs.commit_sha }}
+      is_draft: ${{ steps.preflight.outputs.is_draft }}
+      is_prerelease: ${{ steps.preflight.outputs.is_prerelease }}
+    steps:
+      - name: Check tag, release and immutability via the API
+        id: preflight
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          SUMMARY="$GITHUB_STEP_SUMMARY"
+          TMP="$(mktemp -d)"
+
+          fail() {
+            echo "::error::$*"
+            {
+              echo "## Preflight: move \`$TAG\`"
+              echo ""
+              echo "**Verdict: NO-GO** - $*"
+            } >> "$SUMMARY"
+            exit 1
+          }
+
+          # ---- 1. the tag must already exist on the remote -----------------
+          if ! ref_json=$(gh api "repos/$GH_REPO/git/ref/tags/$TAG" 2>/dev/null); then
+            fail "tag \`$TAG\` does not exist on $GH_REPO. MOVE_TAG only repositions existing tags."
+          fi
+          tag_sha="$(jq -r '.object.sha' <<<"$ref_json")"
+          tag_type="$(jq -r '.object.type' <<<"$ref_json")"
+          commit_sha="$tag_sha"
+          tag_meta="lightweight tag"
+          if [ "$tag_type" = "tag" ]; then
+            # peel the annotated tag object: pointed commit + tagger metadata
+            if ann_json=$(gh api "repos/$GH_REPO/git/tags/$tag_sha"); then
+              commit_sha="$(jq -r '.object.sha' <<<"$ann_json")"
+              tag_meta="$(jq -r '"annotated, tagged " + (.tagger.date // "?") + " by " + (.tagger.name // "?")' <<<"$ann_json")"
+            fi
+          fi
+
+          # ---- 2. the release attached to that tag (drafts included) -------
+          # Paginated listing, NOT get-by-tag: the latter 404s drafts.
+          if ! gh api --paginate --slurp "repos/$GH_REPO/releases?per_page=100" > "$TMP/releases.json" 2> "$TMP/gh.err"; then
+            fail "could not list releases: $(tr -d '\r' < "$TMP/gh.err" | head -n 2 | tr '\n' ' ')"
+          fi
+          # NB: (.immutable | tostring), NOT (.immutable // "unknown"): in jq
+          # `false // x` yields x, which would misclassify mutable releases as
+          # unknown and fail-closed on every run.
+          rel="$(jq -r --arg t "$TAG" \
+            'first(.[][] | select(.tag_name == $t) | [.id, .draft, .prerelease, (.immutable | tostring), (.name // ""), (.assets | length)]) // empty' \
+            "$TMP/releases.json")"
+          if [ -z "$rel" ]; then
+            fail "no GitHub release is attached to tag \`$TAG\`. MOVE_TAG only updates existing releases."
+          fi
+          IFS=$'\t' read -r rel_id rel_draft rel_prerelease rel_immutable rel_name rel_assets <<< "$rel"
+
+          # ---- 3. immutability gate (unknown fails closed, like the script) -
+          case "$rel_immutable" in
+            false) ;;
+            true)  fail "release #$rel_id is IMMUTABLE: GitHub forbids retagging it and replacing its assets." ;;
+            *)     fail "immutability of release #$rel_id is unknown (API returned '$rel_immutable') - failing closed." ;;
+          esac
+
+          # ---- 4. informational: tag rulesets that may block the force-push -
+          rules_note="unreadable (checked manually)"
+          if rules=$(gh api "repos/$GH_REPO/rules/rulesets" --jq '[.[] | select(.target == "tag")] | length' 2>/dev/null); then
+            if [ "$rules" = "0" ]; then
+              rules_note="none"
+            else
+              rules_note="$rules tag ruleset(s): the force-push may be rejected by rules"
+            fi
+          fi
+
+          # ---- 5. informational: where the tag lands on the rerun ----------
+          def_branch="$(gh api "repos/$GH_REPO" --jq '.default_branch')"
+          head_sha="$(gh api "repos/$GH_REPO/commits/$def_branch" --jq '.sha')"
+
+          # ---- verdict -----------------------------------------------------
+          {
+            echo "## Preflight: move \`$TAG\`"
+            echo ""
+            echo "| check | value |"
+            echo "| --- | --- |"
+            echo "| tag on remote | \`$tag_sha\` ($tag_meta) |"
+            echo "| tag points at commit | \`${commit_sha:0:12}\` |"
+            echo "| release | #$rel_id ${rel_name//|/\\|} |"
+            echo "| draft / prerelease | $rel_draft / $rel_prerelease |"
+            echo "| immutable | $rel_immutable (gate passed) |"
+            echo "| release assets | $rel_assets |"
+            echo "| \`$def_branch\` head | \`${head_sha:0:12}\` (a rerun moves the tag here) |"
+            echo "| tag rulesets | $rules_note |"
+            echo ""
+            echo "**Verdict: GO** - safe to run locally:"
+            echo ""
+            echo '```'
+            echo "set MOVE_TAG=1"
+            echo "set CONFIRM_MOVE_TAG=$TAG"
+            echo "dist\\make_release.cmd $TAG"
+            echo '```'
+            if [ "$rel_draft" = "false" ]; then
+              echo ""
+              echo "> The release is published: it will be hidden as a draft during the"
+              echo "> operation and republished at the end. Watch this workflow's sibling"
+              echo "> CI run (release-e2e) once it is public again."
+            fi
+            if [ "$rules_note" != "none" ]; then
+              echo ""
+              echo "> Warning: $rules_note"
+            fi
+          } >> "$SUMMARY"
+
+          {
+            echo "release_id=$rel_id"
+            echo "tag_sha=$tag_sha"
+            echo "commit_sha=$commit_sha"
+            echo "is_draft=$rel_draft"
+            echo "is_prerelease=$rel_prerelease"
+          } >> "$GITHUB_OUTPUT"
+
+          echo "VERDICT: GO - tag $TAG exists, release #$rel_id is mutable."
+          echo "Run locally:"
+          echo "  set MOVE_TAG=1"
+          echo "  set CONFIRM_MOVE_TAG=$TAG"
+          echo "  dist\make_release.cmd $TAG"
