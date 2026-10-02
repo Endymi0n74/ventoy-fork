@@ -176,11 +176,11 @@ dafb5c09942a780e34c71daf5a5f17bd48d52c8929be9298dfb006b6e3373818  ventoy-1.1.18-
 
 Avec le bras arm64 (remplacement et signature de `BOOTAA64.EFI` dans l’image), le zip de référence devient `cf50aa74d3b66e50e4aedcfeb7b5b2f2e543646d2aaf101ecf3d3eb934493501` ; l’empreinte ci-dessus reste celle du build **sans** bras arm64.
 
-**Réserve observée (MSVC, honnête)** : sur deux builds complets consécutifs du même jour, `altexe/Ventoy2Disk_X64.exe` a différé une fois (le code généré s’écarte de quelques centaines d’octets dispersés malgré `/Brepro` — observé sous charge machine ; le relink isolé reproduit ensuite la référence). Chargeurs GRUB, image disque, `core.img` et exe Win32 restent reproductibles bit à bit (vérifiés sur trois runs). En cas d’écart sur ce fichier : relancer le build ; l’empreinte `SHA256SUMS` publiée fait foi pour l’archive publiée.
+**Reproductibilité MSVC x64 vérifiée** : `/Brepro` est appliqué à la compilation (`ClCompile`) **et** au linker (`Link`). Le flag linker seul rendait les `.obj` variables (timestamp COFF de l’heure courante), ce qui propageait les écarts dans `.text`/`.rdata`/`.pdata` de l’EXE. Avec `/Brepro` aux deux étapes, deux rebuilds à froid au chemin exact du script donnent les 29 `.obj` et `Ventoy2Disk_X64.exe` identiques bit à bit ; aucun besoin de supprimer `/m` ni d’ajouter `/d1trimfile`. L’EXE retombe sur le hash publié `2243af58…`.
 
 ### Ce qui rend le build déterministe
 
-- **MSVC** : `/Brepro`, `WholeProgramOptimization=false`, PDB supprimés avant l’édition de liens (âge CodeView).
+- **MSVC** : `/Brepro` sur compilation et lien (stabilise aussi les timestamps COFF des `.obj`), `WholeProgramOptimization=false`, PDB supprimés avant l’édition de liens (âge CodeView).
 - **GRUB** : tarball figé (sha256 consigné), dates normalisées 2019 (autotools), `-std=gnu17 -Os`.
 - **Paquet** : mtimes officielles restaurées sur les cinq fichiers remplacés, horodatages FAT ré-écrits après `mcopy`, `zip -q -r -X` (pas de champs extra horodatés).
 - **Signatures** : `strip` puis `sbsign` sous `LD_PRELOAD=fixedtime.so` (temps figé au 2027-01-01T00:00:00Z) — la RSA PKCS#1 v1.5 est déjà déterministe, seule la `signingTime` faisait varier les octets d’un build à l’autre. `sbverify --cert` suit chaque signature.

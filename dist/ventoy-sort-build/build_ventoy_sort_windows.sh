@@ -698,16 +698,21 @@ step_exes() {
     fi
     "$MSBUILD" -version 2>/dev/null | tr -d '\r' | tail -1 || true
 
-    # Liens reproductibles : /Brepro remplace l'horodatage mur par une valeur
-    # déterministe (en-tête COFF + répertoires de débogage). MSBuild ne l'accepte
-    # pas en ligne de commande → on l'injecte par une cible d'extension.
-    # WholeProgramOptimization=false (/GL + /LTCG) : la compilation à l'édition de
-    # liens n'est PAS déterministe (2 octets de .text différents au gré des exécutions)
-    # et tout le reste en découle (hachage /Brepro, GUID PDB).
+    # Reproductibilité MSVC : /Brepro doit être injecté à la compilation ET à
+    # l'édition de liens. Côté cl.exe, le timestamp COFF variable de chaque .obj
+    # rendait .text/.rdata/.pdata variables dans l'EXE malgré le /Brepro du linker.
+    # Appliqué à ClCompile et Link par la cible d'extension ci-dessous, /Brepro
+    # remplace ces timestamps par une valeur déterministe. Vérifié : 29 .obj et
+    # l'EXE identiques entre deux builds à froid, sans désactiver /m.
+    # WholeProgramOptimization=false reste nécessaire : /GL + /LTCG n'est pas
+    # reproductible sur cette toolchain même avec /Brepro côté compilateur/linker.
     cat > "$B/repro-link.targets" <<'XML'
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalOptions>/Brepro %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <Link>
       <AdditionalOptions>/Brepro %(AdditionalOptions)</AdditionalOptions>
     </Link>
