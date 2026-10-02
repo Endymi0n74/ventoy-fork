@@ -160,10 +160,23 @@ Release stable publiée le **2026-10-02** :
 |---|---|
 | `Ventoy-v1.1.19-ventoy-sort.zip` | `472eb71000f1843ccdfaf55f46d7116dcd4d96cbb68929b17bf4dc307b493c73` |
 | `Ventoy-v1.1.19-ventoy-sort.tar.gz` | `0a980b41116dbbd3960363c4e8eedcea0b02cf1244658216d010d0e58fe9787d` |
+| `ventoy-1.1.19-ventoy-sort-windows.zip` | `47469323aa33ba3fb034db3c22c22ef03b2619da91b637ba964785f563583efd` |
+
+Les deux premiers assets sont les **archives sources**. Le troisième est le
+**paquet binaire Windows** (17 413 440 octets), celui à copier sur la clé USB :
+`[altexe] [boot] [plugin] [ventoy]`, `Ventoy2Disk.exe`, `VentoyPlugson.exe`,
+`VentoyVlnk.exe`. Il est construit de zéro par
+`dist/ventoy-sort-build/build_ventoy_sort_windows.sh` à partir de l’archive
+officielle 1.1.17 : GRUB 2.04 recompilé sur les quatre cibles (i386-pc,
+x86_64-efi, i386-efi, arm64-efi) avec le correctif de tri fusion, `Ventoy2Disk`
+recompilé avec MSBuild, PE signés avec la clé MOK locale (enrôlement requis,
+voir `PROCEDURE-SECURE-BOOT.md`). Empreintes des artefacts :
+`SHA256SUMS-ventoy-sort-windows.txt`.
 
 Tag annoté `cf4912b4` sur le commit `6056a895`. Validation : `dist\check_release.cmd`
-exécuté en local (checksums, sweep 30 seeds, harnais 26/26) et workflow CI du
-run de publication — préflight `tag rulesets: none` / verdict GO, puis jobs
+exécuté en local (checksums, sweep 30 seeds, harnais 26/26, 3 contrôles
+du paquet binaire) et workflow CI du run de
+publication — préflight `tag rulesets: none` / verdict GO, puis jobs
 `release-e2e` et harnais verts.
 
 La prerelease `v1.1.19-ventoy-sort-rc1` (release #400353077) avait été
