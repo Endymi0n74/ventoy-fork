@@ -33,9 +33,19 @@ jobs:
       - name: Regression suite + perf comparison
         run: python build_sort_test.py --perf
 
+  preflight-release:
+    name: Preflight (tag/release state) before e2e
+    if: github.event_name == 'release'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/preflight-move-tag.yml
+    with:
+      tag: ${{ github.event.release.tag_name }}
+
   release-e2e:
     name: E2E check of the published release
     if: github.event_name == 'release'
+    needs: preflight-release
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4

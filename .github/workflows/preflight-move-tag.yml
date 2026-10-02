@@ -22,6 +22,18 @@ on:
         description: Optional announced target commit; NO-GO if it is not the default-branch head (abbreviated SHA accepted)
         required: false
         type: string
+  # Called by ci.yml as a gate before the release-e2e job on every release
+  # publication. The manual dispatch above stays available for the pre-MOVE_TAG
+  # check (it also accepts commit_sha, which the automatic call leaves empty).
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+      commit_sha:
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: write
