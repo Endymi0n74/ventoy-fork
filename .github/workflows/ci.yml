@@ -33,6 +33,19 @@ jobs:
       - name: Regression suite + perf comparison
         run: python build_sort_test.py --perf
 
+  move-tag-bench:
+    name: MOVE_TAG bench (offline, mocked git/gh)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Fully offline: throwaway git sandbox with a local bare origin, gh
+      # shadowed by a Python mock. Needs cmd.exe + csc.exe (shim build),
+      # both present on the hosted Windows runners.
+      - name: MOVE_TAG + rollback bench (146 assertions)
+        shell: bash
+        run: bash dist/tests/test_make_release_move_tag.sh
+
   preflight-release:
     name: Preflight (tag/release state) before e2e
     if: github.event_name == 'release'

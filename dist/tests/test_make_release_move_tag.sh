@@ -13,7 +13,11 @@
 # the calling batch file when it invokes another batch without `call`, which
 # silently kills make_release.cmd after its first direct `git ...` call.
 #
-# Usage:  bash dist/tests/test_make_release_move_tag.sh
+# Usage:  bash dist/tests/test_make_release_move_tag.sh [--check]
+#         --check  après les scénarios, vérifie qu'aucun artefact du banc n'a
+#                  fui hors du sandbox : marqueur NEW_FILE.txt dans le dépôt
+#                  réel, Ventoy-vTEST.* dans le vrai DIST_DIR, et dossiers
+#                  movetag./shimbuild. orphelins dans TMP (run crashée).
 # Exit:   0 = all assertions passed, 1 = failures (sandbox kept for inspection)
 # =============================================================================
 set -u
@@ -26,6 +30,14 @@ CHECK_UNDER_TEST="$HERE/../check_release.cmd"
 command -v cmd.exe  >/dev/null 2>&1 || { echo "FATAL: cmd.exe not found"; exit 2; }
 command -v python   >/dev/null 2>&1 || { echo "FATAL: python not found"; exit 2; }
 command -v git      >/dev/null 2>&1 || { echo "FATAL: git not found"; exit 2; }
+
+CHECK_LEAKS=0
+for _arg in "$@"; do
+    case "$_arg" in
+        --check) CHECK_LEAKS=1 ;;
+        *) echo "FATAL: unknown argument: $_arg (usage: $0 [--check])"; exit 2 ;;
+    esac
+done
 
 CSC="/c/Windows/Microsoft.NET/Framework64/v4.0.30319/csc.exe"
 [ -f "$CSC" ] || { echo "FATAL: csc.exe not found (needed to build the .exe shims)"; exit 2; }
@@ -846,6 +858,46 @@ chk_cnt "gh release upload vTEST .*asset-backup" 3
 chk_cnt "gh release edit vTEST .*--draft=false" 0
 [ "$(git --git-dir "$ORIGIN" rev-parse refs/tags/vTEST)" = "$(git -C "$REPO" rev-parse refs/tags/vTEST)" ] \
     && note_ok "origin tag did move (push succeeded)" || note_bad "tag not moved"
+
+# ------------------------------------------------------- leak check (--check) -
+# Tout ce que le banc écrit vit sous $SB / $SHIM_DIR (TMP) ; --check assert
+# que c'est encore vrai après les scénarios. Les dossiers de CE run sont
+# exclus : le nettoyage ci-dessous les supprime juste après le rapport.
+if [ "$CHECK_LEAKS" -eq 1 ]; then
+    scenario "LK1" "no bench artifact leaked outside the sandbox"
+    REAL_REPO="$(cd "$HERE/../.." && pwd)"
+    REAL_DIST="$(dirname "$REAL_REPO")/dist"
+
+    [ ! -e "$REAL_REPO/NEW_FILE.txt" ] \
+        && note_ok "no NEW_FILE.txt marker in the real repo ($REAL_REPO)" \
+        || note_bad "NEW_FILE.txt leaked into the real repo: $REAL_REPO"
+
+    if [ ! -e "$REAL_DIST/Ventoy-vTEST.zip" ] && [ ! -e "$REAL_DIST/Ventoy-vTEST.tar.gz" ]; then
+        note_ok "no Ventoy-vTEST.* in the real DIST_DIR ($REAL_DIST)"
+    else
+        note_bad "vTEST archives leaked into the real DIST_DIR: $REAL_DIST"
+    fi
+
+    STALE_SB=""
+    for _d in "${TMPDIR:-/tmp}"/movetag.*; do
+        [ -d "$_d" ] || continue
+        [ "$_d" = "$SB" ] && continue
+        STALE_SB="$STALE_SB $_d"
+    done
+    [ -z "$STALE_SB" ] \
+        && note_ok "no stale movetag.* sandbox left in TMP" \
+        || note_bad "stale sandbox(es) in TMP (crashed/failed run?):$STALE_SB"
+
+    STALE_SHIM=""
+    for _d in "${TMPDIR:-/tmp}"/shimbuild.*; do
+        [ -d "$_d" ] || continue
+        [ "$_d" = "$SHIM_DIR" ] && continue
+        STALE_SHIM="$STALE_SHIM $_d"
+    done
+    [ -z "$STALE_SHIM" ] \
+        && note_ok "no stale shimbuild.* left in TMP" \
+        || note_bad "stale shim dir(s) in TMP (crashed run?):$STALE_SHIM"
+fi
 
 # ---------------------------------------------------------------- report -----
 echo
