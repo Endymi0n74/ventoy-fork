@@ -45,8 +45,12 @@ done
 HAVE_SBSIGN=0
 command -v sbsign >/dev/null 2>&1 && command -v sbverify >/dev/null 2>&1 && HAVE_SBSIGN=1
 [ -f "$SCRIPT" ] || { echo "build script not found: $SCRIPT"; exit 1; }
-[ -f "$REAL_SB" ] || { echo "fork MOK certificate not found: $REAL_SB"; exit 1; }
-REAL_FPM=$(sha256sum "$REAL_SB" | cut -d' ' -f1)
+REAL_EXISTS=0
+if [ -f "$REAL_SB" ]; then REAL_EXISTS=1; REAL_FPM=$(sha256sum "$REAL_SB" | cut -d' ' -f1); fi
+# "the fork's own key is untouched" only means something where that key exists:
+# a fresh clone has none (secureboot/ is not tracked), and the CI runner is
+# exactly that case.
+[ -f "$REAL_SB" ] || { echo "note: no local fork key ($REAL_SB) - fresh clone"; }
 
 T=$(mktemp -d)
 trap 'rm -rf "$T"' EXIT
@@ -100,8 +104,12 @@ if ( ensure_sb_key ) >/dev/null 2>&1; then
     else
         bad "a file is missing after the import"
     fi
-    [ "$(sha256sum "$REAL_SB" | cut -d' ' -f1)" = "$REAL_FPM" ] \
-        && ok "the fork's own key is untouched" || bad "the fork's own key was MODIFIED"
+    if [ "$REAL_EXISTS" = 1 ]; then
+        [ "$(sha256sum "$REAL_SB" | cut -d' ' -f1)" = "$REAL_FPM" ] \
+            && ok "the fork's own key is untouched" || bad "the fork's own key was MODIFIED"
+    else
+        skip "no local fork key to protect (fresh clone)"
+    fi
 else
     bad "the import failed"
 fi
