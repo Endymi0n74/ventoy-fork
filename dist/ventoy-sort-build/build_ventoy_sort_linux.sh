@@ -230,6 +230,37 @@ ensure_sb_key() {   # génère la clé MOK une seule fois (conservée entre les 
     : > "$SB_LOG"
     if [ -f "$SB_KEY" ] && [ -f "$SB_CRT" ] && [ -f "$SB_CER" ]; then
         :
+    elif [ -n "${VENTOY_SORT_MOK_KEY:-}" ] && [ -n "${VENTOY_SORT_MOK_CRT:-}" ]; then
+        # Clé fournie par l'environnement (secret CI) : EXIGÉ pour que le paquet
+        # fabriqué en CI soit signé avec la MÊME clé que le paquet Windows (et
+        # que celui produit en local) — une seule procédure d'enrôlement. Sans
+        # cela, ce bloc retomberait sur la génération d'une clé jetable.
+        mkdir -p "$SB_DIR"
+        log "clé MOK importée depuis VENTOY_SORT_MOK_KEY / _MOK_CRT"
+        printf '%s' "$VENTOY_SORT_MOK_KEY" | tr -d '\r' > "$SB_KEY"
+        printf '%s' "$VENTOY_SORT_MOK_CRT" | tr -d '\r' > "$SB_CRT"
+        chmod 600 "$SB_KEY"
+        openssl x509 -in "$SB_CRT" -noout 2>> "$SB_LOG" \
+            || die "VENTOY_SORT_MOK_CRT illisible (PEM attendu)"
+        openssl x509 -in "$SB_CRT" -pubkey -noout 2>/dev/null \
+            | tr -d '\r' > "$SB_DIR/.pub.crt" \
+            || die "détection de la clé publique échouée"
+        openssl pkey -in "$SB_KEY" -pubout 2>/dev/null \
+            | tr -d '\r' > "$SB_DIR/.pub.key" \
+            || die "VENTOY_SORT_MOK_KEY illisible (PEM non chiffré attendu)"
+        cmp -s "$SB_DIR/.pub.crt" "$SB_DIR/.pub.key" \
+            || die "VENTOY_SORT_MOK_KEY et VENTOY_SORT_MOK_CRT ne forment pas une paire"
+        rm -f "$SB_DIR/.pub.crt" "$SB_DIR/.pub.key"
+        if [ -n "${VENTOY_SORT_MOK_CER:-}" ]; then
+            printf '%s' "$VENTOY_SORT_MOK_CER" | tr -d '\r' | base64 -d > "$SB_CER" \
+                || die "VENTOY_SORT_MOK_CER illisible (base64 du DER attendu)"
+        else
+            openssl x509 -in "$SB_CRT" -outform DER -out "$SB_CER" \
+                || die "export DER du certificat échoué"
+        fi
+        [ "$(openssl x509 -in "$SB_CRT" -outform DER 2>/dev/null | sha256sum | cut -d' ' -f1)" = \
+          "$(sha256sum "$SB_CER" | cut -d' ' -f1)" ] \
+            || die "VENTOY_SORT_MOK_CER ne correspond pas à VENTOY_SORT_MOK_CRT"
     else
         mkdir -p "$SB_DIR"
         log "génération de la clé Secure Boot (MOK) — $SB_KEY"

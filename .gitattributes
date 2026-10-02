@@ -1,5 +1,7 @@
 # Les scripts bash doivent rester LF (exécutés sous WSL) ; les .cmd restent CRLF.
 dist/ventoy-sort-build/*.sh text eol=lf
+dist/tests/*.sh text eol=lf
+.github/workflows/*.yml text eol=lf
 dist/ventoy-sort-build/_qemu/*.sh text eol=lf
 dist/ventoy-sort-build/*.py text eol=lf
 dist/ventoy-sort-build/*.cmd text eol=crlf

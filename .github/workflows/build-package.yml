@@ -1,0 +1,181 @@
+name: Release package
+
+# Builds the binary Windows package of a published release from scratch
+# (WSL2 Ubuntu for GRUB + mtools + sbsigntool, VS Build Tools for the exes),
+# validates it with the 3 package checks of README.fr.md, and attaches it to
+# the release when it is not there yet.
+#
+# Deliberately separate from ci.yml so that:
+#   - it never runs on a plain push (this build takes tens of minutes);
+#   - the workflow-level token stays `contents: read`; only this job asks for
+#     `contents: write`, and only to upload one asset.
+#
+# Signing key: the build falls back to generating a throwaway MOK when no key
+# is present, which would give a package signed with a certificate that is not
+# the one documented in PROCEDURE-SECURE-BOOT.md. The key therefore comes from
+# the VENTOY_SORT_MOK_* secrets and the job fails closed when they are missing.
+
+on:
+  release:
+    # `released` is what fires when a prerelease is promoted to a stable
+    # release, which is how this repository ships (rc1 -> stable).
+    types: [published, released]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and publish the package for
+        required: true
+        type: string
+      clobber:
+        description: Replace an already published ventoy-*-windows.zip asset
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  windows-package:
+    name: Windows binary package (WSL + MSVC) and upload
+    # Prereleases are skipped: check_release_pkg.py pins ventoy/version to
+    # \d+\.\d+\.\d+-ventoy-sort, which an "-rc1" suffix fails by design. Dispatch
+    # can still be used to force a build for a given tag.
+    if: github.event_name != 'release' || github.event.release.prerelease == false
+    # windows-2022 on purpose: the build pins /p:PlatformToolset=v143, which
+    # the VS2026 images behind windows-2025 may not ship.
+    runs-on: windows-2022
+    timeout-minutes: 240
+    permissions:
+      contents: write
+    concurrency:
+      group: release-package-${{ github.event.release.tag_name || inputs.tag }}
+      cancel-in-progress: false
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+      CLOBBER: ${{ github.event_name == 'workflow_dispatch' && inputs.clobber || false }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve and check the release tag
+        id: meta
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:TAG)) {
+            Write-Host "::error::no release tag to build (release event or tag input)"
+            exit 1
+          }
+          $tag = gh release view $env:TAG --repo $env:GITHUB_REPOSITORY `
+                 --json tagName,isDraft --jq '.tagName'
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::no release named $env:TAG"; exit 1 }
+          Write-Host "tag: $tag"
+          $ver = $env:TAG.TrimStart('v')
+          "VER=$ver" >> $env:GITHUB_OUTPUT
+          "ZIP=ventoy-$ver-windows.zip" >> $env:GITHUB_OUTPUT
+          "SUMS=SHA256SUMS-ventoy-sort-windows.txt" >> $env:GITHUB_OUTPUT
+
+      - name: Refuse to sign without the documented MOK key
+        env:
+          VENTOY_SORT_MOK_KEY: ${{ secrets.ventoy_sort_mok_key }}
+          VENTOY_SORT_MOK_CRT: ${{ secrets.ventoy_sort_mok_crt }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:VENTOY_SORT_MOK_KEY) -or
+              [string]::IsNullOrWhiteSpace($env:VENTOY_SORT_MOK_CRT)) {
+            Write-Host "::error::secrets VENTOY_SORT_MOK_KEY / VENTOY_SORT_MOK_CRT are not set. Without them the build would mint a throwaway Secure Boot key, and the package would then be signed with a certificate that PROCEDURE-SECURE-BOOT.md does not describe."
+            exit 1
+          }
+          Write-Host "MOK key material supplied (value not printed)."
+
+      - name: Install Ubuntu in WSL with the build prerequisites
+        uses: Vampire/setup-wsl@v7
+        with:
+          distribution: Ubuntu-24.04
+          update: 'true'
+          additional-packages: >-
+            build-essential autoconf automake autopoint gettext pkg-config
+            bison flex python3 mtools xz-utils zip unzip tar gzip git curl
+            ca-certificates openssl gcc-aarch64-linux-gnu sbsigntool
+
+      - name: MOK key import bench (guards the signing path)
+        shell: wsl-bash {0}
+        env:
+          VENTOY_SORT_MOK_KEY: ${{ secrets.ventoy_sort_mok_key }}
+          VENTOY_SORT_MOK_CRT: ${{ secrets.ventoy_sort_mok_crt }}
+        run: |
+          set -euo pipefail
+          # Catches a corrupted or mismatched secret in seconds instead of
+          # after a full package build.
+          bash dist/tests/test_mok_import.sh
+
+      - name: Fetch and pin the official 1.1.17 baseline
+        shell: wsl-bash {0}
+        run: |
+          set -euo pipefail
+          # check_release_pkg.py looks for its baseline in <repo>/_dl (first
+          # candidate); the build reads the very same file as BASE_ZIP, so one
+          # download serves both.
+          mkdir -p _dl
+          curl -fL --retry 3 -o _dl/ventoy-1.1.17-windows.zip \
+            https://github.com/ventoy/Ventoy/releases/download/v1.1.17/ventoy-1.1.17-windows.zip
+          echo "d250e97a7595fdac4f97debc630d7a8da942319274a76cb32384596b659dbaeb  _dl/ventoy-1.1.17-windows.zip" | sha256sum -c -
+
+      - name: Build the Windows package
+        shell: wsl-bash {0}
+        env:
+          VENTOY_SORT_MOK_KEY: ${{ secrets.ventoy_sort_mok_key }}
+          VENTOY_SORT_MOK_CRT: ${{ secrets.ventoy_sort_mok_crt }}
+        run: |
+          set -euo pipefail
+          test -f dist/ventoy-sort-build/build_ventoy_sort_windows.sh \
+            || { echo "::error::run from the repository root"; exit 1; }
+          cd dist/ventoy-sort-build
+          ./build_ventoy_sort_windows.sh \
+            "FORK_VERSION=$TAG" \
+            "BASE_ZIP=$PWD/../../_dl/ventoy-1.1.17-windows.zip"
+
+      - name: Package checks (fingerprint / marker / baseline)
+        shell: wsl-bash {0}
+        run: |
+          set -euo pipefail
+          cd dist/ventoy-sort-build
+          ZIP="ventoy-${TAG#v}-windows.zip"
+          test -f "$ZIP" || { echo "::error::expected $ZIP"; exit 1; }
+          PYTHONIOENCODING=utf-8 python3 ../check_release_pkg.py "$ZIP"
+
+      - name: Attach the package to the release when it is missing
+        shell: pwsh
+        run: |
+          $ver = "${{ steps.meta.outputs.VER }}"
+          $zip = "${{ steps.meta.outputs.ZIP }}"
+          $sums = "${{ steps.meta.outputs.SUMS }}"
+          $zipPath = "dist/ventoy-sort-build/$zip"
+          $sumsPath = "dist/ventoy-sort-build/$sums"
+
+          $assets = @(gh release view $env:TAG --repo $env:GITHUB_REPOSITORY `
+                      --json assets --jq '.assets[].name') -split "`n"
+          $present = $assets -contains $zip
+
+          if ($present -and -not ($env:CLOBBER -eq 'true')) {
+            Write-Host "::notice::asset $zip already published — keeping it (its checksum is the one recorded in RELEASE_NOTES.md); clobber only if you deliberately want to replace it."
+            Write-Host "published asset left untouched: $zip"
+            exit 0
+          }
+
+          $action = if ($present) { 'Replacing' } else { 'Adding' }
+          gh release upload $env:TAG $zipPath $sumsPath --repo $env:GITHUB_REPOSITORY --clobber
+          if ($LASTEXITCODE -ne 0) { Write-Host "::error::upload failed"; exit 1 }
+          Write-Host "$action asset $zip and $sums"
+
+      - name: Report
+        shell: pwsh
+        run: |
+          $zip = "${{ steps.meta.outputs.ZIP }}"
+          $path = "dist/ventoy-sort-build/$zip"
+          Write-Host "built locally: $zip"
+          Write-Host ("local sha256: " + (Get-FileHash $path -Algorithm SHA256).Hash.ToLower())
+          Write-Host "published assets:"
+          gh release view $env:TAG --repo $env:GITHUB_REPOSITORY `
+            --json assets --jq '.assets[] | "\(.name)  \(.size) o"'
