@@ -127,9 +127,26 @@ the sweep takes several minutes — set `SKIP_SWEEP=1` to skip it, and
 Publishing a new release in one command: `dist\make_release.cmd <tag>`
 sanity-checks the tree, creates and pushes the annotated tag, exports
 the archives, writes `SHA256SUMS` and publishes the GitHub release with
-`RELEASE_NOTES.md` as body. Set `PRERELEASE=1` for a test/RC release;
-`DRY_RUN=1` previews without side effects. Follow with
-`dist\check_release.cmd` to validate.
+`RELEASE_NOTES.md` as body. Set `PRERELEASE=1` for a test/RC release.
+To retarget an existing, mutable GitHub release, use `MOVE_TAG=1` plus
+`CONFIRM_MOVE_TAG=<exact tag>`; it draft-hides a published release, force-moves
+the tag, regenerates the archives and checksums, replaces same-named assets,
+and updates release notes while preserving stable/prerelease and draft state.
+Only the two source archives and `SHA256SUMS` are replaced; other release assets
+are left untouched. Because `gh release upload --clobber` deletes each matching
+old asset before uploading its replacement, the three assets are first backed up
+to `DIST_DIR\.asset-backup`; if an upload fails midway they are restored
+automatically (a failed backup aborts before anything changes, and the backup is
+kept for manual repair), and the release stays draft for repair. If it was
+published before the operation, publish the repaired draft manually after
+verification. Immutable releases are refused.
+Before a real move, run the *Preflight move-tag* GitHub Actions workflow
+(Actions tab, or `gh workflow run preflight-move-tag.yml -f tag=<tag>`; add
+`-f commit_sha=<expected head>` to also cross-check the announced target): it
+fails closed unless the tag exists, a release is attached - drafts included -
+and that release is mutable. The same check gates the release-e2e job on every
+release publication.
+`DRY_RUN=1` previews without side effects. Follow with `dist\check_release.cmd` to validate.
 
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
 
