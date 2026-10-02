@@ -33,7 +33,8 @@
 #  Variables d'environnement (toutes optionnelles) :
 #      BASE_LINUX      archive Linux officielle          (def. dist/_dl/ventoy-1.1.17-linux.tar.gz,
 #                                                          téléchargée + sha256 vérifié si absente)
-#      FORK_VERSION    version inscrite dans le paquet    (def. dernier tag « v*-ventoy-sort »)
+#      FORK_VERSION    version inscrite dans le paquet    (def. dernier tag « v*-ventoy-sort » ;
+#                     un « v » initial accepté et retiré)
 #      GRUB_TARBALL    source grub-2.04.tar.xz            (def. <ce dossier>/grub-2.04.tar.xz, sinon téléchargée)
 #      JOBS            parallélisme make                  (def. nproc)
 #      KEEP=1          conserve les arbres de build       (défaut : tout refaire de zéro)
@@ -450,6 +451,11 @@ step_preflight() {
 
 detect_fork_version() {
     if [ -n "${FORK_VERSION:-}" ]; then
+        # un tag « vX.Y.Z-ventoy-sort » est aussi accepté : le « v » ne doit pas
+        # finir dans ventoy/version (regex \d+\.\d+\.\d+-ventoy-sort de
+        # check_release_pkg.py) ni dans le nom du tar.gz attendu par check_release.cmd.
+        FORK_VERSION=${FORK_VERSION#v}
+        GIT_TAG=v$FORK_VERSION
         return
     fi
     command -v git >/dev/null 2>&1 || die "FORK_VERSION non fourni et git indisponible"

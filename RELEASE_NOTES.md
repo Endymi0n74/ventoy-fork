@@ -161,21 +161,31 @@ Release stable publiée le **2026-10-02** :
 | `Ventoy-v1.1.19-ventoy-sort.zip` | `472eb71000f1843ccdfaf55f46d7116dcd4d96cbb68929b17bf4dc307b493c73` |
 | `Ventoy-v1.1.19-ventoy-sort.tar.gz` | `0a980b41116dbbd3960363c4e8eedcea0b02cf1244658216d010d0e58fe9787d` |
 | `ventoy-1.1.19-ventoy-sort-windows.zip` | `47469323aa33ba3fb034db3c22c22ef03b2619da91b637ba964785f563583efd` |
+| `ventoy-1.1.19-ventoy-sort-linux.tar.gz` | `8eb882652b0f5f6744c3435f5b1b40d7fe9aff0e27c4a650288e382a4c13f0e3` |
 
-Les deux premiers assets sont les **archives sources**. Le troisième est le
-**paquet binaire Windows** (17 413 440 octets), celui à copier sur la clé USB :
-`[altexe] [boot] [plugin] [ventoy]`, `Ventoy2Disk.exe`, `VentoyPlugson.exe`,
-`VentoyVlnk.exe`. Il est construit de zéro par
-`dist/ventoy-sort-build/build_ventoy_sort_windows.sh` à partir de l’archive
-officielle 1.1.17 : GRUB 2.04 recompilé sur les quatre cibles (i386-pc,
-x86_64-efi, i386-efi, arm64-efi) avec le correctif de tri fusion, `Ventoy2Disk`
-recompilé avec MSBuild, PE signés avec la clé MOK locale (enrôlement requis,
-voir `PROCEDURE-SECURE-BOOT.md`). Empreintes des artefacts :
-`SHA256SUMS-ventoy-sort-windows.txt`.
+Les deux premiers assets sont les **archives sources** (à compiler soi-même). Les
+deux suivants sont les **paquets binaires**, prêts à copier sur une clé USB :
+
+| paquet | taille | entrées | fichiers modifiés vs officiel 1.1.17 |
+|---|---|---|---|
+| `ventoy-1.1.19-ventoy-sort-windows.zip` | 17 413 440 o | 45 | 5 |
+| `ventoy-1.1.19-ventoy-sort-linux.tar.gz` | 21 041 017 o | 137 | 3 |
+
+Ils sont construits de zéro, à partir de l’archive officielle 1.1.17
+correspondante, par `dist/ventoy-sort-build/build_ventoy_sort_windows.sh` et
+`build_ventoy_sort_linux.sh` : GRUB 2.04 recompilé sur les quatre cibles
+(i386-pc, x86_64-efi, i386-efi, arm64-efi) avec le correctif de tri fusion,
+`Ventoy2Disk` recompilé avec MSBuild (paquet Windows), PE signés avec la **même
+clé MOK locale** dans les deux paquets (enrôlement requis, voir
+`PROCEDURE-SECURE-BOOT.md`). Le paquet Linux embarque en plus le certificat
+d’enrôlement (`ENROLL*.CER`) dans son image disque : son `ventoy.disk.img.xz` a
+donc une empreinte différente de celui du paquet Windows, ce n’est pas une
+divergence de build. Empreintes des artefacts :
+`SHA256SUMS-ventoy-sort-windows.txt` et `SHA256SUMS-ventoy-sort-linux.txt`.
 
 Tag annoté `cf4912b4` sur le commit `6056a895`. Validation : `dist\check_release.cmd`
-exécuté en local (checksums, sweep 30 seeds, harnais 26/26, 3 contrôles
-du paquet binaire) et workflow CI du run de
+exécuté en local (checksums, sweep 30 seeds, harnais 26/26, 3 contrôles sur
+chacun des deux paquets binaires) et workflow CI du run de
 publication — préflight `tag rulesets: none` / verdict GO, puis jobs
 `release-e2e` et harnais verts.
 
