@@ -77,9 +77,11 @@ jobs:
           fi
           # NB: (.immutable | tostring), NOT (.immutable // "unknown"): in jq
           # `false // x` yields x, which would misclassify mutable releases as
-          # unknown and fail-closed on every run.
+          # unknown and fail-closed on every run. The `| @tsv` INSIDE first()
+          # is what makes the line parseable - without it jq -r prints the
+          # array as JSON, read finds no tab, and every field comes back empty.
           rel="$(jq -r --arg t "$TAG" \
-            'first(.[][] | select(.tag_name == $t) | [.id, .draft, .prerelease, (.immutable | tostring), (.name // ""), (.assets | length)]) // empty' \
+            'first(.[][] | select(.tag_name == $t) | [.id, .draft, .prerelease, (.immutable | tostring), (.name // ""), (.assets | length)] | @tsv) // empty' \
             "$TMP/releases.json")"
           if [ -z "$rel" ]; then
             fail "no GitHub release is attached to tag \`$TAG\`. MOVE_TAG only updates existing releases."
