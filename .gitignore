@@ -15,3 +15,7 @@ INSTALL/ventoy/plugson.tar.xz
 INSTALL/ventoy/ventoy.disk.img.xz
 INSTALL/ventoy/ventoy_4k.disk.img.xz
 INSTALL/ventoy/version
+
+# Baseline officielle 1.1.17 téléchargée par le CI (et utilisable en local)
+# : empreintes épinglées dans dist/check_release_pkg.py, jamais commitée.
+_dl/

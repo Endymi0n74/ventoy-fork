@@ -101,13 +101,10 @@ jobs:
 
       - name: MOK key import bench (guards the signing path)
         shell: wsl-bash {0}
-        env:
-          VENTOY_SORT_MOK_KEY: ${{ secrets.ventoy_sort_mok_key }}
-          VENTOY_SORT_MOK_CRT: ${{ secrets.ventoy_sort_mok_crt }}
+        # No secrets here: the bench supplies its own throwaway keys. It checks
+        # the logic of ensure_sb_key(), not these particular secrets.
         run: |
           set -euo pipefail
-          # Catches a corrupted or mismatched secret in seconds instead of
-          # after a full package build.
           bash dist/tests/test_mok_import.sh
 
       - name: Fetch and pin the official 1.1.17 baseline
@@ -125,15 +122,18 @@ jobs:
       - name: Build the Windows package
         shell: wsl-bash {0}
         env:
-          VENTOY_SORT_MOK_KEY: ${{ secrets.ventoy_sort_mok_key }}
-          VENTOY_SORT_MOK_CRT: ${{ secrets.ventoy_sort_mok_crt }}
+          # Windows variables do NOT reach the WSL process on their own - only
+          # WSLENV forwards them. Without this line the build would find no key,
+          # silently mint a throwaway one and sign the package with a
+          # certificate nobody has been told to enrol.
+          WSLENV: VENTOY_SORT_MOK_KEY/u:VENTOY_SORT_MOK_CRT/u
         run: |
           set -euo pipefail
           test -f dist/ventoy-sort-build/build_ventoy_sort_windows.sh \
             || { echo "::error::run from the repository root"; exit 1; }
           cd dist/ventoy-sort-build
           ./build_ventoy_sort_windows.sh \
-            "FORK_VERSION=$TAG" \
+            "FORK_VERSION=${{ env.TAG }}" \
             "BASE_ZIP=$PWD/../../_dl/ventoy-1.1.17-windows.zip"
 
       - name: Package checks (fingerprint / marker / baseline)
@@ -141,9 +141,42 @@ jobs:
         run: |
           set -euo pipefail
           cd dist/ventoy-sort-build
-          ZIP="ventoy-${TAG#v}-windows.zip"
+          VER="${{ env.TAG }}"
+          VER="${VER#v}"
+          ZIP="ventoy-$VER-windows.zip"
           test -f "$ZIP" || { echo "::error::expected $ZIP"; exit 1; }
           PYTHONIOENCODING=utf-8 python3 ../check_release_pkg.py "$ZIP"
+
+      - name: Package is signed with the supplied MOK key
+        shell: wsl-bash {0}
+        env:
+          WSLENV: VENTOY_SORT_MOK_CRT/u
+        run: |
+          set -euo pipefail
+          # The failure this guards against is silent: if the build had not
+          # found the key it would have minted its own, every check would still
+          # pass, and the published package would carry a certificate no
+          # procedure mentions. Compare the certificate embedded in the disk
+          # image with the one we supplied.
+          cd dist/ventoy-sort-build
+          VER="${{ env.TAG }}"; VER="${VER#v}"
+          ZIP="ventoy-$VER-windows.zip"
+          python3 - "$ZIP" /tmp/disk.xz <<'PY'
+          import sys, zipfile
+          with zipfile.ZipFile(sys.argv[1]) as z:
+              n = [n for n in z.namelist() if n.endswith('ventoy/ventoy.disk.img.xz')][0]
+              open(sys.argv[2], 'wb').write(z.read(n))
+          PY
+          xz -dc /tmp/disk.xz > /tmp/disk.img
+          mtype -i /tmp/disk.img ::/ENROLL_THIS_KEY_IN_MOKMANAGER.cer > /tmp/embedded.cer
+          expected=$(printf '%s' "$VENTOY_SORT_MOK_CRT" | tr -d '\r' \
+                     | openssl x509 -outform DER | sha256sum | cut -d' ' -f1)
+          actual=$(sha256sum /tmp/embedded.cer | cut -d' ' -f1)
+          echo "embedded : $actual"
+          echo "supplied : $expected"
+          [ "$actual" = "$expected" ] \
+            || { echo "::error::the package embeds a certificate other than the supplied MOK key"; exit 1; }
+          echo "the package carries the supplied MOK certificate"
 
       - name: Attach the package to the release when it is missing
         shell: pwsh
