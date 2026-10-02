@@ -146,6 +146,37 @@ Before a real move, run the *Preflight move-tag* GitHub Actions workflow
 fails closed unless the tag exists, a release is attached - drafts included -
 and that release is mutable. The same check gates the release-e2e job on every
 release publication.
+
+Example of the GO job summary for `v1.1.18-ventoy-sort`:
+
+````
+## Preflight: move `v1.1.18-ventoy-sort`
+
+| check | value |
+| --- | --- |
+| tag on remote | `f1fc3e6c2fe1538ed48bc228a606374f92a23304` (annotated, tagged 2026-10-01T20:23:52Z by Endymion) |
+| tag points at commit | `f6e919ef18a3` |
+| release | #400300413 Ventoy v1.1.18-ventoy-sort (ventoy-fork) |
+| draft / prerelease | false / false |
+| immutable | false (gate passed) |
+| release assets | 10 |
+| `master` head | `ec0444a27a39` (a rerun moves the tag here) |
+| announced target | not specified (skip) |
+| tag rulesets | none |
+
+**Verdict: GO** - safe to run locally:
+
+```
+set MOVE_TAG=1
+set CONFIRM_MOVE_TAG=v1.1.18-ventoy-sort
+dist\make_release.cmd v1.1.18-ventoy-sort
+```
+
+> The release is published: it will be hidden as a draft during the
+> operation and republished at the end. Watch this workflow's sibling
+> CI run (release-e2e) once it is public again.
+````
+
 `DRY_RUN=1` previews without side effects. Follow with `dist\check_release.cmd` to validate.
 
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).

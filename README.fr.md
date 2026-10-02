@@ -39,6 +39,36 @@ Le sweep peut être omis pour une vérification rapide avec `set SKIP_SWEEP=1`.
 
 Pour créer une nouvelle release : `dist\make_release.cmd <tag>` (dry-run avec `set DRY_RUN=1`). Pour mettre à jour une release **existante** après déplacement de son tag, prévisualiser avec `set DRY_RUN=1`, puis passer `MOVE_TAG=1` et confirmer le nom exact : `set MOVE_TAG=1` puis `set CONFIRM_MOVE_TAG=v1.1.18-ventoy-sort`, et lancer `dist\make_release.cmd v1.1.18-ventoy-sort`. Le mode vérifie le tag distant et la release GitHub, refuse les releases immuables, brouillonne une release publiée le temps de l’opération, déplace le tag annoté, recrée les archives sources et `SHA256SUMS`, remplace uniquement les deux archives sources et `SHA256SUMS` (les autres assets sont conservés), et actualise les notes en conservant stable/prerelease et l’état draft/publié. **Attention :** `gh release upload --clobber` supprime l’ancien asset avant d’envoyer le nouveau ; aussi les trois assets sont-ils d’abord sauvegardés dans `DIST_DIR\.asset-backup` : si un envoi échoue en cours de route, les anciens assets sont **restaurés automatiquement** (un échec de cette sauvegarde arrête le script avant toute modification ; le dossier est conservé pour réparation manuelle). Après déplacement du tag, la release reste en brouillon pour permettre la reprise ; si elle était publiée initialement, elle devra ensuite être republiée manuellement après vérification. Avant un déplacement réel, lancer le workflow GitHub *Preflight move-tag* (onglet Actions, ou `gh workflow run preflight-move-tag.yml -f tag=<tag>`, avec `-f commit_sha=<head attendu>` en option) : il échoue fermement si le tag n’existe pas, si aucune release n’y est attachée (drafts compris), si celle-ci est immuable ou si la cible annoncée ne correspond pas au head de la branche ; le même contrôle verrouille le job release-e2e à chaque publication de release. Toujours prévisualiser avec `DRY_RUN=1`.
 
+Exemple de job summary GO pour `v1.1.18-ventoy-sort` :
+
+````
+## Preflight: move `v1.1.18-ventoy-sort`
+
+| check | value |
+| --- | --- |
+| tag on remote | `f1fc3e6c2fe1538ed48bc228a606374f92a23304` (annotated, tagged 2026-10-01T20:23:52Z by Endymion) |
+| tag points at commit | `f6e919ef18a3` |
+| release | #400300413 Ventoy v1.1.18-ventoy-sort (ventoy-fork) |
+| draft / prerelease | false / false |
+| immutable | false (gate passed) |
+| release assets | 10 |
+| `master` head | `ec0444a27a39` (a rerun moves the tag here) |
+| announced target | not specified (skip) |
+| tag rulesets | none |
+
+**Verdict: GO** - safe to run locally:
+
+```
+set MOVE_TAG=1
+set CONFIRM_MOVE_TAG=v1.1.18-ventoy-sort
+dist\make_release.cmd v1.1.18-ventoy-sort
+```
+
+> The release is published: it will be hidden as a draft during the
+> operation and republished at the end. Watch this workflow's sibling
+> CI run (release-e2e) once it is public again.
+````
+
 **Prérequis : clang et Python 3 uniquement.** Docker, WSL et une machine virtuelle ne sont pas nécessaires.
 
 ## Build reproductible du paquet Windows

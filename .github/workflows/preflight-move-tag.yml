@@ -114,7 +114,7 @@ jobs:
 
           # ---- 4. informational: tag rulesets that may block the force-push -
           rules_note="unreadable (checked manually)"
-          if rules=$(gh api "repos/$GH_REPO/rules/rulesets" --jq '[.[] | select(.target == "tag")] | length' 2>/dev/null); then
+          if rules=$(gh api "repos/$GH_REPO/rulesets" --jq '[.[] | select(.target == "tag")] | length' 2>/dev/null); then
             if [ "$rules" = "0" ]; then
               rules_note="none"
             else
