@@ -370,6 +370,13 @@ def cmd_upload(a):
         if x.startswith("-"):
             continue
         files.append(x)
+    # RESTORE_FAIL: the rollback pass re-uploads single files out of
+    # DIST_DIR\.asset-backup; fail only the first one so ASSETS_RESTORED=0
+    # while the two later ones still come back (manual-repair WARNING).
+    if flag("RESTORE_FAIL") and not flag("RESTORE_DID_FAIL") \
+            and any(".asset-backup" in f for f in files):
+        open(os.path.join(ST, "RESTORE_DID_FAIL"), "w").close()
+        return 1
     for i, f in enumerate(files):
         if not os.path.isfile(f):
             return 1
@@ -518,7 +525,8 @@ clear_env() {
           TAG SKIP_SWEEP SWEEP_OUT PKG_DIR 2>/dev/null || true
     rm -f "$STATE/FAIL_PUSH" "$STATE/UPLOAD_FAIL" "$STATE/UPLOAD_DID_FAIL" \
           "$STATE/RACE" "$STATE/RACE_DONE" "$STATE/API_FAIL" "$STATE/EDIT_FAIL" \
-          "$STATE/ASSET_API_FAIL" 2>/dev/null || true
+          "$STATE/ASSET_API_FAIL" "$STATE/RESTORE_FAIL" \
+          "$STATE/RESTORE_DID_FAIL" 2>/dev/null || true
 }
 
 scenario() { CUR="$1"; echo "== $1 : $2 =="; }
@@ -793,6 +801,51 @@ has_out "4/6 perf sweep skipped"
 has_out "5/6 running the harness"
 has_out "6/6 no ventoy-sort package"
 has_out "PASS: download OK, checksums OK, harness RC=0"
+
+# ---------------------------------------------------------------- T16 --------
+scenario "T16" "rollback pass fails: manual-repair WARNING, backup kept"
+setup_sandbox; clear_env
+touch "$STATE/UPLOAD_FAIL" "$STATE/RESTORE_FAIL"
+export MOVE_TAG=1 CONFIRM_MOVE_TAG=vTEST
+run_env vTEST
+chk_rc 1
+has_out "upload failed - restoring the previous assets"
+has_out "WARNING: some previous assets could NOT be restored"
+has_out "reload them manually from"
+has_out "The remote tag points to the moved object"
+has_out "Fix the cause and rerun with MOVE_TAG=1"
+has_out "publish the repaired draft manually"
+# the success-side rollback messages must NOT be claimed
+chk_out_absent "previous assets restored"
+chk_out_absent "The previous assets are back in place"
+chk_out_absent "PASS:"
+[ "$(jval draft vTEST)" = "true" ] && note_ok "release left as draft" || note_bad "release republished!"
+# first rollback upload (zip) failed: it still holds the rebuilt copy,
+# while the two later ones came back byte-identical to their backups.
+Z_SHA="$(sha256sum "$DIST/Ventoy-vTEST.zip" | cut -d' ' -f1)"
+[ "$(jval assets/Ventoy-vTEST.zip vTEST | tr -d '\"')" = "$Z_SHA" ] \
+    && note_ok "zip still holds the rebuilt copy (not restored)" \
+    || note_bad "zip asset unexpected"
+BK_Z_SHA="$(sha256sum "$DIST/.asset-backup/Ventoy-vTEST.zip" | cut -d' ' -f1)"
+[ "$Z_SHA" != "$BK_Z_SHA" ] \
+    && note_ok "zip differs from backup: manual reload required" \
+    || note_bad "zip matches backup?!"
+for f in "Ventoy-vTEST.tar.gz" "SHA256SUMS"; do
+    BK="$DIST/.asset-backup/$f"
+    BK_SHA="$(sha256sum "$BK" | cut -d' ' -f1)"
+    [ "$(jval "assets/$f" vTEST | tr -d '\"')" = "$BK_SHA" ] \
+        && note_ok "$f restored from backup" \
+        || note_bad "$f asset != backup content"
+done
+# the backup must stay complete for the manual reload
+for f in "Ventoy-vTEST.zip" "Ventoy-vTEST.tar.gz" "SHA256SUMS"; do
+    [ -f "$DIST/.asset-backup/$f" ] && note_ok "$f backup kept" || note_bad "$f backup missing"
+done
+chk_cnt "gh release upload vTEST" 4
+chk_cnt "gh release upload vTEST .*asset-backup" 3
+chk_cnt "gh release edit vTEST .*--draft=false" 0
+[ "$(git --git-dir "$ORIGIN" rev-parse refs/tags/vTEST)" = "$(git -C "$REPO" rev-parse refs/tags/vTEST)" ] \
+    && note_ok "origin tag did move (push succeeded)" || note_bad "tag not moved"
 
 # ---------------------------------------------------------------- report -----
 echo
