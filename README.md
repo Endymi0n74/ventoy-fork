@@ -98,7 +98,7 @@ Please refer to [BuildVentoyFromSource.txt](DOC/BuildVentoyFromSource.txt)
 [![CI](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
 
-Latest release: **[v1.1.18-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.18-ventoy-sort)**
+Latest release: **[v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort)**
 — full source archives (zip / tar.gz) with a `SHA256SUMS` checksum file.
 
 Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`) with a focused improvement to menu image sorting:
@@ -107,7 +107,7 @@ Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf
 - Checks that the recorded image count matches the actual list length before sorting, and reports mismatches while continuing safely.
 - Fixes a list-splitting bug that could hang boot-menu construction with three or more images.
 
-The stable release is **[v1.1.18-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.18-ventoy-sort)**. The **[v1.1.19-ventoy-sort-rc1 prerelease](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1)** exercises the release end-to-end CI; it is a test prerelease, not the stable release.
+The stable release is **[v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort)** (published 2026-10-02, annotated tag on commit `6056a895`). The **[v1.1.19-ventoy-sort-rc1](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1)** release rehearsed the end-to-end publishing chain - its tag was retargeted with `MOVE_TAG=1` and the release promoted out of prerelease - and is kept for comparison.
 
 The change is validated by a standalone regression harness with production-parity checks and a 30-seed performance sweep. Validation requires only clang and Python 3 on Windows—no Docker, WSL, or virtual machine. A real USB boot with the modified GRUB and a full ISO build have **not** been validated; deployment uses the official v1.1.17 runtime payload.
 
@@ -145,7 +145,7 @@ Before a real move, run the *Preflight move-tag* GitHub Actions workflow
 `-f commit_sha=<expected head>` to also cross-check the announced target): it
 fails closed unless the tag exists, a release is attached - drafts included -
 and that release is mutable. The same check gates the release-e2e job on every
-release publication.
+release publication. Every push to `master` also runs the offline MOVE_TAG bench (146 assertions, `git`/`gh` mocked, no network); pass `--check` to the bench to add its workdir-leak assertions.
 
 Example of the GO job summary for `v1.1.18-ventoy-sort`:
 

@@ -151,6 +151,25 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
 - `1172be6a` — job CI `MOVE_TAG bench` (offline) et option `--check` de
   détection des fuites de workdir.
 
+## Publication
+
+Release stable publiée le **2026-10-02** :
+<https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort>
+
+| asset | sha256 |
+|---|---|
+| `Ventoy-v1.1.19-ventoy-sort.zip` | `472eb71000f1843ccdfaf55f46d7116dcd4d96cbb68929b17bf4dc307b493c73` |
+| `Ventoy-v1.1.19-ventoy-sort.tar.gz` | `0a980b41116dbbd3960363c4e8eedcea0b02cf1244658216d010d0e58fe9787d` |
+
+Tag annoté `cf4912b4` sur le commit `6056a895`. Validation : `dist\check_release.cmd`
+exécuté en local (checksums, sweep 30 seeds, harnais 26/26) et workflow CI du
+run de publication — préflight `tag rulesets: none` / verdict GO, puis jobs
+`release-e2e` et harnais verts.
+
+La prerelease `v1.1.19-ventoy-sort-rc1` (release #400353077) avait été
+replacée sur le head de `master` avec `MOVE_TAG=1`, puis promue en stable ;
+son tag pointe sur `1172be6a`.
+
 Le tag `v1.1.19-ventoy-sort` est annoté sur le commit de release
 (qui inclut cette mise à jour des notes) ; les archives
 (`git archive`) et le `SHA256SUMS` publiés correspondent

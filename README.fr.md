@@ -5,8 +5,8 @@
 [![CI](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
 
-- **Dernière version stable :** [v1.1.18-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.18-ventoy-sort)
-- **Version de test :** [v1.1.19-ventoy-sort-rc1](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1) — prerelease utilisée pour tester le workflow CI de publication ; ce n’est pas la version stable.
+- **Dernière version stable :** [v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort)
+- **Ancienne version de test :** [v1.1.19-ventoy-sort-rc1](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1) — même contenu, tag replacé sur le head de `master` avec `MOVE_TAG=1` puis sorti du canal prerelease ; conservée pour comparaison.
 
 Ce fork est basé sur [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17 upstream exact** (`7cbdc5cf`). Il apporte une amélioration ciblée au tri des images du menu Ventoy.
 
@@ -29,7 +29,7 @@ python build_sort_test.py --perf
 
 Le chemin de clang peut être défini par la variable d’environnement `CLANG`. Sinon, le script recherche `C:\Program Files\LLVM\bin\clang.exe`, puis `clang` dans le `PATH`.
 
-Le workflow GitHub Actions exécute les tests normaux et le mode performance à chaque push sur `master`. À la publication d’une release, il télécharge les archives, vérifie `SHA256SUMS`, extrait le ZIP, lance un sweep de performance sur 30 seeds puis relance le harnais. Pour rejouer ce contrôle manuellement :
+Le workflow GitHub Actions exécute les tests normaux et le mode performance à chaque push sur `master`. À la publication d’une release, il télécharge les archives, vérifie `SHA256SUMS`, extrait le ZIP, lance un sweep de performance sur 30 seeds puis relance le harnais. Le même workflow exécute aussi le banc offline du mode `MOVE_TAG` (146 assertions, `git`/`gh` mockés, aucun accès réseau) à chaque push sur `master` ; le job de publication est précédé du contrôle *Preflight move-tag*. Pour rejouer ce contrôle manuellement :
 
 ```bat
 dist\check_release.cmd
