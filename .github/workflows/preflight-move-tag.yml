@@ -121,6 +121,9 @@ jobs:
               rules_note="$rules tag ruleset(s): the force-push may be rejected by rules"
             fi
           fi
+          # Log it too: step summaries are not exposed by the REST API, so the
+          # only way to read this line from CI is `gh run view --log`.
+          echo "tag rulesets: $rules_note"
 
           # ---- 5. informational: where the tag lands on the rerun ----------
           def_branch="$(gh api "repos/$GH_REPO" --jq '.default_branch')"
