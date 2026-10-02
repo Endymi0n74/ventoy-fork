@@ -18,6 +18,10 @@ on:
         description: Existing tag/release to move (e.g. v1.1.18-ventoy-sort)
         required: true
         type: string
+      commit_sha:
+        description: Optional announced target commit; NO-GO if it is not the default-branch head (abbreviated SHA accepted)
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -39,6 +43,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ inputs.tag }}
+          COMMIT_SHA: ${{ inputs.commit_sha }}
         run: |
           set -euo pipefail
           SUMMARY="$GITHUB_STEP_SUMMARY"
@@ -109,6 +114,20 @@ jobs:
           def_branch="$(gh api "repos/$GH_REPO" --jq '.default_branch')"
           head_sha="$(gh api "repos/$GH_REPO/commits/$def_branch" --jq '.sha')"
 
+          # ---- 6. optional: announced target must be that remote head ------
+          # Mirrors make_release.cmd refusing to run when HEAD != origin/master:
+          # a declared target that is not the branch head means the tag would
+          # land elsewhere than announced (or the caller works on a stale ref).
+          target_note="not specified (skip)"
+          if [ -n "$COMMIT_SHA" ]; then
+            want="${COMMIT_SHA,,}"
+            have="${head_sha,,}"
+            if [ "$want" != "$have" ] && [[ "$have" != "$want"* ]]; then
+              fail "announced target \`${COMMIT_SHA:0:12}\` is NOT the \`$def_branch\` head \`${head_sha:0:12}\` - the tag would not land where you announced (stale remote on your side, or wrong commit)."
+            fi
+            target_note="\`${head_sha:0:12}\` == announced \`${COMMIT_SHA:0:12}\`"
+          fi
+
           # ---- verdict -----------------------------------------------------
           {
             echo "## Preflight: move \`$TAG\`"
@@ -122,6 +141,7 @@ jobs:
             echo "| immutable | $rel_immutable (gate passed) |"
             echo "| release assets | $rel_assets |"
             echo "| \`$def_branch\` head | \`${head_sha:0:12}\` (a rerun moves the tag here) |"
+            echo "| announced target | $target_note |"
             echo "| tag rulesets | $rules_note |"
             echo ""
             echo "**Verdict: GO** - safe to run locally:"
