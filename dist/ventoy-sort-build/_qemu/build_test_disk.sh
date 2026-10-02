@@ -10,14 +10,19 @@
 set -euo pipefail
 B=/mnt/d/Codex/ventoy/dist/ventoy-sort-build
 Q=$B/_qemu
-Z=$B/ventoy-1.1.18-ventoy-sort-windows.zip
+# ZIP : le paquet Windows à tester. Par défaut le plus récent ventoy-*-windows.zip
+# du dossier de build (ZIP=... pour en choisir un explicitement).
+Z=${ZIP:-$(ls -t "$B"/ventoy-*-ventoy-sort-windows.zip | head -1)}
+echo "paquet testé : $(basename "$Z")"
 MODE=${1:-cli}
 
 rm -rf "$Q/pkg"
 mkdir -p "$Q"
 cd "$Q"
 unzip -q "$Z" -d pkg
-P=$Q/pkg/ventoy-1.1.18-ventoy-sort
+# racine INTERNE du zip (« ventoy-<version> », sans le suffixe -windows du nom de fichier)
+P=$Q/pkg/$(unzip -Z1 "$Z" | head -1 | cut -d/ -f1)
+echo "racine du zip  : $(basename "$P")"
 [ -f "$P/Ventoy2Disk.exe" ] && [ -f "$P/boot/boot.img" ] || { echo "ZIP_INCOMPLET"; exit 1; }
 
 # --- efi.img : image officielle FAT16 "VTOYEFI" (contenu de la partition 2) ---

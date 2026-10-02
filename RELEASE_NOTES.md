@@ -177,10 +177,13 @@ correspondante, par `dist/ventoy-sort-build/build_ventoy_sort_windows.sh` et
 (i386-pc, x86_64-efi, i386-efi, arm64-efi) avec le correctif de tri fusion,
 `Ventoy2Disk` recompilé avec MSBuild (paquet Windows), PE signés avec la **même
 clé MOK locale** dans les deux paquets (enrôlement requis, voir
-`PROCEDURE-SECURE-BOOT.md`). Le paquet Linux embarque en plus le certificat
-d’enrôlement (`ENROLL*.CER`) dans son image disque : son `ventoy.disk.img.xz` a
-donc une empreinte différente de celui du paquet Windows, ce n’est pas une
-divergence de build. Empreintes des artefacts :
+`PROCEDURE-SECURE-BOOT.md`). Les deux images disque `ventoy.disk.img.xz` sont
+**strictement identiques** (sha256 `bbed13f6…`, 14 199 908 octets) et embarquent
+l’une comme l’autre le certificat du fork à la racine
+(`ENROLL_THIS_KEY_IN_MOKMANAGER.cer`, 836 o, la même clé que celle qui signe les
+chargeurs) : les deux paquets se vérifient donc avec la même procédure
+d’enrôlement. Les archives diffèrent seulement par leur format et leur contenu
+hors image (45 entrées en zip contre 137 en tar.gz). Empreintes des artefacts :
 `SHA256SUMS-ventoy-sort-windows.txt` et `SHA256SUMS-ventoy-sort-linux.txt`.
 
 Tag annoté `cf4912b4` sur le commit `6056a895`. Validation : `dist\check_release.cmd`
@@ -188,6 +191,18 @@ exécuté en local (checksums, sweep 30 seeds, harnais 26/26, 3 contrôles sur
 chacun des deux paquets binaires) et workflow CI du run de
 publication — préflight `tag rulesets: none` / verdict GO, puis jobs
 `release-e2e` et harnais verts.
+
+Le paquet Windows a en outre été **amorcé réellement** dans QEMU
+(`dist/ventoy-sort-build/_qemu/boot_check.sh`), sur une image disque reconstruite
+depuis le zip lui-même (MBR officiel, `core.img`, `ventoy.disk.img` patchée) avec
+douze faux ISO écrits dans un ordre volontairement désordonné : menu « Ventoy
+1.1.19-ventoy-sort » en **BIOS** et en **UEFI x64**, ordre de tri fusion exact
+(`007, 01-first, 0c-num, 10-apple, 2-beta, aardvark, B, delta, KiLo, M, mango,
+zeta`), aucune occurrence de « mismatch ». Les chargeurs signés sont **acceptés
+par OVMF avec Secure Boot activé** une fois la clé MOK enrôlée, et **refusés**
+(`Verification failed: (0x1A) Security Violation`) sur le contrôle négatif où la
+clé du fork est absente du store — la signature est donc bien ce qui autorise le
+démarrage, pas un contournement du firmware.
 
 La prerelease `v1.1.19-ventoy-sort-rc1` (release #400353077) avait été
 replacée sur le head de `master` avec `MOVE_TAG=1`, puis promue en stable ;
