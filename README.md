@@ -147,6 +147,18 @@ fails closed unless the tag exists, a release is attached - drafts included -
 and that release is mutable. The same check gates the release-e2e job on every
 release publication. Every push to `master` also runs the offline MOVE_TAG bench (146 assertions, `git`/`gh` mocked, no network); pass `--check` to the bench to add its workdir-leak assertions.
 
+The *Release package* workflow (`.github/workflows/build-package.yml`) then
+builds the binary Windows package on a `windows-2022` runner: it installs Ubuntu
+in WSL, rebuilds `ventoy-<version>-windows.zip` from scratch (GRUB on 4 targets,
+MSVC exes, Secure Boot signatures), runs the 3 package checks, asserts that the
+disk image embeds the MOK certificate supplied by the `VENTOY_SORT_MOK_*`
+secrets - a build that signed with a throwaway key fails instead of publishing -
+and attaches the zip plus `SHA256SUMS-ventoy-sort-windows.txt` to the release
+when they are missing. An already published asset is kept as it is; pass
+`clobber=true` to replace it. Run it on demand with
+`gh workflow run build-package.yml -f tag=<tag>`. It never runs on a plain push:
+this build takes about 45 minutes.
+
 Example of the GO job summary for `v1.1.18-ventoy-sort`:
 
 ````
