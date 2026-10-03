@@ -122,15 +122,21 @@ jobs:
       - name: Build the Windows package
         shell: wsl-bash {0}
         env:
-          # Windows variables do NOT reach the WSL process on their own - only
-          # WSLENV forwards them. Without this line the build would find no key,
-          # silently mint a throwaway one and sign the package with a
-          # certificate nobody has been told to enrol.
+          # Both halves are required. WSLENV alone only *forwards* a variable
+          # that exists on the Windows side: naming it here without also
+          # exporting the secret left the build with no key, so it minted a
+          # throwaway one and every other check still passed.
+          VENTOY_SORT_MOK_KEY: ${{ secrets.ventoy_sort_mok_key }}
+          VENTOY_SORT_MOK_CRT: ${{ secrets.ventoy_sort_mok_crt }}
           WSLENV: VENTOY_SORT_MOK_KEY/u:VENTOY_SORT_MOK_CRT/u
         run: |
           set -euo pipefail
           test -f dist/ventoy-sort-build/build_ventoy_sort_windows.sh \
             || { echo "::error::run from the repository root"; exit 1; }
+          # Fail here, in the shell that must see them, rather than 40 minutes
+          # later at the certificate comparison.
+          test -n "${VENTOY_SORT_MOK_KEY:-}" && test -n "${VENTOY_SORT_MOK_CRT:-}" \
+            || { echo "::error::VENTOY_SORT_MOK_KEY/_CRT did not reach the WSL process (WSLENV); the build would mint a throwaway Secure Boot key"; exit 1; }
           cd dist/ventoy-sort-build
           ./build_ventoy_sort_windows.sh \
             "FORK_VERSION=${{ env.TAG }}" \
@@ -150,9 +156,12 @@ jobs:
       - name: Package is signed with the supplied MOK key
         shell: wsl-bash {0}
         env:
+          VENTOY_SORT_MOK_CRT: ${{ secrets.ventoy_sort_mok_crt }}
           WSLENV: VENTOY_SORT_MOK_CRT/u
         run: |
           set -euo pipefail
+          test -n "${VENTOY_SORT_MOK_CRT:-}" \
+            || { echo "::error::VENTOY_SORT_MOK_CRT did not reach the WSL process (WSLENV)"; exit 1; }
           # The failure this guards against is silent: if the build had not
           # found the key it would have minted its own, every check would still
           # pass, and the published package would carry a certificate no
