@@ -111,7 +111,11 @@ jobs:
           test -f dist/ventoy-sort-build/build_ventoy_sort_linux.sh \
             || { echo "::error::run from the repository root"; exit 1; }
           cd dist/ventoy-sort-build
-          ./build_ventoy_sort_linux.sh \
+          # Invoked through bash, not as ./script: the repository tracks its
+          # shell scripts mode 644 (as upstream Ventoy does), so an exec bit is
+          # not there on a native checkout. build-package.yml gets away with
+          # ./script only because WSL mounts the Windows filesystem permissively.
+          bash build_ventoy_sort_linux.sh \
             "FORK_VERSION=${{ env.TAG }}" \
             "BASE_LINUX=$PWD/../../_dl/ventoy-1.1.17-linux.tar.gz"
 
