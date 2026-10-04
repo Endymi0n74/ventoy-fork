@@ -26,6 +26,46 @@ commits docs/tooling ci-dessous.
   avant de trier ; en cas d'écart, un message est affiché sur la
   console (le tri continue, sans risque prouvé par le harnais).
 
+### La version du fork tient dans la fenêtre du Linux
+
+`LinuxGUI/Ventoy2Disk`, `INSTALL/tool/VentoyGTK.glade` et
+`LinuxGUI/WebUI/index.html` : les interfaces amont sont dimensionnées pour
+une version de six caractères (`1.0.53`). La chaîne du fork en compte 17
+(`1.1.19-ventoy-sort`) : elle débordait de son cadre, par-dessus `exFAT`
+et `MBR`, et était rognée.
+
+- Qt : fenêtre 441 → 660 px, cadres de version 205 → 315 px, libellés
+  135 → 301 px, et `Ventoy2DiskWindow::SetVersionLabel()` qui ajuste la
+  taille de police entre 20 pt et un plancher de 9 pt. `1.1.19-ventoy-sort`
+  rend à 20 pt ; la variante `-rc1` rend à 16 pt dans les deux libellés Qt.
+- GTK : libellés de version 120 → 305 px. WebUI : `.vtoy_ver` passe en
+  largeur intrinsèque, boîtes 250 → 430 px.
+- `Ventoy2Disk.pro` : les `INCLUDEPATH` absolus `/home/panda/...` deviennent
+  relatifs à `$$PWD` — le fichier n’était construisible que sur la machine de
+  son auteur.
+- Reconstruction locale : `GUI_REBUILD=1` compile et rend le binaire Qt natif
+  hors écran. Le paquet contient quatre architectures (x86_64, i386, aarch64,
+  mips64el) ; seule la x86_64 peut être remplacée par cette compilation native.
+  Avant substitution, le script compare les versions de symboles GLIBC et Qt
+  aux exigences du runtime officiel. Le WSL Ubuntu 26.04 exige GLIBC_2.38 et
+  Qt_5.15, contre GLIBC_2.14 et Qt_5.9 pour la baseline ; la substitution est
+  donc refusée et le runtime livré reste intact. Un hôte compatible peut
+  reconstruire puis remplacer la cible x86_64 seule.
+- Non vérifié : la GUI **Windows** (`Ventoy2Disk.rc` / `WinDialog.c`) mesure
+  150 px disponibles pour 136 px de texte en `Courier New` 10 — elle ne
+  déborde pas aujourd’hui, mais un suffixe `-rc1` la ferait déborder. Ces
+  fichiers sont laissés intacts.
+
+### Tests de mise en page de la version
+
+- `dist/tests/test_gui_version_layout.py` : largeur réelle du texte (lecteur
+  TTF) comparée au cadre **déclaré** dans chaque source. Qt, GTK, WebUI.
+  Sortie 0 / 1 / 2 (2 = police absente, ni succès ni échec).
+- `dist/tests/test_gui_render.sh` + `dist/tests/gui_probe.cpp` : compile la
+  GUI (Qt 5.15), instancie la vraie forme `.ui`, appelle le vrai
+  `SetVersionLabel()`, compare la largeur du texte **rendu** au cadre et écrit
+  une capture PNG dans `dist/tests/out/`. C’est le seul contrôle qui dise
+  quelque chose de l’écran ; il sort en 1 sur un débordement réel.
 ### Harnais de validation autonome (sous `ventoy/`, hors arbre GRUB)
 
 - `ventoy_sort_test.c` : ~30 régressions — comparateurs (modes casse,
@@ -59,6 +99,16 @@ commits docs/tooling ci-dessous.
   bare locale) de 146 assertions sur le mode `MOVE_TAG` et son rollback ;
   l'option `--check` vérifie en fin de run qu'aucun artefact du banc n'a
   fui hors du sandbox.
+- Les builds Windows et Linux ont des lanceurs `.cmd` supervisés côté Windows
+  par `run_wsl_build.ps1` : `wsl.exe` reste au premier plan et le wrapper WSL
+  écrit les marqueurs `started` puis `done:<code>`. Si WSL s'arrête avant le
+  marqueur final (ou si le shell est interrompu par un signal), le superviseur
+  relance le build complet, jusqu'à deux fois avec 15 s d'intervalle par défaut.
+  Un échec normal du build est transmis sans nouvelle tentative. Les valeurs
+  sont réglables avec `WSL_BUILD_RETRIES`, `WSL_RETRY_DELAY_SECONDS` et
+  `WSL_DISTRO` ; sur le build Windows, les variables de clé MOK sont transmises
+  à WSL via `WSLENV`. Le CI teste succès, échec sans retry et arrêt/reprise VM
+  simulés (`dist/tests/test_wsl_build_supervisor.sh`).
 - Banc de reproductibilité du paquet Linux :
   `dist/tests/test_linux_reproducibility.sh` construit le paquet **deux fois
   dans deux racines isolées** de longueurs différentes (copies jetables du
@@ -172,7 +222,62 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
 
 ## Publication
 
-Release stable publiée le **2026-10-02** :
+Release stable publiée le **2026-10-04** :
+<https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.20-ventoy-sort>
+
+| asset | sha256 |
+|---|---|
+| `Ventoy-v1.1.20-ventoy-sort.zip` | `6eb3e3aa03ae15c454fb6b9fe907e7a8e24a88cdd76d71cbb3221700da13d505` |
+| `Ventoy-v1.1.20-ventoy-sort.tar.gz` | `0313f22d144911b9b0acb22952fdecc8c7b15308c14e4ba4b8b6b641dcdd3689` |
+| `ventoy-1.1.20-ventoy-sort-windows.zip` | `a68944d7a49136f3c81b712be9c223e5130aec1aaaf2db5e988b416d136bbbdc` |
+| `ventoy-1.1.20-ventoy-sort-linux.tar.gz` | `f27e2b898dd7c0a42102bac85e54ee4cbecbc50706a20b058374f3ecbd58db20` |
+
+Le premier asset est l’**archive source zip**, le deuxième son équivalent
+tar.gz. Les deux suivants sont les **paquets binaires**, prêts à copier sur
+une clé USB.
+
+Paquet **Windows** — 17 246 599 o, 45 fichiers, 5 contenus modifiés face à
+l’archive officielle 1.1.17 (`Ventoy2Disk.exe`, `altexe/Ventoy2Disk_X64.exe`,
+`boot/core.img.xz`, `ventoy/ventoy.disk.img.xz`, `ventoy/version`), aucun
+ajouté ni manquant.
+
+Paquet **Linux** — 20 873 340 o, 137 fichiers, 3 contenus modifiés
+(`boot/core.img.xz`, `ventoy/ventoy.disk.img.xz`, `ventoy/version`), aucun
+ajouté ni manquant. Construit par le workflow *Release package (Linux)* sur
+`ubuntu-24.04`, runner volontairement figé : la version du compilateur change
+les octets produits par GRUB et déplacerait silencieusement l’empreinte publiée.
+`GUI_REBUILD` reste désactivé, le garde-fou ABI refusant la substitution sur
+une toolchain récente ; le paquet embarque donc les binaires GUI officiels.
+
+Empreinte du certificat MOK embarqué dans ce paquet (identique à celle
+documentée plus bas pour la v1.1.19) :
+
+    8A:78:E8:AC:D9:88:D6:1E:ED:FF:97:64:8A:82:0A:F1:87:E0:10:CA:83:E5:27:B9:FA:6C:E2:06:DF:25:AA:89
+
+**Le zip ne contient aucun fichier `.cer`.** Le certificat est à la racine de la
+partition `ventoy/` de l’image disque, sous le nom
+`ENROLL_THIS_KEY_IN_MOKMANAGER.cer` (836 o) ; il se lit sur la clé USB après
+copie du paquet, ou s’extrait ainsi :
+
+```
+xz -dc ventoy/ventoy.disk.img.xz > /tmp/disk.img
+mtype -i /tmp/disk.img ::/ENROLL_THIS_KEY_IN_MOKMANAGER.cer > ventoy-sort-MOK.cer
+```
+
+Sans enrôlement, ou avec Secure Boot actif et la clé absente du store, le
+démarrage est **refusé** (`Verification failed: (0x1A) Security Violation`).
+La procédure complète reste dans `dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md`.
+
+Tag annoté `da7af651`. Construit par le workflow *Release package* à partir de
+la baseline officielle épinglée ; les trois contrôles de
+`dist/check_release_pkg.py` (empreinte, marqueur du fork dans les trois
+chargeurs EFI, inventaire et contenus vs baseline) et la comparaison du
+certificat embarqué avec le secret du dépôt ont réussi **avant** l’attachement
+de l’asset. Les deux exécutions déclenchées par la publication ont produit la
+même empreinte `a68944d7…` : reproductibilité confirmée sur deux runners
+indépendants.
+
+Release stable précédente, publiée le **2026-10-02** :
 <https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort>
 
 | asset | sha256 |

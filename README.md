@@ -98,8 +98,21 @@ Please refer to [BuildVentoyFromSource.txt](DOC/BuildVentoyFromSource.txt)
 [![CI](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
 
-Latest release: **[v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort)**
-— full source archives (zip / tar.gz) with a `SHA256SUMS` checksum file.
+Latest release: **[v1.1.20-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.20-ventoy-sort)** (published 2026-10-04, annotated tag on commit `da7af651`). It publishes seven distinct assets:
+
+| Type | Asset | Contents | SHA-256 |
+|---|---|---|---|
+| Source archive | [Ventoy-v1.1.20-ventoy-sort.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.zip) | Full source tree; compile it yourself | `6eb3e3aa03ae15c454fb6b9fe907e7a8e24a88cdd76d71cbb3221700da13d505` |
+| Source archive | [Ventoy-v1.1.20-ventoy-sort.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.tar.gz) | Full source tree; compile it yourself | `0313f22d144911b9b0acb22952fdecc8c7b15308c14e4ba4b8b6b641dcdd3689` |
+| Binary package (Windows) | [ventoy-1.1.20-ventoy-sort-windows.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-windows.zip) | Ready-to-use Windows package; Secure Boot MOK enrollment required | `a68944d7a49136f3c81b712be9c223e5130aec1aaaf2db5e988b416d136bbbdc` |
+| Binary package (Linux) | [ventoy-1.1.20-ventoy-sort-linux.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-linux.tar.gz) | Ready-to-use Linux package; Secure Boot MOK enrollment required | `f27e2b898dd7c0a42102bac85e54ee4cbecbc50706a20b058374f3ecbd58db20` |
+| Checksum file | [SHA256SUMS](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS) | Covers the two source archives above | — |
+| Checksum file | [SHA256SUMS-ventoy-sort-windows.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-windows.txt) | Covers the Windows zip plus 10 further build artifacts | — |
+| Checksum file | [SHA256SUMS-ventoy-sort-linux.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-linux.txt) | Covers the Linux tar.gz plus 8 further build artifacts | — |
+
+The first two are **source archives**, not installable builds; the Windows and Linux assets are the **ready-to-boot packages**, and the four checksums above are SHA-256.
+
+The Windows package embeds the official Ventoy 1.1.17 runtime, so the Linux GUI layout fix carried by this release lives in the **sources**, not in that binary.
 
 Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`) with a focused improvement to menu image sorting:
 
@@ -107,7 +120,9 @@ Fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf
 - Checks that the recorded image count matches the actual list length before sorting, and reports mismatches while continuing safely.
 - Fixes a list-splitting bug that could hang boot-menu construction with three or more images.
 
-The stable release is **[v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort)** (published 2026-10-02, annotated tag on commit `6056a895`). The **[v1.1.19-ventoy-sort-rc1](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1)** release rehearsed the end-to-end publishing chain - its tag was retargeted with `MOVE_TAG=1` and the release promoted out of prerelease - and is kept for comparison.
+- Windows and Linux binary packages can be rebuilt from source and attached to releases automatically; see **[Windows binary package publishing](#publishing-the-windows-binary-package)** for the end-to-end steps. See the [release notes](RELEASE_NOTES.md) for the WSL build retry supervisor.
+
+The stable release is **[v1.1.20-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.20-ventoy-sort)** (published 2026-10-04, annotated tag on commit `da7af651`). The previous stable release is **[v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort)** (2026-10-02, commit `6056a895`); its **[v1.1.19-ventoy-sort-rc1](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1)** release rehearsed the end-to-end publishing chain - its tag was retargeted with `MOVE_TAG=1` and the release promoted out of prerelease - and is kept for comparison.
 
 The change is validated by a standalone regression harness with production-parity checks and a 30-seed performance sweep. Validation requires only clang and Python 3 on Windows—no Docker, WSL, or virtual machine. A real USB boot with the modified GRUB and a full ISO build have **not** been validated; deployment uses the official v1.1.17 runtime payload.
 
@@ -147,17 +162,113 @@ fails closed unless the tag exists, a release is attached - drafts included -
 and that release is mutable. The same check gates the release-e2e job on every
 release publication. Every push to `master` also runs the offline MOVE_TAG bench (146 assertions, `git`/`gh` mocked, no network); pass `--check` to the bench to add its workdir-leak assertions.
 
-The *Release package* workflow (`.github/workflows/build-package.yml`) then
-builds the binary Windows package on a `windows-2022` runner: it installs Ubuntu
-in WSL, rebuilds `ventoy-<version>-windows.zip` from scratch (GRUB on 4 targets,
-MSVC exes, Secure Boot signatures), runs the 3 package checks, asserts that the
-disk image embeds the MOK certificate supplied by the `VENTOY_SORT_MOK_*`
-secrets - a build that signed with a throwaway key fails instead of publishing -
-and attaches the zip plus `SHA256SUMS-ventoy-sort-windows.txt` to the release
-when they are missing. An already published asset is kept as it is; pass
-`clobber=true` to replace it. Run it on demand with
-`gh workflow run build-package.yml -f tag=<tag>`. It never runs on a plain push:
-this build takes about 45 minutes.
+When a stable release is published, the *Release package* workflow
+(`.github/workflows/build-package.yml`) builds and verifies the Windows binary
+package, then attaches its assets to the release. The complete procedure
+(secrets, automatic and manual runs, replacement, and validation) follows.
+
+## Publishing the Windows binary package
+
+### 1. Configure the Secure Boot key (once)
+
+In the GitHub repository, open **Settings → Secrets and variables → Actions**
+and add these two *repository secrets*:
+
+- `ventoy_sort_mok_key`: the unencrypted PEM MOK private key;
+- `ventoy_sort_mok_crt`: its matching PEM X.509 certificate.
+
+From WSL Ubuntu at the repository root, use the files under
+`dist/ventoy-sort-build/secureboot/` (`ventoy-sort-mok.key` and
+`ventoy-sort-mok.crt`) if a local build has already created them. Otherwise,
+create the pair at the paths expected by the local build and paste their
+contents into the GitHub secrets:
+
+```bash
+mkdir -p dist/ventoy-sort-build/secureboot
+openssl req -newkey rsa:2048 -nodes -sha256 \
+  -keyout dist/ventoy-sort-build/secureboot/ventoy-sort-mok.key \
+  -x509 -new -days 36500 -subj "/CN=ventoy-sort fork MOK/" \
+  -out dist/ventoy-sort-build/secureboot/ventoy-sort-mok.crt
+```
+
+They must form a valid pair. Local builds and CI will then use the same
+certificate. Never commit the private key, print it in logs, or
+pass it as a command-line argument. The workflow forwards it to WSL through
+`WSLENV`, checks the pair, and compares the certificate embedded in the package
+disk image with the supplied certificate before uploading. Missing or invalid
+secrets fail the job without publishing. Do not rotate this key casually:
+users would need to enroll the new Secure Boot certificate.
+
+### 2. Automatic build on release publication
+
+Publish a stable release using the usual process, for example
+`dist\make_release.cmd <tag>`. Once the release is published, GitHub Actions
+starts *Release package* on a `windows-2022` runner. It installs Ubuntu 24.04
+in WSL and rebuilds the zip from scratch: GRUB for four targets, MSVC
+executables, and Secure Boot signatures. It does not run on a plain push and
+skips prereleases. The package version must match the stable format
+`X.Y.Z-ventoy-sort`. For automatic runs, the workflow file must be present on the repository's
+default branch, and the commit referenced by the tag must contain the build
+scripts. For older tags without them, use the manual dispatch below with
+`--ref master`.
+
+The job downloads and verifies the SHA-256-pinned official 1.1.17 baseline,
+runs the MOK import bench, builds the package, then runs the three checks in
+`dist/check_release_pkg.py`: archive fingerprint, fork marker in the EFI
+loaders, and inventory/content comparison with the baseline. It also checks
+that the secret MOK certificate is the one embedded in the disk image.
+**Uploading only happens after every check passes.** Allow about 45–50 minutes;
+follow *Windows binary package (WSL + MSVC) and upload* in the **Actions** tab.
+
+### 3. Manual run or deliberate replacement
+
+To build or rerun the package for an existing release, install and authenticate
+the GitHub CLI (`gh auth login`), then run this from a terminal:
+
+```bash
+gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.2.0-ventoy-sort
+```
+
+Replace `v1.2.0-ventoy-sort` with the desired stable tag. A release must
+already exist for that tag; prereleases are not supported by the package
+version checks. `--ref master` selects the branch containing the workflow and
+build scripts; ensure it includes the package changes you intend to publish.
+The automatic release event instead builds the revision associated with that
+release tag, so publish tags only after the required build changes are in them.
+
+By default, if `ventoy-<version>-windows.zip` already exists, the workflow
+uploads nothing and leaves the existing assets unchanged, protecting the
+hashes recorded in release notes. The zip's presence triggers this behavior
+even if its checksum file is missing. To upload or repair both assets together,
+or to **deliberately replace** the package after changing the build, pass
+`clobber=true`:
+
+```bash
+gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.2.0-ventoy-sort -f clobber=true
+```
+
+Replacement uses `gh release upload --clobber` for the zip and
+`SHA256SUMS-ventoy-sort-windows.txt`. Do this only when changing the published
+fingerprint is intentional, and update the release notes accordingly.
+
+### 4. Verify the published assets
+
+After the workflow succeeds, the release should contain
+`ventoy-<version>-windows.zip` and `SHA256SUMS-ventoy-sort-windows.txt`. From
+the repository root, check the release and run the three package checks on the
+downloaded asset:
+
+```bat
+set "TAG=v1.2.0-ventoy-sort"
+set "SKIP_SWEEP=1"
+dist\check_release.cmd
+```
+
+`SKIP_SWEEP=1` skips only the performance sweep; step 6 still checks every
+package asset present. The Actions logs also show the package-check result,
+the certificate fingerprint comparison (`embedded` / `supplied`), and the
+final asset list.
+
 
 Example of the GO job summary for `v1.1.18-ventoy-sort`:
 
@@ -193,12 +304,12 @@ dist\make_release.cmd v1.1.18-ventoy-sort
 
 Details: [ventoy/RELEASE_NOTES.md](ventoy/RELEASE_NOTES.md) and [ventoy/PERF_FINDINGS.md](ventoy/PERF_FINDINGS.md).
 
-No Docker or Linux toolchain is required: the harness builds and runs natively
-on Windows with only **clang** and **Python 3** — no containers, no WSL, no VM.
-The clang path is resolved as: the `CLANG` environment variable when set, then
-the default `C:\Program Files\LLVM\bin\clang.exe`, then a plain `clang` on
-`PATH`. Building the boot ISO was deliberately dropped; deployment uses the
-official v1.1.17 runtimes.
+The sort regression harness requires no Docker, Linux toolchain, or VM; it runs
+on Windows with **clang** and **Python 3**. The binary package builders are a
+separate path: they use Windows/MSVC plus Ubuntu under WSL and the retry
+supervisor described above. The harness resolves clang from `CLANG` when set,
+then `C:\Program Files\LLVM\bin\clang.exe`, then `PATH`. Building the boot
+ISO was deliberately dropped; deployment uses the official v1.1.17 runtimes.
 
 # Document
 Title | Link

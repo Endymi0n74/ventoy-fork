@@ -5,8 +5,24 @@
 [![CI](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Endymi0n74/ventoy-fork/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/Endymi0n74/ventoy-fork)](https://github.com/Endymi0n74/ventoy-fork/releases/latest)
 
-- **Dernière version stable :** [v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort)
-- **Ancienne version de test :** [v1.1.19-ventoy-sort-rc1](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1) — même contenu, tag replacé sur le head de `master` avec `MOVE_TAG=1` puis sorti du canal prerelease ; conservée pour comparaison.
+- **Dernière version stable :** [v1.1.20-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.20-ventoy-sort)
+- **Version stable précédente :** [v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort) — seule release à fournir aussi le paquet binaire Linux ; [v1.1.19-ventoy-sort-rc1](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort-rc1) a répété la chaîne de publication de bout en bout (tag replacé avec `MOVE_TAG=1`, puis sortie du canal prerelease) et est conservée pour comparaison.
+
+La release stable fournit **sept assets**, à ne pas confondre :
+
+| Type | Asset | Contenu | SHA-256 |
+|---|---|---|---|
+| Archive source | [Ventoy-v1.1.20-ventoy-sort.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.zip) | Sources complètes, à compiler soi-même | `6eb3e3aa03ae15c454fb6b9fe907e7a8e24a88cdd76d71cbb3221700da13d505` |
+| Archive source | [Ventoy-v1.1.20-ventoy-sort.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.tar.gz) | Sources complètes, à compiler soi-même | `0313f22d144911b9b0acb22952fdecc8c7b15308c14e4ba4b8b6b641dcdd3689` |
+| Paquet binaire (Windows) | [ventoy-1.1.20-ventoy-sort-windows.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-windows.zip) | Prêt à l’emploi ; enrôlement de la clé MOK requis pour Secure Boot | `a68944d7a49136f3c81b712be9c223e5130aec1aaaf2db5e988b416d136bbbdc` |
+| Paquet binaire (Linux) | [ventoy-1.1.20-ventoy-sort-linux.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-linux.tar.gz) | Prêt à l’emploi ; enrôlement de la clé MOK requis pour Secure Boot | `f27e2b898dd7c0a42102bac85e54ee4cbecbc50706a20b058374f3ecbd58db20` |
+| Fichier de sommes | [SHA256SUMS](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS) | Couvre les deux archives sources ci-dessus | — |
+| Fichier de sommes | [SHA256SUMS-ventoy-sort-windows.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-windows.txt) | Couvre le zip Windows et 10 artefacts de build supplémentaires | — |
+| Fichier de sommes | [SHA256SUMS-ventoy-sort-linux.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-linux.txt) | Couvre le tar.gz Linux et 8 artefacts de build supplémentaires | — |
+
+Les deux premiers fichiers sont des **archives sources**, pas des builds installables. Les deux paquets binaires sont les artefacts amorçables de cette release. Les sommes ci-dessus sont des SHA-256.
+
+Le paquet Windows embarque le runtime officiel Ventoy 1.1.17 : le correctif de mise en page de la GUI Linux livré ici est donc présent dans les **sources**, pas dans ce binaire.
 
 Ce fork est basé sur [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17 upstream exact** (`7cbdc5cf`). Il apporte une amélioration ciblée au tri des images du menu Ventoy.
 
@@ -15,6 +31,7 @@ Ce fork est basé sur [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.1
 - Remplace le tri par sélection **O(n²)** par un **tri fusion stable O(n log n)**. Les images dont les noms sont égaux conservent leur ordre de découverte.
 - Vérifie que le nombre d’images enregistré correspond à la longueur réelle de la liste avant le tri ; en cas d’écart, un message est affiché et le traitement continue.
 - Corrige un bug de découpage de liste qui pouvait bloquer la construction du menu de démarrage dès trois images.
+- Affiche la version complète du fork dans la fenêtre du Linux (`1.1.20-ventoy-sort`) **sans débordement** : les interfaces amont sont dimensionnées pour une version de six caractères (`1.0.53`), et la chaîne du fork débordait de son cadre, par-dessus `exFAT` et `MBR`. Fenêtre élargie, cadres de version revus sur les trois surfaces (Qt, GTK, WebUI), et pour Qt une taille de police calculée à l’exécution (minimum 9 pt). Sur la version publiée ici, le rendu Qt réel tient à 20 pt ; voir les limites ABI ci-dessous.
 
 ## Validation
 
@@ -29,7 +46,7 @@ python build_sort_test.py --perf
 
 Le chemin de clang peut être défini par la variable d’environnement `CLANG`. Sinon, le script recherche `C:\Program Files\LLVM\bin\clang.exe`, puis `clang` dans le `PATH`.
 
-Le workflow GitHub Actions exécute les tests normaux et le mode performance à chaque push sur `master`. À la publication d’une release, il télécharge les archives, vérifie `SHA256SUMS`, extrait le ZIP, lance un sweep de performance sur 30 seeds puis relance le harnais. Le même workflow exécute aussi le banc offline du mode `MOVE_TAG` (146 assertions, `git`/`gh` mockés, aucun accès réseau) à chaque push sur `master` ; le job de publication est précédé du contrôle *Preflight move-tag*. Pour rejouer ce contrôle manuellement :
+Le workflow GitHub Actions exécute les tests normaux, le mode performance et le test du superviseur WSL (arrêt/reprise VM simulés) à chaque push sur `master`. À la publication d’une release, il télécharge les archives, vérifie `SHA256SUMS`, extrait le ZIP, lance un sweep de performance sur 30 seeds puis relance le harnais. Le même workflow exécute aussi le banc offline du mode `MOVE_TAG` (146 assertions, `git`/`gh` mockés, aucun accès réseau) à chaque push sur `master` ; le job de publication est précédé du contrôle *Preflight move-tag*. Pour rejouer ce contrôle manuellement :
 
 ```bat
 dist\check_release.cmd
@@ -37,7 +54,64 @@ dist\check_release.cmd
 
 Le sweep peut être omis pour une vérification rapide avec `set SKIP_SWEEP=1`.
 
-Le workflow *Release package* (`.github/workflows/build-package.yml`) construit ensuite le paquet binaire Windows sur un runner `windows-2022` : il installe Ubuntu dans WSL, reconstruit `ventoy-<version>-windows.zip` de zéro (GRUB sur 4 cibles, exes MSVC, signatures Secure Boot), exécute les 3 contrôles package, vérifie que l’image disque embarque bien le certificat MOK fourni par les secrets `VENTOY_SORT_MOK_*` — un build signé avec une clé jetable **échoue au lieu de publier** — puis joint le zip et `SHA256SUMS-ventoy-sort-windows.txt` à la release s’ils manquent. Un asset déjà publié est conservé tel quel ; `clobber=true` le remplace. Déclenchement à la demande : `gh workflow run build-package.yml -f tag=<tag>` (45 min environ). Le workflow ne s’exécute jamais sur un simple push.
+À la publication d’une release stable, le workflow *Release package* (`.github/workflows/build-package.yml`) construit et vérifie le paquet binaire Windows, puis joint ses assets à la release. La procédure complète (secrets, déclenchement, remplacement et validation) est décrite ci-dessous.
+
+## Publier le paquet binaire Windows
+
+### 1. Configurer la clé Secure Boot (une seule fois)
+
+Dans le dépôt GitHub, ouvrir **Settings → Secrets and variables → Actions** et créer ces deux *repository secrets* :
+
+- `ventoy_sort_mok_key` : clé privée MOK en PEM, non chiffrée ;
+- `ventoy_sort_mok_crt` : certificat X.509 correspondant, en PEM.
+
+Depuis WSL Ubuntu, à la racine du dépôt, utiliser pour un build local existant les fichiers sous `dist/ventoy-sort-build/secureboot/` (`ventoy-sort-mok.key` et `ventoy-sort-mok.crt`). Sinon, créer la paire aux chemins attendus par le build local, puis copier leur contenu dans les deux secrets GitHub :
+
+```bash
+mkdir -p dist/ventoy-sort-build/secureboot
+openssl req -newkey rsa:2048 -nodes -sha256 \
+  -keyout dist/ventoy-sort-build/secureboot/ventoy-sort-mok.key \
+  -x509 -new -days 36500 -subj "/CN=ventoy-sort fork MOK/" \
+  -out dist/ventoy-sort-build/secureboot/ventoy-sort-mok.crt
+```
+
+Ils doivent former une paire valide. Ainsi, les builds locaux et le CI utilisent le même certificat. La clé privée ne doit jamais être ajoutée au dépôt, imprimée dans les logs ni envoyée comme argument de commande. Le workflow la transmet à WSL via `WSLENV`, vérifie la paire et compare le certificat embarqué dans l’image du paquet au certificat secret avant tout envoi. En cas de secret absent ou invalide, le job échoue sans publier. Ne pas renouveler cette clé à la légère : les utilisateurs devraient enrôler le nouveau certificat Secure Boot.
+
+### 2. Déclenchement automatique à la publication
+
+Publier une release stable avec la procédure habituelle, par exemple `dist\make_release.cmd <tag>`. Une fois la release publiée, GitHub Actions lance *Release package* sur un runner `windows-2022` ; celui-ci installe Ubuntu 24.04 dans WSL et reconstruit le zip depuis zéro, avec GRUB recompilé pour quatre cibles, exécutables MSVC et signatures Secure Boot. Le workflow ne s’exécute pas sur un simple push et ignore les prereleases. La version du paquet doit respecter le format stable `X.Y.Z-ventoy-sort`. Pour que le déclenchement automatique soit disponible, le workflow `.github/workflows/build-package.yml` doit être présent sur la branche par défaut du dépôt et le commit du tag doit contenir les scripts de build requis. Pour un ancien tag qui ne les contient pas, utiliser le déclenchement manuel ci-dessous avec `--ref master`.
+
+Le job télécharge et vérifie la baseline officielle 1.1.17 épinglée par SHA-256, exécute le banc d’import MOK, construit le paquet, puis lance les trois contrôles de `dist/check_release_pkg.py` : empreinte, marqueur du fork dans les chargeurs EFI et comparaison de l’inventaire/contenu à la baseline. Il vérifie aussi que le certificat MOK secret est bien celui embarqué dans l’image disque. **L’upload n’a lieu qu’après la réussite de toutes ces étapes.** Compter environ 45 à 50 minutes ; suivre le job *Windows binary package (WSL + MSVC) and upload* dans l’onglet **Actions**.
+
+### 3. Déclenchement manuel ou remplacement volontaire
+
+Pour construire ou relancer le paquet d’une release existante, installer et authentifier GitHub CLI (`gh auth login`), puis exécuter depuis un terminal :
+
+```bash
+gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.2.0-ventoy-sort
+```
+
+Remplacer `v1.2.0-ventoy-sort` par le tag stable voulu. Une release associée à ce tag doit déjà exister. `--ref master` sélectionne la branche contenant le workflow et les scripts ; vérifier qu’elle comprend les changements à publier. Les prereleases ne sont pas prises en charge, car leur suffixe échoue au contrôle de version du paquet.
+
+Par défaut, si `ventoy-<version>-windows.zip` est déjà présent, le workflow n’envoie rien et conserve les assets existants tels quels — cela protège les références des notes de version. La présence du zip déclenche ce comportement même si le fichier de sommes est absent. Pour envoyer ou réparer les deux assets ensemble, ou **remplacer délibérément** le paquet après un changement du build, passer `clobber=true` :
+
+```bash
+gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.2.0-ventoy-sort -f clobber=true
+```
+
+Le remplacement utilise `gh release upload --clobber` pour le zip et `SHA256SUMS-ventoy-sort-windows.txt`. Ne l’utiliser que si cette modification d’empreinte est voulue et que les notes de release seront mises à jour en conséquence.
+
+### 4. Vérifier les assets publiés
+
+Après le succès du job, la release doit contenir `ventoy-<version>-windows.zip` et `SHA256SUMS-ventoy-sort-windows.txt`. Depuis la racine du dépôt, vérifier toute la release et appliquer les trois contrôles package à l’asset téléchargé :
+
+```bat
+set "TAG=v1.2.0-ventoy-sort"
+set "SKIP_SWEEP=1"
+dist\check_release.cmd
+```
+
+`SKIP_SWEEP=1` omet seulement le sweep de performance ; l’étape 6 continue de contrôler chaque paquet présent. Les journaux de l’action donnent aussi le résultat des contrôles, l’égalité des empreintes du certificat (`embedded` / `supplied`) et la liste finale des assets.
 
 Pour créer une nouvelle release : `dist\make_release.cmd <tag>` (dry-run avec `set DRY_RUN=1`). Pour mettre à jour une release **existante** après déplacement de son tag, prévisualiser avec `set DRY_RUN=1`, puis passer `MOVE_TAG=1` et confirmer le nom exact : `set MOVE_TAG=1` puis `set CONFIRM_MOVE_TAG=v1.1.18-ventoy-sort`, et lancer `dist\make_release.cmd v1.1.18-ventoy-sort`. Le mode vérifie le tag distant et la release GitHub, refuse les releases immuables, brouillonne une release publiée le temps de l’opération, déplace le tag annoté, recrée les archives sources et `SHA256SUMS`, remplace uniquement les deux archives sources et `SHA256SUMS` (les autres assets sont conservés), et actualise les notes en conservant stable/prerelease et l’état draft/publié. **Attention :** `gh release upload --clobber` supprime l’ancien asset avant d’envoyer le nouveau ; aussi les trois assets sont-ils d’abord sauvegardés dans `DIST_DIR\.asset-backup` : si un envoi échoue en cours de route, les anciens assets sont **restaurés automatiquement** (un échec de cette sauvegarde arrête le script avant toute modification ; le dossier est conservé pour réparation manuelle). Après déplacement du tag, la release reste en brouillon pour permettre la reprise ; si elle était publiée initialement, elle devra ensuite être republiée manuellement après vérification. Avant un déplacement réel, lancer le workflow GitHub *Preflight move-tag* (onglet Actions, ou `gh workflow run preflight-move-tag.yml -f tag=<tag>`, avec `-f commit_sha=<head attendu>` en option) : il échoue fermement si le tag n’existe pas, si aucune release n’y est attachée (drafts compris), si celle-ci est immuable ou si la cible annoncée ne correspond pas au head de la branche ; le même contrôle verrouille le job release-e2e à chaque publication de release. Toujours prévisualiser avec `DRY_RUN=1`.
 
@@ -75,10 +149,12 @@ dist\make_release.cmd v1.1.18-ventoy-sort
 
 ## Build reproductible du paquet Windows
 
+La procédure de build repose sur un superviseur PowerShell commun aux lanceurs Windows/Linux, qui évite de dépendre d’un `sleep infinity` externe et relance le build en cas d’arrêt brutal de WSL. Les détails, réglages et test CI sont consignés dans les [notes de version](RELEASE_NOTES.md).
+
 Le dépôt contient un script unique qui régénère de zéro le paquet Windows complet à partir du code du fork et de l’archive officielle 1.1.17 — charge utiles GRUB recompilées (BIOS + UEFI64 + UEFI32 + UEFI arm64), exes Ventoy2Disk, image disque patchée, signatures Secure Boot avec la clé MOK locale — puis prouve sa propre reproductibilité :
 
 - `dist/ventoy-sort-build/build_ventoy_sort_windows.sh` — le script (exécuté sous WSL) ;
-- `dist/ventoy-sort-build/build_ventoy_sort_windows.cmd` — le lanceur Windows (convertit le chemin et transmet les arguments `NOM=valeur`).
+- `dist/ventoy-sort-build/build_ventoy_sort_windows.cmd` — le lanceur Windows, protégé par le superviseur WSL commun ; détails et réglages dans les [notes de version](RELEASE_NOTES.md).
 
 ### Prérequis
 
@@ -158,7 +234,7 @@ Principe : **builder deux fois de suite** avec la même chaîne d’outils et co
 
 **Critère de succès :** `diff` ne produit aucune ligne et les deux sha256 du zip sont identiques. `SHA256SUMS` couvrant le zip, les deux exes, `core.img.xz`, `ventoy.disk.img.xz`, `version`, `work/core.img`, les deux chargeurs et le certificat, son identité prouve l’identité octet à octet de l’ensemble.
 
-Pour une comparaison plus poussée (artefacts bruts + chaque entrée du zip : CRC, taille, dates, offsets ; script figé sur la version `1.1.18-ventoy-sort`) :
+Le script `dist/ventoy-sort-build/_cmp_runs.sh`, qui automatisait cette comparaison plus poussée (artefacts bruts, puis chaque entrée du zip : CRC, taille, dates, offsets), a été **retiré**. Il était figé sur la version `1.1.18-ventoy-sort` et lisait un instantané d'arborescence (`work/`, `pkg/`, `_run5/`) que les scripts de build ne produisent plus : il ne pouvait plus aboutir. La méthode manuelle ci-dessus reste valable ; pour une vérification reproductible de bout en bout, le banc `bash dist/tests/test_linux_reproducibility.sh` rejoue le build dans deux racines isolées et compare les paquets qu'il obtient.
 
 ```bash
 cp -a work/core.img work/grubx64_real.efi work/grubia32_real.efi work/BOOTAA64.EFI \
@@ -169,7 +245,6 @@ cp -a work/core.img work/grubx64_real.efi work/grubia32_real.efi work/BOOTAA64.E
       pkg/ventoy-1.1.18-ventoy-sort/ventoy/version \
       SHA256SUMS-ventoy-sort-windows.txt PROCEDURE-SECURE-BOOT.md \
       ventoy-sort-MOK.cer _ref/
-bash _cmp_runs.sh _ref    # tout doit afficher IDENTIQUE, aucune ligne DIFF
 ```
 
 Référence sur la chaîne d’outils de référence (gcc 15.2, VS2022 v143, Ubuntu WSL, sbsigntool 0.9.4) :
@@ -194,10 +269,10 @@ Un harnais QEMU (`dist/ventoy-sort-build/_qemu/`) permet en complément de véri
 
 ## Build reproductible du paquet Linux
 
-Le même principe existe pour le paquet Linux : un script unique régénère de zéro `ventoy-<version>-linux.tar.gz` à partir de l’archive officielle 1.1.17, couvrant **quatre** plateformes — BIOS (i386-pc), UEFI x64, UEFI ia32 **et UEFI arm64** — puis prouve sa propre reproductibilité :
+Le même principe existe pour le paquet Linux : le lanceur `.cmd` utilise le même superviseur PowerShell et bénéficie des mêmes reprises WSL. Un script unique régénère de zéro `ventoy-<version>-linux.tar.gz` à partir de l’archive officielle 1.1.17, couvrant **quatre** plateformes — BIOS (i386-pc), UEFI x64, UEFI ia32 **et UEFI arm64** — puis prouve sa propre reproductibilité :
 
 - `dist/ventoy-sort-build/build_ventoy_sort_linux.sh` — le script (exécuté sous WSL) ;
-- `dist/ventoy-sort-build/build_ventoy_sort_linux.cmd` — le lanceur Windows (convertit le chemin et transmet les arguments `NOM=valeur`).
+- `dist/ventoy-sort-build/build_ventoy_sort_linux.cmd` — le lanceur Windows, protégé par le même superviseur WSL.
 
 Différence assumée avec le packaging amont (`INSTALL/ventoy_pack.sh`, qui reconstruit tout via `losetup`) : ce script ne monte rien et ne remplace que les charges utiles GRUB et les signatures — tous les binaires runtime de l’archive officielle (tools, GUI, WebUI, scripts) sont repris tels quels, même approche que le script Windows.
 
@@ -217,15 +292,36 @@ Différence assumée avec le packaging amont (`INSTALL/ventoy_pack.sh`, qui reco
 
 ### Étapes du pipeline
 
-Préflight (outils, cross arm64, sbsigntool, clé MOK, shim de temps figé, téléchargement épinglé), puis sept étapes numérotées :
+Préflight (outils, cross arm64, sbsigntool, clé MOK, shim de temps figé, téléchargement épinglé), puis étapes numérotées :
 
 1. **build GRUB 2.04** en quatre plateformes — arm64-efi d’abord (cross `aarch64-linux-gnu-*`, options reprises à l’identique de `GRUB2/buildgrub.sh`), puis i386-pc, x86_64-efi, i386-efi ; le marqueur `Ventoy img list count mismatch` est vérifié dans les quatre `ventoy.mod` installés.
 2. **charges utiles GRUB** — `core.img`, `grubx64_real.efi`, `grubia32_real.efi`, `BOOTAA64.EFI` via les commandes `grub-mkimage` exactes de `install.sh` (listes `all_modules_legacy` / `all_modules_uefi` / `all_modules_arm64_uefi`), puis signature des trois chargeurs.
 3. **préparation du paquet** depuis l’archive officielle — les mtimes des trois fichiers à remplacer sont capturés.
-4. **patch de l’image disque + signatures Secure Boot** — remplacement des chargeurs x64/ia32 et de `BOOTAA64.EFI` (en 1.1.17, ce dernier est le chargeur GRUB arm64 lui-même, sans shim), empreinte x64 dans `fbx64.efi`, version dans `grub.cfg`, re-signature de tous les PE x64/ia32/arm64 concernés (`ventoy_*`, `iso9660_*`, `udf_*`, `vtoyutil_*`, `wimboot*` via décompresser → signer → re-compresser), certificat `ENROLL_THIS_KEY_IN_MOKMANAGER.cer`, restauration des horodatages FAT.
-5. **assemblage** — `core.img.xz` rembourré à 2047 secteurs, mtimes officielles restaurées, tar déterministe (`--sort=name --owner=0 --format=gnu`, `gzip -n`).
-6. **empreintes + manifeste** — `SHA256SUMS-ventoy-sort-linux.txt` + `BUILD-MANIFEST-*-linux.txt`.
-7. **vérifications finales** (voir ci-dessous).
+4. **reconstruction optionnelle de la GUI Qt** (`GUI_REBUILD=1`) — ABI x86_64 validée contre la baseline, remplacement refusé si les symboles glibc/Qt requis sont plus récents.
+5. **patch de l’image disque + signatures Secure Boot** — remplacement des chargeurs x64/ia32 et de `BOOTAA64.EFI` (en 1.1.17, ce dernier est le chargeur GRUB arm64 lui-même, sans shim), empreinte x64 dans `fbx64.efi`, version dans `grub.cfg`, re-signature de tous les PE x64/ia32/arm64 concernés (`ventoy_*`, `iso9660_*`, `udf_*`, `vtoyutil_*`, `wimboot*` via décompresser → signer → re-compresser), certificat `ENROLL_THIS_KEY_IN_MOKMANAGER.cer`, restauration des horodatages FAT.
+6. **assemblage** — `core.img.xz` rembourré à 2047 secteurs, mtimes officielles restaurées, tar déterministe (`--sort=name --owner=0 --format=gnu`, `gzip -n`).
+7. **empreintes + manifeste** — `SHA256SUMS-ventoy-sort-linux.txt` + `BUILD-MANIFEST-*-linux.txt`.
+8. **vérifications finales** (voir ci-dessous).
+
+### La GUI Linux dans le paquet
+
+Par défaut, le paquet reprend **tel quel** le runtime de l’archive officielle, GUI comprise : les corrections de mise en page ci-dessus ne deviennent visibles qu’après reconstruction. `GUI_REBUILD=1` compile la GUI Qt x86_64 et compare ses exigences de symboles GLIBC et Qt à la baseline officielle. Le WSL Ubuntu 26.04 utilisé ici exige GLIBC_2.38 et Qt_5.15, contre GLIBC_2.14 et Qt_5.9 pour la GUI officielle : le script refuse cette substitution et laisse le paquet intact. Le paquet comporte aussi des GUI i386, aarch64 et mips64el ; elles ne sont jamais remplacées par le binaire natif x86_64.
+
+```bash
+apt install -y qtbase5-dev qtbase5-dev-tools qt5-qmake   # prérequis de cette étape
+GUI_REBUILD=1 bash dist/ventoy-sort-build/build_ventoy_sort_linux.sh
+```
+
+Elle est désactivée par défaut parce que la compilation est native x86_64 alors que le paquet contient aussi des GUI i386, aarch64 et mips64el. Seul le binaire x86_64 peut être remplacé et seulement si ses prérequis GLIBC et Qt ne dépassent pas ceux de la GUI officielle. Avec la toolchain présente ici, le garde-fou ABI interrompt donc le build avant la substitution. Deux pièges ont été rencontrés et sont consignés dans l’en-tête du script : le `.pro` amont pointait sur des chemins absolus `/home/panda/...` (désormais relatifs à `$$PWD`), et `qmake` doit être lancé depuis la **racine** du projet `Ventoy2Disk`, pas depuis `QT/`.
+
+Deux tests gardent cette mise en page honnête :
+
+```bash
+python3 dist/tests/test_gui_version_layout.py   # cadres déclarés vs largeur réelle du texte
+bash    dist/tests/test_gui_render.sh           # compile la GUI et REND la fenêtre hors écran (PNG)
+```
+
+Le second est le seul qui dise quelque chose de l’écran : il instancie la vraie forme `.ui`, appelle le vrai `Ventoy2DiskWindow::SetVersionLabel()` et compare la largeur du texte **rendu** au cadre. Il sort en 0 si le texte tient, 1 s’il déborde, 2 si Qt5 est absent. La capture est écrite dans `dist/tests/out/`. Le paquet local déjà assemblé conserve les binaires Qt officiels ; sa GUI ne bénéficie donc pas encore du nouveau layout.
 
 ### Sorties
 
@@ -241,7 +337,7 @@ Préflight (outils, cross arm64, sbsigntool, clé MOK, shim de temps figé, tél
 - garde-fous : échec si un haché de `grubia32_real.efi` ou de `BOOTAA64.EFI` apparaissait déjà dans l’image officielle (extension du patch à prévoir), échec si le `signingTime` n’est pas figée ;
 - **reproductibilité** : sonde de préflight — le build échoue si le compilateur natif ou le cross arm64 refuse `-ffile-prefix-map`/`-fmacro-prefix-map` ; puis, après chaque `make install`, échec si un `*.module` ou un `kernel.img` contient encore le chemin de la racine de build (c’est la régression qui faisait diverger deux racines distinctes) ;
 - intégrité `xz -t`, `gzip -t`, `tar -tzf` ;
-- comparaison à l’archive officielle : mêmes noms de fichiers (137 fichiers), **exactement trois contenus modifiés** (`boot/core.img.xz`, `ventoy/ventoy.disk.img.xz`, `ventoy/version`), aucun manquant ni superflu.
+- comparaison à l’archive officielle : mêmes noms de fichiers (137 fichiers), trois contenus de base modifiés (`boot/core.img.xz`, `ventoy/ventoy.disk.img.xz`, `ventoy/version`), aucun manquant ni superflu. Si `GUI_REBUILD=1` et que l’ABI passe, le remplacement x86_64 de la GUI est également autorisé.
 
 ### Reproductibilité : ce qui est vérifié, et jusqu’où
 
