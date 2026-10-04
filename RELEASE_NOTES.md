@@ -59,6 +59,14 @@ commits docs/tooling ci-dessous.
   bare locale) de 146 assertions sur le mode `MOVE_TAG` et son rollback ;
   l'option `--check` vérifie en fin de run qu'aucun artefact du banc n'a
   fui hors du sandbox.
+- Banc de reproductibilité du paquet Linux :
+  `dist/tests/test_linux_reproducibility.sh` construit le paquet **deux fois
+  dans deux racines isolées** de longueurs différentes (copies jetables du
+  script et de `GRUB2/MOD_SRC`, même clé MOK des deux côtés) puis compare les
+  archives octet à octet, nomme les entrées divergentes et vérifie qu’aucun
+  chemin de build n’a survécu dans `boot/core.img.xz`. ~7 minutes, sortie 0 =
+  identiques. C’est ce banc qui a révélé que deux builds consécutifs au même
+  emplacement étaient identiques alors que deux racines distinctes divergeaient.
 - La prerelease `v1.1.19-ventoy-sort-rc1` a servi à éprouver cette chaîne
   (préflight → `release-e2e`), puis a été replacée sur le head de `master`.
 
@@ -150,6 +158,17 @@ Python 3, `-Wall -Wextra -Werror`) — sans WSL ni machine virtuelle.
   préflight (lisible via `gh run view --log`).
 - `1172be6a` — job CI `MOVE_TAG bench` (offline) et option `--check` de
   détection des fuites de workdir.
+- Correctif de reproductibilité du build Linux : projection de la racine de
+  build sur un préfixe constant (`-ffile-prefix-map`, `-fmacro-prefix-map`, et
+  `TARGET_CCASFLAGS` pour les `.S` compilés par automake, qui ne recoivent pas
+  les `TARGET_CFLAGS`), plus une sonde de préflight et un garde-fou qui font
+  échouer le build si un chemin de build subsiste dans un `*.module` ou
+  `kernel.img`. Avant, deux racines isolées divergeaient sur `core.img.xz` et
+  `ventoy.disk.img.xz` (1 088 fichiers de `grub-install` sur 2 211) ; après,
+  deux racines de longueurs différentes donnent le même octet. La même
+  correction reste à appliquer au build Windows. `PROCEDURE-SECURE-BOOT.md` et
+  son gabarit dans les deux scripts de build décrivent désormais le périmètre
+  réel plutôt qu’une promesse.
 
 ## Publication
 
@@ -170,6 +189,17 @@ deux suivants sont les **paquets binaires**, prêts à copier sur une clé USB :
 |---|---|---|---|
 | `ventoy-1.1.19-ventoy-sort-windows.zip` | 17 413 440 o | 45 | 5 |
 | `ventoy-1.1.19-ventoy-sort-linux.tar.gz` | 21 041 017 o | 137 | 3 |
+**Statut de reproductibilité du paquet Linux publié.** L’empreinte ci-dessus
+recense l’asset effectivement publié, construit **avant** une correction : les
+modules GRUB embarquaient alors le chemin absolu de la racine de build, si bien
+que le script actuel **ne reproduit pas** `8eb88265…`. Deux builds dans deux
+racines isolées donnent aujourd’hui `e8bf8179…` de façon reproductible
+(`dist/tests/test_linux_reproducibility.sh`) ; reproduire l’empreinte publiée
+suppose donc de republier le paquet. Vérifié à chaîne d’outils identique
+(gcc 15.2, binutils 2.46, sbsigntool 0.9.4, WSL Ubuntu) — une autre version du
+compilateur produit d’autres octets. Le paquet **Windows** n’a pas reçu cette
+correction : son résultat n’est connu qu’au chemin exact du build.
+
 
 Ils sont construits de zéro, à partir de l’archive officielle 1.1.17
 correspondante, par `dist/ventoy-sort-build/build_ventoy_sort_windows.sh` et

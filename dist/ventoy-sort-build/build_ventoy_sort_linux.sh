@@ -140,6 +140,38 @@ GRUB_HOST_CFLAGS=${GRUB_HOST_CFLAGS:-"-std=gnu17 $GRUB_WARN_DOWNGRADES"}
 GRUB_TARGET_CFLAGS=${GRUB_TARGET_CFLAGS:-"-std=gnu17 -Os $GRUB_WARN_DOWNGRADES"}
 
 # -------------------------------------------------------------------------------------
+# Reproductibilité entre racines de build différentes
+# -------------------------------------------------------------------------------------
+# gcc grave le chemin ABSOLU de la racine dans les binaires qu'il produit :
+#   - via __FILE__ (assert de minilzo/lzopio, etc.) et les directives #line ;
+#   - via les informations de débogage (DWARF comp_dir / DW_AT_name).
+# Ces chaînes se retrouvent dans les .module et kernel.exec, donc dans core.img et
+# les chargeurs UEFI : deux builds lancés dans des répertoires distincts produisaient
+# alors des octets différents (constaté : 1088 fichiers de grub-install sur 2211
+# divergeaient, dont les .module assemblés dans boot/core.img.xz).
+# SOURCE_DATE_EPOCH n'a aucun effet ici : il ne traite ni les chemins ni #line.
+#
+# On projette donc $SRC (les répertoires de build y sont imbriqués) sur un préfixe
+# CONSTANT, indépendant de l'emplacement réel du checkout :
+#   -ffile-prefix-map  → noms de fichiers DWARF et #line
+#   -fmacro-prefix-map → __FILE__ (assert, GRUB_ERROR_*)
+# Les deux sont nécessaires : -ffile-prefix-map seul ne couvre pas __FILE__ dans
+# toutes les versions de gcc.
+GRUB_PATH_MAP_SRC=/grub-2.04
+GRUB_PATH_MAP_BUILD=/grub-build
+
+grub_path_maps() {   # grub_path_maps <répertoire de build> → drapeaux de projection
+    local bdir=$1 maps
+    maps="-ffile-prefix-map=$SRC=$GRUB_PATH_MAP_SRC -fmacro-prefix-map=$SRC=$GRUB_PATH_MAP_SRC"
+    case $bdir in
+        "$SRC"/*) : ;;   # déjà couvert par la projection de $SRC
+        *) maps="$maps -ffile-prefix-map=$bdir=$GRUB_PATH_MAP_BUILD"
+           maps="$maps -fmacro-prefix-map=$bdir=$GRUB_PATH_MAP_BUILD" ;;
+    esac
+    printf '%s' "$maps"
+}
+
+# -------------------------------------------------------------------------------------
 # Journalisation
 # -------------------------------------------------------------------------------------
 C_STEP=$'\033[1;36m'; C_OK=$'\033[1;32m'; C_WARN=$'\033[1;33m'; C_ERR=$'\033[1;31m'; C_OFF=$'\033[0m'
@@ -160,6 +192,24 @@ trap 'on_error $LINENO' ERR
 
 sha256() { sha256sum "$1" | cut -d' ' -f1; }
 size()   { stat -c %s "$1"; }
+
+assert_no_build_path() {   # assert_no_build_path <plateforme grub> <étape>
+                           # échoue si le chemin de la racine de build a survécu dans un
+                           # fichier qui part dans core.img ou le chargeur UEFI (*.module,
+                           # kernel.img) : ces binaires seraient alors différents d'une
+                           # racine de build à l'autre, et le paquet non reproductible.
+                           # kernel.exec et modinfo.sh sont volontairement ignorés : ils ne
+                           # sont ni lus par grub-mkimage ni livrés dans le paquet.
+    local grubdir=$1 what=$2 dir=$GRUB_INSTALL/lib/grub/$1 leaks
+    leaks=$(grep -rlaF --include='*.module' --include='kernel.img' \
+                -e "$SRC" -e "$GRUB_INSTALL" "$dir" 2>/dev/null | head -5) || true
+    [ -z "$leaks" ] && return 0
+    die "chemin de build présent dans les artefacts livrés ($what) :
+$(printf '%s' "$leaks" | tr '\n' ' ')
+→ deux builds dans des racines différentes divergeraient : vérifier les
+  -ffile-prefix-map / -fmacro-prefix-map (grub_path_maps, y compris via
+  TARGET_CCASFLAGS pour les fichiers .S) et le --prefix"
+}
 
 run_logged() {   # run_logged <logfile> <commande...>   (écrase le journal)
     local logfile=$1; shift
@@ -420,10 +470,21 @@ firmware qui porte l'application de dbx. Test ré-exécutable :
 
 La \`signingTime\` de chaque signature est figée à
 2027-01-01T00:00:00Z pendant \`sbsign\` (shim \`secureboot/fixedtime.so\`),
-de sorte que deux builds du même code produisent des paquets binaires
-identiques. L'UEFI ne valide pas cette date : seule l'appartenance du
-certificat à la MOK compte (validité du certificat : date de génération
-→ +100 ans).
+et les chemins de compilation sont projetés sur un préfixe constant
+(\`-ffile-prefix-map\` / \`-fmacro-prefix-map\`, y compris via
+\`TARGET_CCASFLAGS\` pour les \`.S\`). Ces deux mesures sont nécessaires :
+sans elles, les modules GRUB embarquaient le chemin absolu de la racine
+de build, et deux builds dans des répertoires différents divergeaient
+(\`boot/core.img.xz\`, \`ventoy/ventoy.disk.img.xz\`).
+
+Vérifié : deux builds complets dans deux racines isolées de longueurs
+différentes produisent le même octet (\`e8bf8179…\`) — banc
+\`dist/tests/test_linux_reproducibility.sh\`. Non vérifié : entre chaînes
+d'outils différentes (autre GCC, autre binutils), qui produisent d'autres
+octets.
+
+L'UEFI ne valide pas cette date : seule l'appartenance du certificat à la
+MOK compte (validité du certificat : date de génération → +100 ans).
 
 ## Rotation de clé
 
@@ -453,6 +514,22 @@ step_preflight() {
     done
     command -v aarch64-linux-gnu-gcc >/dev/null 2>&1 \
         || die "cross-compilateur arm64 absent : apt install gcc-aarch64-linux-gnu"
+
+    # Reproductibilité : sans projection des chemins, le paquet dépend du répertoire
+    # de build. On vérifie que les compilateurs acceptent les drapeaux AVANT de
+    # construire (gcc ≥ 8 / clang ≥ 10) plutôt que de livrer en silence un paquet
+    # qui diverge d'une racine de build à l'autre.
+    local probe
+    probe=$(mktemp)
+    printf 'int main(void) { return 0; }\n' > "$probe"
+    local cc
+    for cc in gcc aarch64-linux-gnu-gcc; do
+        "$cc" -ffile-prefix-map="$B"=/x -fmacro-prefix-map="$B"=/x \
+            -c -o /dev/null "$probe" >/dev/null 2>&1 \
+            || die "$cc n'accepte pas -ffile-prefix-map/-fmacro-prefix-map (gcc ≥ 8 requis) : le build ne serait pas reproductible"
+    done
+    rm -f "$probe"
+    ok "projection des chemins compilée (-ffile-prefix-map / -fmacro-prefix-map acceptées par gcc et le cross arm64)"
     command -v sbsign >/dev/null 2>&1 && command -v sbverify >/dev/null 2>&1 \
         || die "sbsigntool absent : installer avec « apt install sbsigntool » (WSL Ubuntu)"
     ensure_sb_key
@@ -593,9 +670,21 @@ build_grub_platform() {   # build_grub_platform <arm64|bios|efi64|efi32>
     esac
 
     rm -rf "$bdir"; mkdir -p "$bdir"
+    local path_maps
+    path_maps=$(grub_path_maps "$bdir")
     (
         cd "$bdir"
-        HOST_CFLAGS="$GRUB_HOST_CFLAGS" TARGET_CFLAGS="$GRUB_TARGET_CFLAGS" \
+        # TARGET_CCASFLAGS/HOST_CCASFLAGS : automake compile les .S via CPPASCOMPILE,
+        # qui utilise AM_CCASFLAGS = $(TARGET_CCASFLAGS) et NON les TARGET_CFLAGS. Sans
+        # cela les quelques fichiers .S de GRUB (mmap_helper.S, reboot_trampoline.S,
+        # drivemap_int13h.S, machdep.S…) gardent le chemin absolu de la racine — via le
+        # symbole FILE du dossier de compilation et le DWARF — et 6 .module par
+        # plateforme divergent encore entre deux racines. configure est une variable
+        # « precious » : la valeur fournie ici sert de base, il y ajoute ses drapeaux.
+        HOST_CFLAGS="$GRUB_HOST_CFLAGS $path_maps" \
+            TARGET_CFLAGS="$GRUB_TARGET_CFLAGS $path_maps" \
+            HOST_CCASFLAGS="$path_maps" \
+            TARGET_CCASFLAGS="$path_maps" \
             "$SRC/configure" "${cfg_args[@]}" --prefix="$GRUB_INSTALL/" \
             > "$log" 2>&1 || { tail -n 40 "$log" >&2; die "configure ($what) a échoué"; }
         # V=1 : journaliser les lignes gcc complètes (preuve des drapeaux dans le journal)
@@ -606,6 +695,13 @@ build_grub_platform() {   # build_grub_platform <arm64|bios|efi64|efi32>
     local mod=$GRUB_INSTALL/lib/grub/$grubdir/ventoy.mod
     [ -f "$mod" ] || die "ventoy.mod absent après build ($what)"
     grep -a -q "$FORK_MARKER" "$mod" || die "ventoy.mod ($what) ne contient pas le correctif du fork"
+
+    # garde-fou reproductibilité : les *.module et kernel.img de cette plateforme
+    # sont lus tels quels par grub-mkimage et partent dans core.img / les chargeurs
+    # UEFI. Si le chemin de la racine de build y survit, deux builds dans des
+    # répertoires différents divergeraient — on échoue ici plutôt que de livrer un
+    # paquet prétendument reproductible.
+    assert_no_build_path "$grubdir" "$what"
     ok "build $what + make install terminés (ventoy.mod patché vérifié)"
 }
 

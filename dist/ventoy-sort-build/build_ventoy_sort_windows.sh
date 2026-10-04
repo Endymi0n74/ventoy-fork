@@ -420,10 +420,19 @@ firmware qui porte l'application de dbx. Test ré-exécutable :
 
 La \`signingTime\` de chaque signature est figée à
 2027-01-01T00:00:00Z pendant \`sbsign\` (shim \`secureboot/fixedtime.so\`),
-de sorte que deux builds du même code produisent des paquets binaires
-identiques. L'UEFI ne valide pas cette date : seule l'appartenance du
-certificat à la MOK compte (validité du certificat : date de génération
-→ +100 ans).
+et \`/Brepro\` est appliqué à la compilation comme au lien MSVC : à chemin
+de build identique, deux builds du même code produisent le même paquet.
+
+Ce script ne projette en revanche pas les chemins de compilation de GRUB
+(\`-ffile-prefix-map\` absent) : les modules embarqués conservent le chemin
+absolu de la racine de build, donc le paquet dépend de l'emplacement du
+checkout. Le correctif équivalent à celui du build Linux n'est pas appliqué
+ici, et l'écart entre deux racines distinctes n'a pas été mesuré : ne pas
+présumer de la reproductibilité du paquet Windows hors du chemin exact du
+build.
+
+L'UEFI ne valide pas cette date : seule l'appartenance du certificat à la
+MOK compte (validité du certificat : date de génération → +100 ans).
 
 ## Rotation de clé
 

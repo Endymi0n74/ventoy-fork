@@ -118,10 +118,21 @@ firmware qui porte l'application de dbx. Test ré-exécutable :
 
 La `signingTime` de chaque signature est figée à
 2027-01-01T00:00:00Z pendant `sbsign` (shim `secureboot/fixedtime.so`),
-de sorte que deux builds du même code produisent des paquets binaires
-identiques. L'UEFI ne valide pas cette date : seule l'appartenance du
-certificat à la MOK compte (validité du certificat : date de génération
-→ +100 ans).
+et les chemins de compilation sont projetés sur un préfixe constant
+(`-ffile-prefix-map` / `-fmacro-prefix-map`, y compris via
+`TARGET_CCASFLAGS` pour les `.S`). Ces deux mesures sont nécessaires :
+sans elles, les modules GRUB embarquaient le chemin absolu de la racine
+de build, et deux builds dans des répertoires différents divergeaient
+(`boot/core.img.xz`, `ventoy/ventoy.disk.img.xz`).
+
+Vérifié : deux builds complets dans deux racines isolées de longueurs
+différentes produisent le même octet (`e8bf8179…`) — banc
+`dist/tests/test_linux_reproducibility.sh`. Non vérifié : entre chaînes
+d'outils différentes (autre GCC, autre binutils), qui produisent d'autres
+octets.
+
+L'UEFI ne valide pas cette date : seule l'appartenance du certificat à la
+MOK compte (validité du certificat : date de génération → +100 ans).
 
 ## Rotation de clé
 

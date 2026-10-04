@@ -134,6 +134,8 @@ Le journal complet est écrit dans `run-full.log` (et `log-*.txt` par sous-compo
 
 Principe : **builder deux fois de suite** avec la même chaîne d’outils et comparer les empreintes — environ 25 minutes par build.
 
+> **Ce que cette procédure prouve, et sa limite.** Rejouer le build dans le **même** dossier montre seulement que le build est *idempotent* à cet emplacement : c’est ce qui était vérifié jusqu’ici, et cela ne détecte pas un paquet qui dépend du chemin du checkout. C’est exactement le défaut qui affectait le paquet Linux (chemins absolus gravés dans les modules GRUB) : deux runs consécutifs étaient identiques, deux racines isolées ne l’étaient pas. Pour une preuve qui couvre le lieu du build, utiliser deux racines isolées — c’est ce que fait `dist/tests/test_linux_reproducibility.sh` pour le paquet Linux. Le paquet **Windows** n’est pas couvert par ce banc : `build_ventoy_sort_windows.sh` ne projette pas encore les chemins de compilation de GRUB, donc son résultat est connu seulement au chemin exact du build.
+
 1. Premier build (depuis la racine du dépôt) :
 
    ```bat
@@ -183,7 +185,7 @@ Avec le bras arm64 (remplacement et signature de `BOOTAA64.EFI` dans l’image),
 ### Ce qui rend le build déterministe
 
 - **MSVC** : `/Brepro` sur compilation et lien (stabilise aussi les timestamps COFF des `.obj`), `WholeProgramOptimization=false`, PDB supprimés avant l’édition de liens (âge CodeView).
-- **GRUB** : tarball figé (sha256 consigné), dates normalisées 2019 (autotools), `-std=gnu17 -Os`.
+- **GRUB** : tarball figé (sha256 consigné), dates normalisées 2019 (autotools), `-std=gnu17 -Os`, et — build Linux seulement — projection de la racine de build sur un préfixe constant (`-ffile-prefix-map`, `-fmacro-prefix-map`, et `TARGET_CCASFLAGS` pour les `.S`) : sans cela, les modules embarquaient le chemin absolu du checkout et le paquet dépendait de l’emplacement du build. Un garde-fou échoue le build si un chemin réapparaît dans un `*.module` ou `kernel.img`.
 - **Paquet** : mtimes officielles restaurées sur les cinq fichiers remplacés, horodatages FAT ré-écrits après `mcopy`, `zip -q -r -X` (pas de champs extra horodatés).
 - **Signatures** : `strip` puis `sbsign` sous `LD_PRELOAD=fixedtime.so` (temps figé au 2027-01-01T00:00:00Z) — la RSA PKCS#1 v1.5 est déjà déterministe, seule la `signingTime` faisait varier les octets d’un build à l’autre. `sbverify --cert` suit chaque signature.
 - **Hors périmètre** : `BUILD-MANIFEST-*.txt` contient la date de build — il diffère normalement d’un run à l’autre et n’est pas couvert par `SHA256SUMS`. Une **autre** chaîne d’outils (autre version gcc/MSVC) produit des octets différents : les versions sont consignées dans le manifeste.
@@ -237,18 +239,36 @@ Préflight (outils, cross arm64, sbsigntool, clé MOK, shim de temps figé, tél
 - marqueur du fork présent dans les `ventoy.mod` des **quatre** plateformes ;
 - `sbverify --cert` sur les trois chargeurs recompilés, sur `fbx64.efi`, `grubia32.efi` et les payloads `ventoy/*` + `wimboot*` relus depuis l’image, avec la clé MOK locale ;
 - garde-fous : échec si un haché de `grubia32_real.efi` ou de `BOOTAA64.EFI` apparaissait déjà dans l’image officielle (extension du patch à prévoir), échec si le `signingTime` n’est pas figée ;
+- **reproductibilité** : sonde de préflight — le build échoue si le compilateur natif ou le cross arm64 refuse `-ffile-prefix-map`/`-fmacro-prefix-map` ; puis, après chaque `make install`, échec si un `*.module` ou un `kernel.img` contient encore le chemin de la racine de build (c’est la régression qui faisait diverger deux racines distinctes) ;
 - intégrité `xz -t`, `gzip -t`, `tar -tzf` ;
 - comparaison à l’archive officielle : mêmes noms de fichiers (137 fichiers), **exactement trois contenus modifiés** (`boot/core.img.xz`, `ventoy/ventoy.disk.img.xz`, `ventoy/version`), aucun manquant ni superflu.
 
-### Reproductibilité prouvée
+### Reproductibilité : ce qui est vérifié, et jusqu’où
 
-Deux runs complets sur la même chaîne d’outils (gcc 15.2, sbsigntool 0.9.4, WSL Ubuntu) : l’archive est **identique octet à octet** —
+**Vérifié.** Deux builds complets, lancés dans deux racines isolées de longueurs différentes (gcc 15.2, binutils 2.46, sbsigntool 0.9.4, WSL Ubuntu), donnent le même octet :
 
 ```
-d23c014f1e272a2cb627b27e45d43227d7f0b1bc8e2e7e6ad03a3e140f4903ca  ventoy-1.1.18-ventoy-sort-linux.tar.gz
+e8bf8179317df0c03219366d80177136c3f6a50cb35ca777b3a30aaef66071c2  ventoy-1.1.19-ventoy-sort-linux.tar.gz
 ```
 
-Les sorties x86 sont restées bit à bit identiques à celles des runs **sans** arm64 (`core.img` `e87ddc9f…`, `grubx64_real.efi` `f11050f6…`, `grubia32_real.efi` `5f143737…`) : le build croisé s’insère sans déplacer quoi que ce soit. Les mécanismes déterministes sont ceux du build Windows (dates 2019, mtimes officielles restaurées, horodatages FAT réécrits, `gzip -n`), moins MSVC et plus le tar trié ; `BUILD-MANIFEST-*-linux.txt` contient la date de build et diffère normalement d’un run à l’autre.
+Le banc est rejouable et fait partie du dépôt :
+
+```bash
+bash dist/tests/test_linux_reproducibility.sh      # deux builds isolés + comparaison
+REPRO_DRY_RUN=1 bash dist/tests/test_linux_reproducibility.sh   # prérequis seuls
+```
+
+Il prépare deux racines jetables, copie le script et `GRUB2/MOD_SRC` dans chacune (le script n'écrit jamais dans le dépôt), impose la **même** clé MOK des deux côtés, compare les archives octet à octet, nomme les entrées divergentes en cas d'échec, et vérifie qu'aucun chemin de build n'a survécu dans `boot/core.img.xz`. Compter ~7 minutes. Sortie 0 = identiques, 1 = divergence.
+
+**Ce qui avait été corrigé pour y arriver.** Deux builds consécutifs au **même** emplacement étaient déjà identiques avant ce correctif — cette vérification ne prouve donc rien sur le lieu du build. En réalité, gcc grave le chemin absolu de la racine dans ce qu'il produit : `__FILE__` (assert de `minilzo.c`), le DWARF, et le symbole `FILE` du dossier de compilation pour les quelques fichiers `.S` de GRUB. Ces chaînes se retrouvent dans les `.module`, donc dans `core.img` et les chargeurs UEFI ; deux racines différentes divergeaient alors sur `boot/core.img.xz` et `ventoy/ventoy.disk.img.xz` (1 088 fichiers de `grub-install` sur 2 211). Le script projette maintenant la racine sur un préfixe constant via `-ffile-prefix-map` et `-fmacro-prefix-map`, y compris dans `TARGET_CCASFLAGS` — sans quoi les `.S` compilés par automake continuaient de fuiter — et un garde-fou fait échouer le build si un chemin subsiste dans un artefact livré. `SOURCE_DATE_EPOCH` ne traitait ni l'un ni l'autre.
+
+**Ce qui n'est pas vérifié.**
+
+- Entre **chaînes d'outils différentes** (autre GCC, autre binutils) : les octets changent. La reproductibilité est vérifiée à outilchain identique, pas d'un environnement à l'autre.
+- Le paquet **publié** `8eb88265…` a été construit **avant** ce correctif : le script actuel ne le reproduit pas, et le reconstruire donne `e8bf8179…`. Republier le paquet Linux est nécessaire pour que l'empreinte publiée soit reproductible.
+- Le build **Windows** n'a pas reçu le correctif : `build_ventoy_sort_windows.sh` ne projette pas les chemins de GRUB, donc son paquet dépend de l'emplacement du checkout. Seul le build au chemin exact du script a été vérifié.
+
+`BUILD-MANIFEST-*-linux.txt` contient la date de build et diffère normalement d'un run à l'autre ; il n'est pas couvert par `SHA256SUMS`.
 
 ### Démarrage validé dans QEMU (sans clé USB)
 
