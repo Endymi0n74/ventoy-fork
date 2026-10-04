@@ -53,6 +53,25 @@ jobs:
       - name: Render the real Qt window offscreen
         run: bash dist/tests/test_gui_render.sh
 
+  readme-release:
+    name: README vs published release (SHA-256, assets, links)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      # Confronte les sommes SHA-256, la liste des assets et les liens inscrits
+      # dans README.md / README.fr.md a la vraie release GitHub. Sans telecharger
+      # les paquets : les sommes sont lues dans les SHA256SUMS* publies.
+      # Le token leve le quota de l'API (60 requetes/h en anonyme, partagees
+      # entre les runners).
+      - name: Check the release declared in the README
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 dist/check_readme_release.py
+
   move-tag-bench:
     name: MOVE_TAG bench (offline, mocked git/gh)
     runs-on: windows-latest

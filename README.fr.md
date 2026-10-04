@@ -29,8 +29,7 @@ fonctions de Ventoy vient de l'amont ; voir [Ventoy amont](#ventoy-amont).
 | Sommes | [SHA256SUMS-ventoy-sort-linux.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-linux.txt) | Couvre le tar.gz Linux + 8 artefacts de build | — |
 
 Les deux premiers sont des **archives sources**, pas des builds installables. Les deux
-paquets binaires sont à copier sur une clé USB. Version stable précédente :
-[v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort).
+paquets binaires sont à copier sur une clé USB.
 
 ## Installation
 

@@ -29,8 +29,7 @@ Ventoy's own capabilities is upstream's; see [Upstream Ventoy](#upstream-ventoy)
 | Checksums | [SHA256SUMS-ventoy-sort-linux.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-linux.txt) | Covers the Linux tar.gz + 8 build artifacts | — |
 
 The first two are **source archives**, not installable builds. The two binary packages are
-ready to copy to a USB drive. Previous stable release:
-[v1.1.19-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.19-ventoy-sort).
+ready to copy to a USB drive.
 
 ## Installing
 

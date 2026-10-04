@@ -410,6 +410,45 @@ La validation couvre la logique du tri et sa parité structurelle avec le code d
 
 Les résultats de performance détaillés et les notes de version sont disponibles dans [PERF_FINDINGS.md](../PERF_FINDINGS.md) et [RELEASE_NOTES.md](../RELEASE_NOTES.md).
 
+## Garder le README honnête
+
+Publier une release sans mettre à jour les README laisse des sommes fausses et
+des liens périmés que les lecteurs recopient. Le contrôle est automatisé :
+
+```bash
+python dist/check_readme_release.py            # contrôles 1 à 5 (réseau)
+python dist/check_readme_release.py --offline  # cohérence EN/FR seule, hors-ligne
+```
+
+Cinq contrôles, sortie `RESULTAT : PASS|FAIL` et code de retour 0/1 :
+
+1. **cohérence** — les deux README déclarent le même tag, les mêmes assets et les
+   mêmes sommes ;
+2. **tag** — chaque release annoncée existe, et `/releases/latest` pointe bien sur
+   celle annoncée : une release plus récente publiée sans mise à jour fait
+   échouer le contrôle ;
+3. **assets** — le tableau énumère exactement les assets publiés, et chaque URL de
+   téléchargement est celle renvoyée par l’API ;
+4. **sommes** — chaque SHA-256 du tableau est conforme aux fichiers
+   `SHA256SUMS*` joints à la release ;
+5. **liens externes** — site amont, FAQ, badges : un échec donne un avertissement,
+   sauf si `--strict-links` est passé.
+
+Les paquets ne sont jamais téléchargés : les sommes sont lues dans les
+`SHA256SUMS*` publiés (197 à 1 112 octets). Le contrôle 4 compare donc le README
+à la référence **publiée** ; recalculer l’empreinte d’un paquet de 80 Mo reste le
+travail de `check_release_pkg.py`.
+
+Le job CI **`README vs published release`** (`ci.yml`) le lance à chaque push sur
+`master` et à chaque publication de release. `GH_TOKEN` y lève le quota de l’API,
+qui est de 60 requêtes/h en anonyme et partagé entre les runners.
+
+> Le contrôle 2 a déjà payé : les README annonçaient une release
+> « précédente » en `v1.1.19-ventoy-sort`. Le tag Git existe, mais aucune release
+> ne lui est attachée — l’API répond 404 alors que la page HTML répond 200. Un
+> simple test HTTP ne l’aurait pas vu. C’est aussi pourquoi le dépôt n’a qu’une
+> seule release pour l’instant, et pourquoi les README n’en citent aucune autre.
+
 ## Ce qui reste à faire à la main
 
 Les workflows couvrent le build et l’attachement. Restent manuels :
