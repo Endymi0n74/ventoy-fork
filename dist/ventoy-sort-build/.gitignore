@@ -8,6 +8,8 @@
 !/build_ventoy_sort_windows.cmd
 !/build_ventoy_sort_linux.sh
 !/build_ventoy_sort_linux.cmd
+!/run_wsl_build.ps1
+!/wsl_build_attempt.sh
 !/PROCEDURE-SECURE-BOOT.md
 !/_run.sh
 !/_run_linux.sh

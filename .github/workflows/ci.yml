@@ -66,6 +66,10 @@ jobs:
         shell: bash
         run: bash dist/tests/test_make_release_move_tag.sh
 
+      - name: WSL build supervisor (simulated VM interruption)
+        shell: bash
+        run: bash dist/tests/test_wsl_build_supervisor.sh
+
   preflight-release:
     name: Preflight (tag/release state) before e2e
     if: github.event_name == 'release'
