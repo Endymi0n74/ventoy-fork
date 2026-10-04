@@ -17,8 +17,10 @@
 #      README soient mis à jour)
 #   3. ASSETS    : le tableau du README énumère exactement les assets de la release,
 #      et chaque URL de téléchargement est celle annoncée par l'API
-#   4. SOMMES    : chaque SHA-256 inscrit au README est conforme aux fichiers
-#      SHA256SUMS* publiés (jamais recalculé : on ne télécharge pas les paquets)
+#   4. SOMMES    : tout fichier telechargeable annonce une empreinte, et chaque
+#      SHA-256 inscrit au README — dans le tableau ou dans la liste « asset —
+#      somme » qui le suit — est conforme aux fichiers SHA256SUMS* publiés
+#      (jamais recalculé : on ne télécharge pas les paquets)
 #   5. LIENS     : les liens externes (site amont, FAQ, badges…) répondent ; en
 #      échec simple → avertissement, avec --strict-links → échec bloquant
 #
@@ -51,6 +53,10 @@ RE_TAG = re.compile(r"https://github\.com/([^/\s]+)/([^/\s]+)/releases/tag/([^)\
 RE_LATEST = re.compile(r"https://github\.com/([^/\s]+)/([^/\s]+)/releases/latest")
 RE_MD_LINK = re.compile(r"\[([^\]]*)\]\(([^)\s]+)\)")
 RE_SOMME = re.compile(r"\b([0-9a-f]{64})\b")
+# Ligne de la liste des sommes : « - `asset.zip` — `6eb3...` ». Les sommes sont
+# hors du tableau (une cellule de tableau ne peut pas se couper), donc on les lit
+# aussi bien dans le tableau que dans cette liste.
+RE_LIGNE_SOMME = re.compile(r"`([^`]+)`\s*[—–: -]\s*`([0-9a-f]{64})`")
 STOP_URL = set(" \t\r\n()<>[]\"'`")
 
 LISEURS = ("README.md", "README.fr.md")
@@ -136,6 +142,11 @@ class Declaration(object):
             nom, url = m.group(1), m.group(2)
             somme = RE_SOMME.search(ligne)
             self.assets[nom] = (url, somme.group(1) if somme else None)
+        # Sommes listees sous le tableau, hors de toute cellule.
+        for m in RE_LIGNE_SOMME.finditer(self.texte):
+            nom, somme = m.group(1), m.group(2)
+            if nom in self.assets and self.assets[nom][1] is None:
+                self.assets[nom] = (self.assets[nom][0], somme)
 
     def resume(self):
         return "%s : tag %s, %d assets (%d avec somme)" % (
@@ -238,8 +249,17 @@ def controler_sommes(decl, release, token, out):
     out("4. sommes SHA-256 contre les SHA256SUMS publiés")
     wanted = {nom: somme for nom, (_, somme) in decl.assets.items() if somme}
     if not wanted:
-        out("   [FAIL] aucune somme SHA-256 dans le tableau du README")
+        out("   [FAIL] aucune somme SHA-256 annoncée dans le README")
         return False
+    # Tout fichier telechargeable doit declarer son empreinte : un asset sans
+    # somme est inverifiable pour le lecteur. Les fichiers SHA256SUMS* sont
+    # eux-memes des fichiers de sommes, pas des archives a verifier.
+    sans_somme = sorted(nom for nom in decl.assets
+                        if not nom.startswith("SHA256SUMS") and nom not in wanted)
+    ok = not sans_somme
+    if sans_somme:
+        out("   [FAIL] %d asset(s) telechargeable(s) sans somme annoncee : %s"
+            % (len(sans_somme), ", ".join(sans_somme)))
     publies = {a["name"]: a for a in release.get("assets", [])}
     reference = {}
     for nom in sorted(publies):
@@ -258,7 +278,6 @@ def controler_sommes(decl, release, token, out):
                 fichier = parties[1].strip().lstrip("*")
                 reference[fichier] = parties[0].lower()
         out("   [ok] %s lu (%d lignes)" % (nom, len(corps)))
-    ok = True
     for nom, somme in sorted(wanted.items()):
         publiee = reference.get(nom)
         if publiee is None:
@@ -269,10 +288,10 @@ def controler_sommes(decl, release, token, out):
             ok = False
         else:
             out("   [ok] %s : %s…" % (nom, somme[:16]))
-    sans_somme = sorted(set(decl.assets) - set(wanted))
-    if sans_somme:
-        out("   [ok] %d assets sans somme (fichiers de sommes eux-mêmes) : %s"
-            % (len(sans_somme), ", ".join(sans_somme)))
+    fichiers_sommes = sorted(nom for nom in decl.assets if nom.startswith("SHA256SUMS"))
+    if fichiers_sommes:
+        out("   [ok] %d fichiers de sommes (sans empreinte propre) : %s"
+            % (len(fichiers_sommes), ", ".join(fichiers_sommes)))
     return ok
 
 

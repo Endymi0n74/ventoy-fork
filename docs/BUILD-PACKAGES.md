@@ -429,8 +429,8 @@ Cinq contrôles, sortie `RESULTAT : PASS|FAIL` et code de retour 0/1 :
    échouer le contrôle ;
 3. **assets** — le tableau énumère exactement les assets publiés, et chaque URL de
    téléchargement est celle renvoyée par l’API ;
-4. **sommes** — chaque SHA-256 du tableau est conforme aux fichiers
-   `SHA256SUMS*` joints à la release ;
+4. **sommes** — tout fichier téléchargeable annonce une empreinte, et chaque
+   SHA-256 est conforme aux fichiers `SHA256SUMS*` joints à la release ;
 5. **liens externes** — site amont, FAQ, badges : un échec donne un avertissement,
    sauf si `--strict-links` est passé.
 
@@ -438,6 +438,14 @@ Les paquets ne sont jamais téléchargés : les sommes sont lues dans les
 `SHA256SUMS*` publiés (197 à 1 112 octets). Le contrôle 4 compare donc le README
 à la référence **publiée** ; recalculer l’empreinte d’un paquet de 80 Mo reste le
 travail de `check_release_pkg.py`.
+
+Les sommes sont lues **où qu’elles soient** : dans le tableau des assets, ou
+dans la liste « `asset` — `somme` » qui le suit. Cette liste n’est pas un détail
+cosétique : GitHub rend les tables en `display:block; overflow-x:auto` avec une
+largeur `max-content`, donc une colonne d’empreintes de 64 caractères imposait un
+défilement horizontal même sur grand écran. Les sommes sont sorties du tableau
+pour cette raison, et restent complètes et vérifiables — une puce peut se couper,
+une cellule non.
 
 Le job CI **`README vs published release`** (`ci.yml`) le lance à chaque push sur
 `master` et à chaque publication de release. `GH_TOKEN` y lève le quota de l’API,

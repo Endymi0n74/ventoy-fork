@@ -18,18 +18,28 @@ Ventoy's own capabilities is upstream's; see [Upstream Ventoy](#upstream-ventoy)
 **[v1.1.20-ventoy-sort](https://github.com/Endymi0n74/ventoy-fork/releases/tag/v1.1.20-ventoy-sort)**
 — published 2026-10-04, annotated tag on commit `da7af651`.
 
-| Type | Asset | Contents | SHA-256 |
-|---|---|---|---|
-| Source archive | [Ventoy-v1.1.20-ventoy-sort.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.zip) | Full source tree; compile it yourself | `6eb3e3aa03ae15c454fb6b9fe907e7a8e24a88cdd76d71cbb3221700da13d505` |
-| Source archive | [Ventoy-v1.1.20-ventoy-sort.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.tar.gz) | Full source tree; compile it yourself | `0313f22d144911b9b0acb22952fdecc8c7b15308c14e4ba4b8b6b641dcdd3689` |
-| Binary package (Windows) | [ventoy-1.1.20-ventoy-sort-windows.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-windows.zip) | Ready-to-use; 45 files, 5 differ from official 1.1.17 | `a68944d7a49136f3c81b712be9c223e5130aec1aaaf2db5e988b416d136bbbdc` |
-| Binary package (Linux) | [ventoy-1.1.20-ventoy-sort-linux.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-linux.tar.gz) | Ready-to-use; 137 files, 3 differ from official 1.1.17 | `f27e2b898dd7c0a42102bac85e54ee4cbecbc50706a20b058374f3ecbd58db20` |
-| Checksums | [SHA256SUMS](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS) | Covers the two source archives | — |
-| Checksums | [SHA256SUMS-ventoy-sort-windows.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-windows.txt) | Covers the Windows zip + 10 build artifacts | — |
-| Checksums | [SHA256SUMS-ventoy-sort-linux.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-linux.txt) | Covers the Linux tar.gz + 8 build artifacts | — |
+| Type | Asset | Contents |
+|---|---|---|
+| Source archive | [Ventoy-v1.1.20-ventoy-sort.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.zip) | Full source tree; compile it yourself |
+| Source archive | [Ventoy-v1.1.20-ventoy-sort.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/Ventoy-v1.1.20-ventoy-sort.tar.gz) | Full source tree; compile it yourself |
+| Binary package (Windows) | [ventoy-1.1.20-ventoy-sort-windows.zip](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-windows.zip) | Ready-to-use; 45 files, 5 differ from official 1.1.17 |
+| Binary package (Linux) | [ventoy-1.1.20-ventoy-sort-linux.tar.gz](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/ventoy-1.1.20-ventoy-sort-linux.tar.gz) | Ready-to-use; 137 files, 3 differ from official 1.1.17 |
+| Checksums | [SHA256SUMS](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS) | Covers the two source archives |
+| Checksums | [SHA256SUMS-ventoy-sort-windows.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-windows.txt) | Covers the Windows zip + 10 build artifacts |
+| Checksums | [SHA256SUMS-ventoy-sort-linux.txt](https://github.com/Endymi0n74/ventoy-fork/releases/download/v1.1.20-ventoy-sort/SHA256SUMS-ventoy-sort-linux.txt) | Covers the Linux tar.gz + 8 build artifacts |
 
 The first two are **source archives**, not installable builds. The two binary packages are
 ready to copy to a USB drive.
+
+### Verifying a download
+
+Full SHA-256 of the four downloadable files, to compare against what
+`sha256sum` (or `Get-FileHash`) reports:
+
+- `Ventoy-v1.1.20-ventoy-sort.zip` — `6eb3e3aa03ae15c454fb6b9fe907e7a8e24a88cdd76d71cbb3221700da13d505`
+- `Ventoy-v1.1.20-ventoy-sort.tar.gz` — `0313f22d144911b9b0acb22952fdecc8c7b15308c14e4ba4b8b6b641dcdd3689`
+- `ventoy-1.1.20-ventoy-sort-windows.zip` — `a68944d7a49136f3c81b712be9c223e5130aec1aaaf2db5e988b416d136bbbdc`
+- `ventoy-1.1.20-ventoy-sort-linux.tar.gz` — `f27e2b898dd7c0a42102bac85e54ee4cbecbc50706a20b058374f3ecbd58db20`
 
 ## Installing
 
