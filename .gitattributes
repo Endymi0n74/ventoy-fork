@@ -4,4 +4,6 @@ dist/tests/*.sh text eol=lf
 .github/workflows/*.yml text eol=lf
 dist/ventoy-sort-build/_qemu/*.sh text eol=lf
 dist/ventoy-sort-build/*.py text eol=lf
+dist/tests/*.py text eol=lf
 dist/ventoy-sort-build/*.cmd text eol=crlf
+LinuxGUI/WebUI/index.html text eol=crlf

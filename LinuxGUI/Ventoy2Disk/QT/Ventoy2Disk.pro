@@ -117,17 +117,16 @@ DISTFILES += \
     Lib/fat_io_lib/version.txt
 
 
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Core
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Web
-INCLUDEPATH +=/home/panda/Ventoy2Disk/QT
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Include
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Lib/libhttp/include
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Lib/fat_io_lib/include
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Lib/xz-embedded/linux/include
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Lib/xz-embedded/linux/include/linux
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Lib/xz-embedded/userspace
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Lib/exfat/src/libexfat
-INCLUDEPATH +=/home/panda/Ventoy2Disk/Lib/fat_io_lib
+INCLUDEPATH +=$$PWD/../Core
+INCLUDEPATH +=$$PWD/../Web
+INCLUDEPATH +=$$PWD
+INCLUDEPATH +=$$PWD/../Include
+INCLUDEPATH +=$$PWD/../Lib/libhttp/include
+INCLUDEPATH +=$$PWD/../Lib/fat_io_lib
+INCLUDEPATH +=$$PWD/../Lib/xz-embedded/linux/include
+INCLUDEPATH +=$$PWD/../Lib/xz-embedded/linux/include/linux
+INCLUDEPATH +=$$PWD/../Lib/xz-embedded/userspace
+INCLUDEPATH +=$$PWD/../Lib/exfat/src/libexfat
 #INCLUDEPATH +=/usr/src/linux-headers-5.10.18-amd64-desktop/include
 #INCLUDEPATH +=/usr/src/linux-headers-5.10.18-amd64-desktop/arch/x86/include
 #INCLUDEPATH +=/usr/src/linux-headers-5.10.18-amd64-desktop/arch/x86/include/generated

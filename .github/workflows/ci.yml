@@ -33,6 +33,23 @@ jobs:
       - name: Regression suite + perf comparison
         run: python build_sort_test.py --perf
 
+  gui-version-fit:
+    name: GUI version fit (real offscreen render)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt5 toolchain and DejaVu fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qtbase5-dev qtbase5-dev-tools qt5-qmake g++ pkg-config fonts-dejavu-core
+
+      - name: Static check (declared frames vs measured text)
+        run: python3 dist/tests/test_gui_version_layout.py
+
+      - name: Render the real Qt window offscreen
+        run: bash dist/tests/test_gui_render.sh
+
   move-tag-bench:
     name: MOVE_TAG bench (offline, mocked git/gh)
     runs-on: windows-latest

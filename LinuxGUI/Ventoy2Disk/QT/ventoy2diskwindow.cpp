@@ -3,6 +3,7 @@
 #include "partcfgdialog.h"
 
 #include <QMessageBox>
+#include <QFontMetrics>
 
 extern "C" {
 #include "ventoy_define.h"
@@ -427,6 +428,57 @@ void Ventoy2DiskWindow::FillDeviceList(const QString &select)
 }
 
 
+// Affiche une version dans un libelle en choisissant la plus grande taille de
+// police qui tient dans sa largeur. Le amont n'a jamais eu besoin de ca : ses
+// versions tiennent en 6-7 caracteres (« 1.0.53 »), mais celles du fork en
+// comptent 17 (« 1.1.20-ventoy-sort ») et debordaient du cadre. Plutot que de
+// figer une taille qui-convient-au-moment, on la calcule : aucune version
+// future ne pourra deborder, quelle que soit la police substituee par le
+// systeme.
+void Ventoy2DiskWindow::SetVersionLabel(QLabel *label, const char *ver)
+{
+    const int kMaxPointSize = 20;
+    const int kMinPointSize = 9;
+    const int kMargin = 4;            // marge de securite, en pixels
+
+    if ((NULL == label) || (NULL == ver))
+    {
+        return;
+    }
+
+    QString text = QString::fromUtf8(ver);
+    QFont font = label->font();
+    font.setWeight(QFont::Bold);
+
+    int avail = label->width() - kMargin;
+    if (avail < 8)
+    {
+        avail = 8;
+    }
+
+    for (int pt = kMaxPointSize; pt >= kMinPointSize; pt--)
+    {
+        font.setPointSize(pt);
+        QFontMetrics fm(font);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+        const int textWidth = fm.horizontalAdvance(text);
+#else
+        // QFontMetrics::horizontalAdvance() n'existe qu'a partir de Qt 5.11.
+        const int textWidth = fm.width(text);
+#endif
+        if (textWidth <= avail)
+        {
+            break;
+        }
+    }
+
+    label->setFont(font);
+
+    char html[512];
+    snprintf(html, sizeof(html), VERSION_FMT, ver);
+    label->setText(QApplication::translate("Ventoy2DiskWindow", html, nullptr));
+}
+
 void Ventoy2DiskWindow::OnInitWindow(void)
 {
     int len;
@@ -434,7 +486,6 @@ void Ventoy2DiskWindow::OnInitWindow(void)
     QIcon icon;
     QPixmap pix1;
     QPixmap pix2;
-    char ver[512];
 
     ui->labelVentoyLocalSecure->hide();
 
@@ -453,8 +504,7 @@ void Ventoy2DiskWindow::OnInitWindow(void)
         m_part_group->triggered(ui->actionMBR);
     }
 
-    snprintf(ver, sizeof(ver), VERSION_FMT, ventoy_get_local_version());
-    ui->labelVentoyLocalVer->setText(QApplication::translate("Ventoy2DiskWindow", ver, nullptr));
+    SetVersionLabel(ui->labelVentoyLocalVer, ventoy_get_local_version());
 
     LoadLanguages();
 
@@ -637,8 +687,7 @@ void Ventoy2DiskWindow::on_ButtonRefresh_clicked()
 }
 
 void Ventoy2DiskWindow::on_comboBoxDevice_currentIndexChanged(int index)
-{    
-    char ver[512];
+{
     ventoy_disk *cur;
 
     ui->labelVentoyDeviceSecure->setHidden(true);
@@ -668,8 +717,7 @@ void Ventoy2DiskWindow::on_comboBoxDevice_currentIndexChanged(int index)
             ui->actionSecure_Boot_Support->trigger();
         }
 
-        snprintf(ver, sizeof(ver), VERSION_FMT, cur->vtoydata.ventoy_ver);
-        ui->labelVentoyDeviceVer->setText(QApplication::translate("Ventoy2DiskWindow", ver, nullptr));
+        SetVersionLabel(ui->labelVentoyDeviceVer, cur->vtoydata.ventoy_ver);
         ui->labelVentoyDevicePartStyle->setText(cur->vtoydata.partition_style ? "GPT" : "MBR");
     }
     else

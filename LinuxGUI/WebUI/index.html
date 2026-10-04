@@ -56,7 +56,12 @@
         font-size:28px;
         font-weight:bold;
         color:red; 
-        width:60%; 
+        /* largeur fixe de 60% : « 1.1.20-ventoy-sort » fait 294 px à 28 px de
+           corps, la version amont en faisait 57 : le texte débordait du cadre.
+           La version prend maintenant toute la place restante et ne se coupe
+           plus ; les boites conteneur ont été élargies en conséquence. */
+        width:auto;
+        white-space:nowrap;
         text-align:center;
     }
     span.vtoy_part {
@@ -277,7 +282,7 @@
         </div>
           
         <div class="row" style="width:520px;margin-top:20px;">          
-              <div class="box box-primary box-solid" style="float:left; width:250px;">
+              <div class="box box-primary box-solid" style="float:left; width:430px;">
                 <div class="box-header with-border" style="text-align:center;">
                   <h3 class="box-title" id="vtoy_local_ver_title" style="font-size: 14px;font-weight: bold;" >安装包内 Ventoy 版本</h3>              
                 </div>
@@ -288,7 +293,7 @@
                 </div>
               </div>
               
-              <div class="box box-primary box-solid" style="float:right; width:250px;">
+              <div class="box box-primary box-solid" style="float:right; width:430px;">
                 <div class="box-header with-border" style="text-align:center;">
                   <h3 class="box-title" id="vtoy_dev_ver_title" style="font-size: 14px;font-weight: bold;" >设备内部 Ventoy 版本</h3>              
                 </div>

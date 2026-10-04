@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QCloseEvent>
 #include <QThread>
+#include <QLabel>
 #include "partcfgdialog.h"
 
 QT_BEGIN_NAMESPACE
@@ -67,6 +68,9 @@ public:
     int lang_string(const QString &id, QString &str);
     void update_ui_language();
     void set_percent(int percent);
+
+    // Regle la police du libelle pour que la version y tienne toujours.
+    static void SetVersionLabel(QLabel *label, const char *ver);
 protected:
     void showEvent(QShowEvent *ev);
     void closeEvent(QCloseEvent *event);
@@ -100,6 +104,9 @@ private:
 };
 
 #define _LANG_STR(id) obj.value(id).toString()
-#define VERSION_FMT "<html><head/><body><p><span style=\" font-size:20pt; font-weight:600; color:#ff0000;\">%s</span></p></body></html>"
+// La taille et la graisse NE sont plus dans le HTML : elles sont choisies a
+// l'execution par SetVersionLabel() pour que le texte tienne toujours dans le
+// libelle. La couleur reste fixee ici.
+#define VERSION_FMT "<html><head/><body><p><span style=\" color:#ff0000;\">%s</span></p></body></html>"
 
 #endif // VENTOY2DISKWINDOW_H

@@ -271,13 +271,18 @@ def check_baseline(pkg, kind, base_dir):
     extra = sorted(set(inv_new) - set(inv_base))
     changed = sorted(n for n in inv_base if n in inv_new and inv_base[n] != inv_new[n])
     expected = EXPECTED_DIFF[kind]
+    # A locally rebuilt x86_64 Qt frontend is an optional, ABI-gated package
+    # variant. The other three architecture-specific GUI binaries stay official.
+    accepted = [expected]
+    if kind == "linux":
+        accepted.append(expected | {"tool/x86_64/Ventoy2Disk.qt5"})
     ok = True
     if missing or extra:
         print(f"    [FAIL] manquants={missing} superflus={extra}")
         ok = False
-    if set(changed) != expected:
+    if set(changed) not in accepted:
         print(f"    [FAIL] fichiers modifiés : {changed}")
-        print(f"           attendu : {sorted(expected)}")
+        print(f"           attendu : l'une des listes {sorted(sorted(x) for x in accepted)}")
         ok = False
     if ok:
         print(f"    [ok] {len(inv_new)} fichiers identiques en nom, "

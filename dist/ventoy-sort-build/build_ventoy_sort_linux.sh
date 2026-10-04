@@ -38,10 +38,19 @@
 #      GRUB_TARBALL    source grub-2.04.tar.xz            (def. <ce dossier>/grub-2.04.tar.xz, sinon téléchargée)
 #      JOBS            parallélisme make                  (def. nproc)
 #      KEEP=1          conserve les arbres de build       (défaut : tout refaire de zéro)
+#      GUI_REBUILD=1   compile la GUI Qt native, vérifie l'ABI GLIBC+Qt, puis
+#                      remplace x86_64 si ses symboles restent compatibles
+#                      (défaut : 0 — les binaires GUI officiels sont conservés)
 #
 #  Prérequis WSL : gcc, gcc-aarch64-linux-gnu (cross arm64), make, python3,
 #                  autoconf/automake, openssl, sbsigntool, mtools (mcopy/mdir),
 #                  xz, gzip, tar, curl, coreutils.
+#  GUI_REBUILD=1 ajoute : qtbase5-dev, qtbase5-dev-tools, qt5-qmake, readelf,
+#                         binutils (nm/strings pour les audits de symboles).
+#
+#  GUI_REBUILD=1 demande en plus une toolchain Qt5 : qtbase5-dev,
+#  qtbase5-dev-tools et qt5-qmake (5.15 suffit). Sans elle l'étape échoue
+#  explicitement plutot que de livrer silencieusement la GUI officielle.
 #  Aucun prérequis Windows n'est nécessaire (pas d'MSBuild).
 # =====================================================================================
 set -Eeuo pipefail
@@ -819,6 +828,121 @@ step_stage_package() {
 }
 
 # -------------------------------------------------------------------------------------
+# why GUI_REBUILD — reconstruction de la GUI Qt (étape 5b, opt-in)
+# -------------------------------------------------------------------------------------
+# why Le paquet reprend par défaut TOUT le runtime de l'archive officielle, GUI
+# comprise (commentaire d'en-tête du script). Or les interfaces amont sont
+# dimensionnées pour une version de 6 caractères (« 1.0.53 ») : à 20 pt, celle
+# du fork en compte 17 (« 1.1.20-ventoy-sort ») et déborde du cadre. Les sources
+# ont été corrigées (fenêtre élargie, largeur du libellé revue, et pour Qt une
+# taille de police calculée à l'exécution) — voir dist/tests/test_gui_version_layout.py.
+# why Tant que la GUI n'est pas reconstruite, ces corrections restent invisibles
+# pour qui installe le paquet : c'est le binaire officiel qui est livré.
+# why L'etape a ete reellement executee de bout en bout (qmake 5.15.18, WSL
+# Ubuntu) et son rendu verifie hors ecran par dist/tests/test_gui_render.sh,
+# qui compile la GUI, appelle le vrai SetVersionLabel() sur la vraie forme
+# .ui, mesure le texte rendu et ecrit une capture PNG.
+# why Pieges rencontres, consigner pour ne pas les repayer : le .pro amont
+# pointait sur des chemins ABSOLUS /home/panda/... (il a ete rendu relatif a
+# $$PWD), et qmake doit etre lance depuis la RACINE du projet (Ventoy2Disk),
+# pas depuis QT/ : les chemins de SOURCES (Core/, Lib/, Web/) y sont relatifs.
+# why why L'étape est désactivée par défaut : la reconstruction est native x86_64,
+# alors que l'archive contient quatre binaires Qt d'architectures différentes.
+# Le runtime x86_64 n'est substitué qu'après validation du processeur, des symboles
+# GLIBC et Qt requis contre la baseline ; sinon le binaire officiel reste intact.
+step_rebuild_gui() {
+    if [ "${GUI_REBUILD:-0}" != "1" ]; then
+        log "GUI : non reconstruite (GUI_REBUILD absent) — binaires officiels conservés"
+        return 0
+    fi
+
+    local qmake_bin= src_dir= work= built=
+    for qmake_bin in qmake-qt5 qmake-qt5.15 qmake; do
+        if command -v "$qmake_bin" >/dev/null 2>&1; then break; fi
+        qmake_bin=
+    done
+    if [ -z "$qmake_bin" ]; then
+        die "GUI_REBUILD=1 exige une toolchain Qt5, absente ici.
+  Dans le WSL de build :  apt-get install -y qtbase5-dev qtbase5-dev-tools qt5-qmake g++ pkg-config
+  (prefixer par sudo si la session WSL n'est pas root)
+  Ou relancer sans GUI_REBUILD (binaires GUI officiels conservés)."
+    fi
+
+    src_dir=$REPO/LinuxGUI/Ventoy2Disk
+    [ -f "$src_dir/QT/Ventoy2Disk.pro" ] || die "$src_dir/QT/Ventoy2Disk.pro introuvable"
+
+    work=$B/gui-build
+    rm -rf "$work"
+    mkdir -p "$work"
+    # Copie jetable : qmake écrit Makefile et .o à côté des sources.
+    cp -r "$src_dir/." "$work/"
+
+    local rc=0
+    (
+        # qmake se lance depuis la RACINE du projet : les chemins de SOURCES
+        # (Core/, Lib/, Web/) y sont relatifs. Lance depuis QT/, qmake ne trouve
+        # plus aucun fichier et make echoue sur « Core/ventoy_crc32.c ».
+        cd "$work" || exit 1
+        "$qmake_bin" QT/Ventoy2Disk.pro || exit 1
+        make -j"${JOBS:-1}" || exit 1
+    ) > "$B/log-gui-build.txt" 2>&1 || rc=$?
+    if [ "$rc" -ne 0 ]; then
+        die "échec de la reconstruction de la GUI Qt (code $rc) — voir log-gui-build.txt"
+    fi
+
+    built=$(find "$work" -maxdepth 3 -type f -name 'Ventoy2Disk' -perm -u+x | head -1)
+    [ -n "$built" ] || die "binaire Ventoy2Disk introuvable après qmake/make — voir log-gui-build.txt"
+
+    # Le binaire qmake/make est natif : il ne peut remplacer que la GUI x86_64.
+    # Les versions aarch64/i386/mips64el doivent rester les binaires officiels :
+    # elles ont des architectures et des toolchains Qt differentes.
+    [ "$(uname -m)" = "x86_64" ] || die "GUI_REBUILD=1 compile une GUI native x86_64 ; hôte détecté : $(uname -m)"
+    readelf -h "$built" | grep -q 'Machine:.*X86-64' || die "GUI reconstruite non x86_64 : $built"
+
+    # Le binaire livré ne doit pas relever les prérequis de glibc du runtime officiel.
+    local built_glibc base_glibc base_gui="$work/baseline-x86_64.qt5"
+    built_glibc=$(readelf --version-info "$built" | grep -oE 'GLIBC_[0-9]+\.[0-9]+(\.[0-9]+)?' | sort -Vu | tail -1 | cut -d_ -f2)
+    # Le linker dynamique est requis par tout ELF, mais n'est pas une version
+    # GLIBC symbolisee : ne pas laisser /lib64/ld-linux-x86-64.so.2 gonfler le max.
+    [ -n "$built_glibc" ] || die "aucune version GLIBC_ trouvee dans la GUI construite"
+    tar -xOzf "$BASE_LINUX" "./$BASE_ROOT/tool/x86_64/Ventoy2Disk.qt5" > "$base_gui" || die "lecture de la GUI baseline impossible"
+    base_glibc=$(readelf --version-info "$base_gui" | grep -oE 'GLIBC_[0-9]+\.[0-9]+(\.[0-9]+)?' | sort -Vu | tail -1 | cut -d_ -f2)
+    [ -n "$built_glibc" ] && [ -n "$base_glibc" ] || die "impossible de determiner les prérequis glibc"
+    version_le() { [ "$(printf '%s
+%s
+' "$1" "$2" | sort -V | tail -1)" = "$2" ]; }
+    version_le "$built_glibc" "$base_glibc" || die "GUI construite exige GLIBC_$built_glibc ; baseline=$base_glibc, ABI incompatible"
+
+    # Qt est dynamiquement fourni par le système : la baseline Qt 5.9 ne
+    # garantit pas que les API Qt 5.15 disponibles sur l'hôte existeront partout.
+    local built_qt base_qt base_qt_symbols
+    built_qt=$(readelf --version-info "$built" | grep -oE 'Qt_[0-9]+(\.[0-9]+)*' | sort -Vu | tail -1)
+    base_qt=$(readelf --version-info "$base_gui" | grep -oE 'Qt_[0-9]+(\.[0-9]+)*' | sort -Vu | tail -1)
+    [ -n "$built_qt" ] && [ -n "$base_qt" ] || die "impossible de determiner les symboles Qt requis"
+    version_le "${built_qt#Qt_}" "${base_qt#Qt_}" || die "GUI construite exige $built_qt ; baseline=$base_qt, ABI Qt incompatible"
+    base_qt_symbols=$(readelf --version-info "$base_gui" | grep -oE 'Qt_[0-9]+(\.[0-9]+)*' | sort -u)
+    while IFS= read -r sym; do
+        [ -z "$sym" ] && continue
+        grep -Fxq "$sym" <<<"$base_qt_symbols" || die "GUI construite requiert $sym, absent des versions de symbole Qt de la baseline"
+    done < <(readelf --version-info "$built" | grep -oE 'Qt_[0-9]+(\.[0-9]+)*' | sort -u)
+
+    # Ne modifier que la cible native x86_64. Les trois autres ELF proviennent
+    # de toolchains/architectures distinctes ; les remplacer par ce binaire serait
+    # une corruption de paquet.
+    local d="$PKG/tool/x86_64" m
+    [ -f "$d/Ventoy2Disk.qt5" ] || die "GUI x86_64 introuvable dans $d"
+    m=$(stat -c %Y "$d/Ventoy2Disk.qt5")
+    cp -f "$built" "$d/Ventoy2Disk.qt5"
+    chmod 755 "$d/Ventoy2Disk.qt5"
+    touch -d "@$m" "$d/Ventoy2Disk.qt5"
+    EXPECTED_DIFF_FILES="$EXPECTED_DIFF_FILES tool/x86_64/Ventoy2Disk.qt5"
+
+    ok "GUI Qt x86_64 reconstruite ; les binaires aarch64/i386/mips64el restent officiels"
+    log "  sha256 du binaire reconstruit : $(sha256 "$built")"
+    log "ATTENTION : le contenu du paquet s'écarte de la base officielle — l'empreinte change"
+}
+
+# -------------------------------------------------------------------------------------
 # Étape 6 — patch de l'image disque (grubx64 + grubia32 + empreinte fbx64 + version)
 # -------------------------------------------------------------------------------------
 patch_disk_image() {
@@ -1148,7 +1272,8 @@ step_verify() {
     tar -tzf "$TAR" > "$B/log-tar-test.txt" || die "tar.gz illisible"
     ok "archives xz et tar.gz intègres"
 
-    # c) contenu du tar.gz vs archive officielle : mêmes noms, seuls les 3 payloads attendus diffèrent
+# c) contenu du tar.gz vs archive officielle : trois remplacements de base ;
+#    si GUI_REBUILD=1 et l'ABI passe, un quatrième fichier x86_64 est attendu.
     python3 - "$BASE_LINUX" "$TAR" "$BASE_ROOT" "ventoy-$FORK_VERSION" "$EXPECTED_DIFF_FILES" <<'PY'
 import hashlib, sys, tarfile
 base_tgz, new_tgz, base_root, new_root, expected = sys.argv[1:6]
@@ -1183,13 +1308,13 @@ if changed - expected:
 print(f'tar.gz comparé à l\'archive officielle : {len(new)} fichiers identiques en nom, '
       f'{len(changed)} contenu(s) modifié(s) -> {sorted(changed)}')
 PY
-    ok "contenu du tar.gz conforme (aucun fichier manquant/superflu, 3 remplacements attendus)"
+    ok "contenu du tar.gz conforme (aucun fichier manquant/superflu, remplacements attendus)"
 }
 
 # -------------------------------------------------------------------------------------
 # Pipeline
 # -------------------------------------------------------------------------------------
-TOTAL_STEPS=7
+TOTAL_STEPS=8
 main() {
     printf '%s\n' "======================================================================"
     printf '%s\n' " Build reproductible — paquet Linux du fork ventoy-sort"
@@ -1201,10 +1326,12 @@ main() {
     step "build GRUB 2.04 (i386-pc, x86_64-efi, i386-efi, arm64-efi)";     step_build_grub
     step "charges utiles GRUB (core.img + grubx64 + grubia32 + BOOTAA64)"; step_mkimage
     step "préparation du paquet depuis l'archive officielle"; step_stage_package
+    step "reconstruction de la GUI Qt (GUI_REBUILD=1)";  step_rebuild_gui
     step "patch de l'image disque + signatures Secure Boot"; patch_disk_image
     step "assemblage (core.img.xz, tar.gz)";                step_assemble
     step "empreintes + manifeste";                           step_checksums; step_manifest
     step "vérifications finales";                            step_verify
+
 
     printf '\n%s' "$C_OK"
     printf '%s\n' "======================================================================"
