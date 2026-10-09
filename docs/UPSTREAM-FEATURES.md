@@ -64,17 +64,22 @@ régression passe en mode normal **et** en `--perf`.
 
 ### Portée pour ce fork
 
-- Le merge est **au niveau source** : rien n'a été reconstruit ni republié. Les
-  25 tests du harnais et le mode `--perf` passent, et la CI revalide au push.
-- **Les paquets publiés restent construits à partir de l'archive officielle 1.1.17**
-  (baseline épinglée par SHA-256) : `grub.cfg`, hooks du cpio et outils livrés sont ceux
-  de 1.1.17. Seuls les chargeurs GRUB recompilés porteront le code 1.1.18 — à partir du
-  moment où les binaires seront reconstruits.
-- Conséquence pratique : le prochain build de paquet doit **ré-épingler la baseline
-  officielle 1.1.18** (URL + SHA-256 dans `.github/workflows/build-package*.yml`,
-  `dist/check_release_pkg.py`, `BASE_ZIP`/`BASE_LINUX` des scripts de build). Un
-  `grub.cfg` de 1.1.18 appelle en effet `vt_timeout_lock`, `vt_theme_lock`,
-  `terminal_lock` et `lockfont`, qui n'existent que dans un GRUB compilé depuis 1.1.18.
+- Le merge n'est plus resté au niveau source : la baseline officielle épinglée par
+  SHA-256 est maintenant **1.1.18** (`.github/workflows/build-package*.yml`,
+  `BASE_ZIP`/`BASE_LINUX` des scripts de build, `BASELINES` de
+  `dist/check_release_pkg.py`). Les paquets publiés embarquent donc `grub.cfg`, hooks
+  du cpio et outils de 1.1.18, et les chargeurs GRUB recompilés contiennent le code
+  de 1.1.18. C'est nécessaire : un `grub.cfg` de 1.1.18 appelle `vt_timeout_lock`,
+  `vt_theme_lock`, `terminal_lock` et `lockfont`, qui n'existent que dans un GRUB
+  compilé depuis 1.1.18.
+- Les inventaires ne bougent pas pour autant : 45 fichiers dans le zip Windows et 137
+  dans le tar.gz Linux, les mêmes noms qu'en 1.1.17. Cinq contenus changent donc côté
+  Windows et trois côté Linux, exactement la liste attendue par
+  `dist/check_release_pkg.py`.
+- Les 25 tests du harnais et le mode `--perf` passent, la CI revalide au push, et
+  chaque paquet est contrôlé par la CI (empreinte, marqueur du fork dans les trois
+  chargeurs EFI, inventaire et contenus vs baseline) **avant** d'être attaché à la
+  release.
 - Le **tri fusion reste le seul changement de production du fork** : le merge n'a pas
   touché `ventoy_cmd_list_img()` ni ses tests.
 
