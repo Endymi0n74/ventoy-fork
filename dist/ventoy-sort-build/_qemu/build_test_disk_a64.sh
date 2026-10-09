@@ -2,16 +2,18 @@
 # Image disque brute "clé Ventoy" pour le test UEFI ARM64 — géométrie officielle
 # (p1 données FAT32 @LBA2048, p2 EFI FAT16 32 Mio), construite depuis le PAQUET
 # LINUX ventoy-sort (celui qui contient notre BOOTAA64.EFI patché + signé).
-#   usage : build_test_disk_a64.sh [chemin-tar.gz|chemin-zip]
+#   usage : build_test_disk_a64.sh [chemin-tar.gz|chemin-zip] [dossier de travail]
 #          (défaut : le tar Linux du build ; un zip Windows marche aussi —
-#           BOOTAA64.EFI y est notre build depuis l'extension arm64)
+#           BOOTAA64.EFI y est notre build depuis l'extension arm64 ; le dossier
+#           de travail évite de toucher aux artefacts QEMU existants)
 set -euo pipefail
 B=/mnt/d/Codex/ventoy/dist/ventoy-sort-build
 Q=$B/_qemu
-SRC=${1:-$B/ventoy-1.1.18-ventoy-sort-linux.tar.gz}
+SRC=${1:-$B/ventoy-1.1.19-ventoy-sort-linux.tar.gz}
 [ -f "$SRC" ] || { echo "paquet absent : $SRC"; exit 1; }
-
-rm -rf "$Q/pkga64"; mkdir -p "$Q/pkga64"
+Q=${2:-$Q}
+case "$Q" in /*) ;; *) Q=$(realpath -m "$Q") ;; esac
+mkdir -p "$Q/pkga64"
 cd "$Q"
 case "$SRC" in
     *.zip) unzip -q "$SRC" -d pkga64 ;;

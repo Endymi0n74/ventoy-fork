@@ -13,7 +13,6 @@
 !/PROCEDURE-SECURE-BOOT.md
 !/_run.sh
 !/_run_linux.sh
-!/_cmp_runs.sh
 !/_strip_exes.py
 !/_qemu
 /_qemu/*
