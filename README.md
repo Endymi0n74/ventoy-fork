@@ -5,9 +5,11 @@
 
 **Language / Langue:** English | [Français](README.fr.md)
 
-A fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17** (`7cbdc5cf`)
+A fork of [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.18** (`6116894a`)
 that adds a focused improvement to boot-menu image sorting, and publishes ready-to-boot
-Windows and Linux packages rebuilt from source.
+Windows and Linux packages rebuilt from source. Upstream v1.1.18 was merged on
+2026-10-09; the published packages still embed the official **1.1.17** runtime, see
+[Known limits](#known-limits).
 
 Ventoy itself is an open source tool to create bootable USB drives: copy ISO/WIM/IMG/
 VHD(x)/EFI files onto a drive and pick one from a boot menu. Everything below about
@@ -109,13 +111,19 @@ harness from the extraction. Set `SKIP_SWEEP=1` to skip the sweep.
 - The Windows package was reproduced byte-for-byte across two independent CI runs; the
   Linux package was built once, on a pinned `ubuntu-24.04` because the compiler version
   changes GRUB's output bytes.
+- **The published packages are built from the official 1.1.17 archive** (baseline pinned
+  by SHA-256 in `build-package*.yml`), while the source tree now carries upstream
+  v1.1.18. They therefore ship the 1.1.17 `grub.cfg`, hooks and tools. The next package
+  build should re-pin the official 1.1.18 baseline: the 1.1.18 `grub.cfg` calls
+  `vt_timeout_lock` / `vt_theme_lock` / `terminal_lock` / `lockfont`, which only exist in
+  a GRUB built from 1.1.18 sources.
 
 ## Documentation
 
 | Document | What it covers |
 |---|---|
 | [docs/BUILD-PACKAGES.md](docs/BUILD-PACKAGES.md) | Building and publishing the binary packages, the three package checks |
-| [docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md) | Upstream Ventoy 1.1.17: feature list, tested OS, plugins, Secure Boot, official docs |
+| [docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md) | Upstream Ventoy 1.1.18: feature list, tested OS, plugins, Secure Boot, official docs |
 | [RELEASE_NOTES.md](RELEASE_NOTES.md) | Release mechanics: tag, `MOVE_TAG=1`, preflight, test bench |
 | [dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md](dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md) | Secure Boot MOK enrollment |
 | [PERF_FINDINGS.md](PERF_FINDINGS.md) | Performance measurements |
@@ -124,9 +132,10 @@ harness from the extraction. Set `SKIP_SWEEP=1` to skip the sweep.
 ## Upstream Ventoy
 
 The fork changes the boot-menu sort and the Linux GUI layout. Everything else is upstream
-Ventoy 1.1.17, unchanged: the full feature list, the tested-OS tables, the plugins, Secure
+Ventoy 1.1.18, unchanged: the full feature list, the tested-OS tables, the plugins, Secure
 Boot and the official documentation index are all kept in
-[docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md).
+[docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md), together with what upstream
+v1.1.18 added and what the next package build still has to pick up.
 
 Upstream site: <https://www.ventoy.net> · [FAQ](https://www.ventoy.net/en/faq.html)
 · [Forum](https://forums.ventoy.net)

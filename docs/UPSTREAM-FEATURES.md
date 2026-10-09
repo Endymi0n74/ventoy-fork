@@ -1,7 +1,8 @@
-# Fonctions de Ventoy amont — v1.1.17
+# Fonctions de Ventoy amont — v1.1.18
 
 Ce document recense ce que fait [Ventoy](https://github.com/ventoy/Ventoy) **en amont**,
-repris depuis le README du projet pour la version **v1.1.17** (commit `7cbdc5cf`). Il
+repris depuis le README du projet pour la version **v1.1.18** (commit `6116894a`, tag
+`v1.1.18`, publié le 2026-10-09). Il
 existe parce que la surface fonctionnelle de Ventoy est bien plus large que ce que ce
 fork touche : le fork ne change que le **tri des images du menu** et la **mise en page de
 la version dans la GUI Linux** (voir le [README](../README.md) et le
@@ -16,6 +17,66 @@ référence : <https://github.com/ventoy/Ventoy>.
 > la clé MOK du fork, pas celle de Microsoft. Voir
 > [Secure Boot](#secure-boot) plus bas et la procédure d'enrôlement dans
 > [`dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md`](../dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md).
+
+## Synchronisation amont : v1.1.17 → v1.1.18
+
+Le 2026-10-09, `upstream/master` (tag `v1.1.18`, commit `6116894a`) a été fusionné dans
+`master` du fork : 19 commits après `7cbdc5cf` (« 1.1.17 release »). **Le merge n'a posé
+aucun conflit** — `ventoy_cmd.c` est le seul fichier modifié des deux côtés, et leurs
+hunks sont disjoints (le tri fusion du fork occupe les lignes ~2852-3121, upstream touche
+les commandes `ventoy_cmd_check_mode`, `ventoy_cmd_need_secondary_menu`,
+`ventoy_cmd_timeout_lock`/`theme_lock` et le tableau `ventoy_cmds[]`). Le harnais de
+régression passe en mode normal **et** en `--perf`.
+
+### Nouveautés officielles de v1.1.18 (changelog GitHub)
+
+- Support **expérimental des images de récupération SteamOS** (#3712, #2875, #1815).
+- **Partition ISO montable « ready to use »** sur les distributions de bureau courantes,
+  nom dm stable `/dev/mapper/VentoyPart`, et montabilité depuis CloneZilla (#3274).
+- Suppression des icônes de disque en double dans la barre latérale sous Linux.
+- Correctif de boot **Fedora 45 beta**.
+- Correctif du contrôle **Secure Boot Windows/WinPE** (certificat Windows CA2011 révoqué,
+  avec le mode ByPass Ventoy et un BIOS à jour).
+- Correctif de la **persistance intermittente sous Ubuntu 24.04** (#3718).
+- Correctif de boot **Grml 2026.09** (#3751).
+- **Support des ISO Syslinux personnalisées** (`syslinux.cfg` à la racine, #3760).
+- Améliorations pour la dernière version de **LinuxConsole** (#3745).
+- **Plugson** : contrôle des entrées *Boot Conf Replace*, limitées à 2 par mode
+  (#3727, #3593).
+
+### Également fusionné (au-delà du changelog)
+
+- **GRUB** : nouvelles commandes `vt_timeout_lock` et `vt_theme_lock` (verrouillage de
+  la variable `timeout` et de la variable `theme` par hooks d'environnement), mode
+  `vtcompat`, commandes `terminal_lock`, `lockfont`, `efifwsetup`, `terminal`, `font` ;
+  loaders linux i386 / arm64 / mips64 et `syslinux_parse` améliorés ; une nouvelle
+  fonction `ventoy_cfg_theme_lock` dans `grub.cfg`.
+- `vt_img_extra_initrd_append` détecte automatiquement le suffixe des modules noyau
+  (`.ko`, `.ko.xz`, `.ko.zst`, …).
+- **Hooks d'amorçage** : chemin des hooks dracut rendu variable (#3753), optimisation du
+  processus udev, et nouveaux hooks « uauto » pour arch, blackPanther, deepin, gobo,
+  hyperbola, kaos, lunar, mageia, manjaro, openEuler, rhel7, suse ; boucle dédiée
+  SteamOS (`IMG/cpio/ventoy/loop/steamos/`).
+- **VtoyTool** : nouveau module `vtoygpt.c`, `vtoydm.c` étendu (nom dm stable), nouvelles
+  commandes, `biso_9660.h` revu.
+- `Ventoy2Disk/build.bat` (toolchain MSVC), VtoyShim EDK2, aide et menu **pt_BR**
+  corrigés, `DOC/BuildVentoyFromSource.txt` mis à jour.
+
+### Portée pour ce fork
+
+- Le merge est **au niveau source** : rien n'a été reconstruit ni republié. Les
+  25 tests du harnais et le mode `--perf` passent, et la CI revalide au push.
+- **Les paquets publiés restent construits à partir de l'archive officielle 1.1.17**
+  (baseline épinglée par SHA-256) : `grub.cfg`, hooks du cpio et outils livrés sont ceux
+  de 1.1.17. Seuls les chargeurs GRUB recompilés porteront le code 1.1.18 — à partir du
+  moment où les binaires seront reconstruits.
+- Conséquence pratique : le prochain build de paquet doit **ré-épingler la baseline
+  officielle 1.1.18** (URL + SHA-256 dans `.github/workflows/build-package*.yml`,
+  `dist/check_release_pkg.py`, `BASE_ZIP`/`BASE_LINUX` des scripts de build). Un
+  `grub.cfg` de 1.1.18 appelle en effet `vt_timeout_lock`, `vt_theme_lock`,
+  `terminal_lock` et `lockfont`, qui n'existent que dans un GRUB compilé depuis 1.1.18.
+- Le **tri fusion reste le seul changement de production du fork** : le merge n'a pas
+  touché `ventoy_cmd_list_img()` ni ses tests.
 
 ## Ce qu'est Ventoy
 

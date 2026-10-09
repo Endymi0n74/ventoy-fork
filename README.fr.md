@@ -5,9 +5,11 @@
 
 **Langue / Language:** Français | [English](README.md)
 
-Fork de [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.17 upstream exact**
-(`7cbdc5cf`) : une amélioration ciblée du tri des images du menu de démarrage, et des
-paquets Windows et Linux prêts à l'emploi reconstruits depuis les sources.
+Fork de [ventoy/Ventoy](https://github.com/ventoy/Ventoy) **v1.1.18 upstream**
+(`6116894a`) : une amélioration ciblée du tri des images du menu de démarrage, et des
+paquets Windows et Linux prêts à l'emploi reconstruits depuis les sources. Le merge
+amont v1.1.18 a été fait le 2026-10-09 ; les paquets publiés embarquent encore le
+runtime officiel **1.1.17**, voir [Limites connues](#limites-connues).
 
 Ventoy est un outil libre qui rend une clé USB amorçable : on y copie des images
 ISO/WIM/IMG/VHD(x)/EFI et on choisit celle à démarrer. Tout ce qui suit à propos des
@@ -113,13 +115,20 @@ harnais. `SKIP_SWEEP=1` saute le sweep.
 - Le paquet Windows a été reproduit à l'octet près lors de deux exécutions CI
   indépendantes ; le paquet Linux a été construit une seule fois, sur un `ubuntu-24.04`
   épinglé, car la version du compilateur change les octets produits par GRUB.
+- **Les paquets publiés sont construits à partir de l'archive officielle 1.1.17**
+  (baseline épinglée par SHA-256 dans `build-package*.yml`), alors que les sources
+  portent désormais upstream v1.1.18 : ils livrent donc le `grub.cfg`, les greffons et
+  les outils de 1.1.17. Le prochain build de paquet doit ré-épingler la baseline
+  officielle 1.1.18 : le `grub.cfg` de 1.1.18 appelle `vt_timeout_lock` /
+  `vt_theme_lock` / `terminal_lock` / `lockfont`, qui n'existent que dans un GRUB
+  compilé à partir des sources 1.1.18.
 
 ## Documentation
 
 | Document | Contenu |
 |---|---|
 | [docs/BUILD-PACKAGES.md](docs/BUILD-PACKAGES.md) | Construction et publication des paquets binaires, les trois contrôles package |
-| [docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md) | Ventoy amont 1.1.17 : fonctions, plateformes éprouvées, greffons, Secure Boot, documentation officielle |
+| [docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md) | Ventoy amont 1.1.18 : fonctions, plateformes éprouvées, greffons, Secure Boot, documentation officielle |
 | [RELEASE_NOTES.md](RELEASE_NOTES.md) | Mécanique de publication : tag, `MOVE_TAG=1`, préflight, banc de test |
 | [dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md](dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md) | Enrôlement de la clé MOK Secure Boot |
 | [PERF_FINDINGS.md](PERF_FINDINGS.md) | Mesures de performance |
@@ -128,10 +137,11 @@ harnais. `SKIP_SWEEP=1` saute le sweep.
 ## Ventoy amont
 
 Le fork change le tri du menu de démarrage et la mise en page de la GUI Linux. Tout le
-reste est Ventoy amont 1.1.17, inchangé : la liste complète des fonctions, les tables de
+reste est Ventoy amont 1.1.18, inchangé : la liste complète des fonctions, les tables de
 plateformes éprouvées, les greffons, Secure Boot et l'index de la documentation
 officielle sont tous conservés dans
-[docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md).
+[docs/UPSTREAM-FEATURES.md](docs/UPSTREAM-FEATURES.md), avec ce que la version 1.1.18
+apporte et ce que le prochain build de paquet a encore à en reprendre.
 
 Site amont : <https://www.ventoy.net> · [FAQ](https://www.ventoy.net/en/faq.html)
 · [Forum](https://forums.ventoy.net)
