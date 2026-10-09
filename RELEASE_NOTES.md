@@ -134,22 +134,32 @@ Mesures (30 seeds, QPC) : ×1,4 à n=32, ×8,7 à n=512, ×22 à n=2048,
 
 ## Assets
 
-| asset | rôle |
-|---|---|
-| `Ventoy-v1.1.18-Fork.zip` | archive source (à compiler soi-même) |
-| `Ventoy-v1.1.18-Fork.tar.gz` | archive source (équivalent tar.gz) |
-| `ventoy-1.1.18-Fork-windows.zip` | paquet binaire Windows, prêt pour une clé USB |
-| `ventoy-1.1.18-Fork-linux.tar.gz` | paquet binaire Linux, prêt pour une clé USB |
-| `SHA256SUMS` | sommes des deux archives sources |
-| `SHA256SUMS-Fork-windows.txt` | zip Windows + artefacts de build |
-| `SHA256SUMS-Fork-linux.txt` | tar.gz Linux + artefacts de build |
+| asset | taille | sha256 |
+|---|---|---|
+| `Ventoy-v1.1.18-Fork.zip` | 83 040 516 o | `18cef2d6c23c9a35abc80fe23837aaf41a6e0859159d23f62bd1456de314ebeb` |
+| `Ventoy-v1.1.18-Fork.tar.gz` | 81 516 259 o | `7290719022cf69ae4d1876f216ac9a8cf12ec95d50894f5d1fbd78ae8d7be534` |
+| `ventoy-1.1.18-Fork-windows.zip` | 17 281 942 o | `fccaf0b17c7de74d21c8c6f3a5527ad136baa203451d5d7dba72a01ef0933a4c` |
+| `ventoy-1.1.18-Fork-linux.tar.gz` | 20 907 791 o | `474ace026a53300ac627da9a1458ced94d6f04a4fdc0106f4839b3b6a3b6ce60` |
+| `SHA256SUMS` | 183 o | couvre les deux archives sources |
+| `SHA256SUMS-Fork-windows.txt` | 1 070 o | couvre le zip Windows et 10 artefacts de build |
+| `SHA256SUMS-Fork-linux.txt` | 868 o | couvre le tar.gz Linux et 8 artefacts de build |
 
-Les empreintes complètes figurent dans les fichiers `SHA256SUMS*` joints à
-la release et dans `README.md` / `README.fr.md`.
+Les deux premiers sont des **archives sources**, à compiler soi-même. Les deux
+suivants sont les **paquets binaires**, prêts à copier sur une clé USB.
 
-Les deux paquets binaires sont construits **par la CI** — les secrets MOK
-n'existent pas sur une machine locale — puis validés avant attachement ;
-compter ~5 minutes pour le Linux et ~45-50 minutes pour le Windows.
+Paquet **Windows** — 45 fichiers, 5 contenus modifiés face à l’archive
+officielle 1.1.18 (`Ventoy2Disk.exe`, `altexe/Ventoy2Disk_X64.exe`,
+`boot/core.img.xz`, `ventoy/ventoy.disk.img.xz`, `ventoy/version`), aucun
+ajouté ni manquant.
+
+Paquet **Linux** — 137 fichiers, 3 contenus modifiés (`boot/core.img.xz`,
+`ventoy/ventoy.disk.img.xz`, `ventoy/version`), aucun ajouté ni manquant.
+
+Les deux paquets ont été construits par les workflows *Release package* et
+*Release package (Linux)* à partir de la baseline officielle 1.1.18 épinglée,
+puis contrôlés par `dist/check_release_pkg.py` (empreinte, marqueur du fork
+dans les trois chargeurs EFI, inventaire et contenus vs baseline) **avant**
+d’être attachés. Le certificat MOK embarqué est celui documenté plus bas.
 
 ## Certificat Secure Boot
 
