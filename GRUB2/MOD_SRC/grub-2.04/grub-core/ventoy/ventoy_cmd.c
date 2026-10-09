@@ -4364,6 +4364,11 @@ static grub_err_t ventoy_cmd_check_mode(grub_extcmd_context_t ctxt, int argc, ch
     }
     else if (args[0][0] == '1')
     {
+        if (argc == 2 && ventoy_check_mode_by_name(args[1], "vtcompat"))
+        {
+            return 0;
+        }
+
         return g_ventoy_iso_raw ? 0 : 1;
     }
     else if (args[0][0] == '2')
@@ -6325,7 +6330,8 @@ static grub_err_t ventoy_cmd_need_secondary_menu(grub_extcmd_context_t ctxt, int
     if (ventoy_check_mode_by_name(args[0], "vtgrub2") ||
         ventoy_check_mode_by_name(args[0], "vtwimboot") ||
         ventoy_check_mode_by_name(args[0], "vtmemdisk") ||
-        ventoy_check_mode_by_name(args[0], "vtnormal")
+        ventoy_check_mode_by_name(args[0], "vtnormal") ||
+        ventoy_check_mode_by_name(args[0], "vtcompat")
         )
     {
         return 1;
@@ -6515,6 +6521,40 @@ static grub_err_t ventoy_cmd_update_sb_policy(grub_extcmd_context_t ctxt, int ar
 #ifdef GRUB_MACHINE_EFI
     ventoy_set_sb_policy();
 #endif
+
+    VENTOY_CMD_RETURN(0);
+}
+
+static grub_err_t ventoy_cmd_timeout_lock(grub_extcmd_context_t ctxt, int argc, char **args)
+{
+    (void)ctxt;
+    (void)argc;
+
+    if (args[0] && args[0][0] == '1')
+    {
+        ventoy_timeout_lock(1);
+    }
+    else
+    {
+        ventoy_timeout_lock(0);
+    }
+
+    VENTOY_CMD_RETURN(0);
+}
+
+static grub_err_t ventoy_cmd_theme_lock(grub_extcmd_context_t ctxt, int argc, char **args)
+{
+    (void)ctxt;
+    (void)argc;
+
+    if (args[0] && args[0][0] == '1')
+    {
+        ventoy_theme_lock(1);
+    }
+    else
+    {
+        ventoy_theme_lock(0);
+    }
 
     VENTOY_CMD_RETURN(0);
 }
@@ -7209,6 +7249,9 @@ static cmd_para ventoy_cmds[] =
 
     { "vt_sbinfo", ventoy_cmd_sb_info, 0, NULL, "", "", NULL },
     { "vt_update_sb_policy", ventoy_cmd_update_sb_policy, 0, NULL, "", "", NULL },
+
+    { "vt_timeout_lock", ventoy_cmd_timeout_lock, 0, NULL, "", "", NULL },
+    { "vt_theme_lock", ventoy_cmd_theme_lock, 0, NULL, "", "", NULL },
 
 };
 

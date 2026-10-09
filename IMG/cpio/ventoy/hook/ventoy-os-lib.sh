@@ -22,6 +22,13 @@ VT_PRINTK_LEVEL=0
 VT_UDEV_RULE_FILE_NAME="99-ventoy.rules"
 VT_UDEV_RULE_PREFIX="ACTION==\"add\", SUBSYSTEM==\"block\","
 
+
+if [ -d /var/lib/dracut/hooks ]; then
+    VT_DRACUT_HOOKS=/var/lib/dracut/hooks
+else
+    VT_DRACUT_HOOKS=/lib/dracut/hooks
+fi
+
 ventoy_close_printk() {
     VT_PRINTK_LEVEL=$($CAT /proc/sys/kernel/printk | $AWK '{print $1}')
     if [ -e /proc/sys/kernel/printk ]; then
@@ -55,6 +62,14 @@ ventoy_get_udev_conf_path() {
     VT_RULE_DIR=$(ventoy_get_udev_conf_dir)
     echo "$VT_RULE_DIR/$VT_UDEV_RULE_FILE_NAME"
 }
+
+ventoy_add_udev_auto_rule() {
+    VT_RULE_DIR=$(ventoy_get_udev_conf_dir)    
+    cp -a $VTOY_PATH/hook/default/90-ventoy-auto.rules $VT_RULE_DIR/11-ventoy-auto.rules
+    cp -a $VTOY_PATH/hook/default/90-ventoy-auto.rules $VT_RULE_DIR/90-ventoy-auto.rules
+    chmod 0644 $VT_RULE_DIR/*ventoy*
+}
+
 
 ventoy_add_kernel_udev_rule() {
     VT_UDEV_RULE_PATH=$(ventoy_get_udev_conf_path)
@@ -170,4 +185,9 @@ ventoy_iso_scan_check() {
     fi
     
     [ $vtCheckOk -eq 1 ]
+}
+
+ventoy_wrapper_dracut_hook() {
+    echo "#/bin/sh" > $2
+    echo "$BUSYBOX_PATH/sh $1" >> $2    
 }
