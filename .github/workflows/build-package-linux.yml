@@ -42,7 +42,7 @@ jobs:
   linux-package:
     name: Linux binary package and upload
     # Prereleases are skipped: check_release_pkg.py pins ventoy/version to
-    # \d+\.\d+\.\d+-ventoy-sort, which an "-rc1" suffix fails by design.
+    # \d+\.\d+\.\d+-(ventoy-sort|Fork), which an "-rc1" suffix fails by design.
     if: github.event_name != 'release' || github.event.release.prerelease == false
     runs-on: ubuntu-24.04
     timeout-minutes: 180
@@ -71,7 +71,7 @@ jobs:
           ver=${TAG#v}
           echo "VER=$ver" >> "$GITHUB_OUTPUT"
           echo "PKG=ventoy-$ver-linux.tar.gz" >> "$GITHUB_OUTPUT"
-          echo "SUMS=SHA256SUMS-ventoy-sort-linux.txt" >> "$GITHUB_OUTPUT"
+          echo "SUMS=SHA256SUMS-Fork-linux.txt" >> "$GITHUB_OUTPUT"
 
       - name: Refuse to sign without the documented MOK key
         env:
@@ -92,15 +92,15 @@ jobs:
             bison flex python3 mtools xz-utils zip unzip tar gzip git curl \
             ca-certificates openssl gcc-aarch64-linux-gnu sbsigntool
 
-      - name: Fetch and pin the official 1.1.17 baseline
+      - name: Fetch and pin the official 1.1.18 baseline
         run: |
           set -euo pipefail
           # The build reads this file as BASE_LINUX and check_release_pkg.py
           # looks for its own baseline in <repo>/_dl, so one download serves both.
           mkdir -p _dl
-          curl -fL --retry 3 -o _dl/ventoy-1.1.17-linux.tar.gz \
-            https://github.com/ventoy/Ventoy/releases/download/v1.1.17/ventoy-1.1.17-linux.tar.gz
-          echo "7fb4ed08cef6a6b4d39dd19260d8c80291a78dfdf9af7d461571e23cbbc43805  _dl/ventoy-1.1.17-linux.tar.gz" | sha256sum -c -
+          curl -fL --retry 3 -o _dl/ventoy-1.1.18-linux.tar.gz \
+            https://github.com/ventoy/Ventoy/releases/download/v1.1.18/ventoy-1.1.18-linux.tar.gz
+          echo "d86ff9de63d94c8b8f1f6b14d23c55af4b88e8207bf2893890892a6a97b1ad54  _dl/ventoy-1.1.18-linux.tar.gz" | sha256sum -c -
 
       - name: Build the Linux package
         env:
@@ -117,7 +117,7 @@ jobs:
           # ./script only because WSL mounts the Windows filesystem permissively.
           bash build_ventoy_sort_linux.sh \
             "FORK_VERSION=${{ env.TAG }}" \
-            "BASE_LINUX=$PWD/../../_dl/ventoy-1.1.17-linux.tar.gz"
+            "BASE_LINUX=$PWD/../../_dl/ventoy-1.1.18-linux.tar.gz"
 
       - name: Package checks (fingerprint / marker / baseline)
         run: |

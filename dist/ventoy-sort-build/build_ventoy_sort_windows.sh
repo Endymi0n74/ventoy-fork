@@ -31,8 +31,8 @@
 #      WSL     :  wsl -d Ubuntu -- bash /mnt/d/Codex/ventoy/dist/ventoy-sort-build/build_ventoy_sort_windows.sh
 #
 #  Variables d'environnement (toutes optionnelles) :
-#      BASE_ZIP        archive Windows officielle         (def. /mnt/d/Codex/dist/_dl/ventoy-1.1.17-windows.zip)
-#      FORK_VERSION    version inscrite dans le paquet    (def. dernier tag « v*-ventoy-sort » ;
+#      BASE_ZIP        archive Windows officielle         (def. /mnt/d/Codex/dist/_dl/ventoy-1.1.18-windows.zip)
+#      FORK_VERSION    version inscrite dans le paquet    (def. dernier tag « v*-Fork » ou « v*-ventoy-sort » ;
 #                     un « v » initial accepté et retiré)
 #      GRUB_TARBALL    source grub-2.04.tar.xz            (def. <ce dossier>/grub-2.04.tar.xz, sinon téléchargée)
 #      JOBS            parallélisme make                  (def. nproc)
@@ -63,7 +63,7 @@ SCRIPT_PATH=$(readlink -f "${BASH_SOURCE[0]}")
 B=$(dirname "$SCRIPT_PATH")                 # .../ventoy/dist/ventoy-sort-build
 REPO=$(cd -- "$B/../.." && pwd)             # .../ventoy
 
-BASE_ZIP=${BASE_ZIP:-/mnt/d/Codex/dist/_dl/ventoy-1.1.17-windows.zip}
+BASE_ZIP=${BASE_ZIP:-/mnt/d/Codex/dist/_dl/ventoy-1.1.18-windows.zip}
 GRUB_TARBALL=${GRUB_TARBALL:-$B/grub-2.04.tar.xz}
 GRUB_TARBALL_URL=${GRUB_TARBALL_URL:-https://github.com/ventoy/vtoytoolchain/releases/download/1.0/grub-2.04.tar.xz}
 JOBS=${JOBS:-$(nproc)}
@@ -309,7 +309,7 @@ Clé locale générée par le build (empreinte SHA-256 du certificat) :
     $SB_FP
 
 - recompilés puis signés : \`grubx64_real.efi\`, \`grubia32_real.efi\` et
-  \`BOOTAA64.EFI\` (chargeur GRUB arm64 — pas de shim sur ce chemin en 1.1.17)
+  \`BOOTAA64.EFI\` (chargeur GRUB arm64 — pas de shim sur ce chemin, 1.1.17 comme 1.1.18)
 - re-signés après modification ou pour remplacer la signature Ventoy :
   \`fbx64.efi\` (empreinte sha256 du chargeur x64 mise à jour),
   \`grubia32.efi\`, \`ventoy_{x64,ia32,aa64}.efi\`, \`iso9660_{x64,ia32,aa64}.efi\`,
@@ -486,17 +486,18 @@ step_preflight() {
 
 detect_fork_version() {
     if [ -n "${FORK_VERSION:-}" ]; then
-        # un tag « vX.Y.Z-ventoy-sort » est aussi accepté : le « v » ne doit pas
-        # finir dans ventoy/version (regex \d+\.\d+\.\d+-ventoy-sort de
-        # check_release_pkg.py) ni dans le nom du zip attendu par check_release.cmd.
+        # un tag « vX.Y.Z-Fork » (ou l'ancien « vX.Y.Z-ventoy-sort ») est aussi
+        # accepté : le « v » ne doit pas finir dans ventoy/version (regex
+        # \d+\.\d+\.\d+-(ventoy-sort|Fork) de check_release_pkg.py) ni dans le
+        # nom du zip attendu par check_release.cmd.
         FORK_VERSION=${FORK_VERSION#v}
         GIT_TAG=v$FORK_VERSION
         return
     fi
     command -v git >/dev/null 2>&1 || die "FORK_VERSION non fourni et git indisponible"
     local tag
-    tag=$(git -C "$REPO" describe --tags --abbrev=0 --match 'v*-ventoy-sort' 2>/dev/null) \
-        || die "aucun tag « v*-ventoy-sort » dans $REPO : fournir FORK_VERSION=..."
+    tag=$(git -C "$REPO" describe --tags --abbrev=0 --match 'v*-Fork' --match 'v*-ventoy-sort' 2>/dev/null) \
+        || die "aucun tag « v*-Fork » / « v*-ventoy-sort » dans $REPO : fournir FORK_VERSION=..."
     FORK_VERSION=${tag#v}
     GIT_TAG=$tag
     GIT_COMMIT=$(git -C "$REPO" rev-parse --short HEAD)
@@ -689,7 +690,7 @@ step_mkimage() {
 
     # UEFI arm64 BOOTAA64.EFI — commande reprise à l'identique de install.sh
     # (branche « arm64 » : liste all_modules_arm64_uefi, même prefix, sortie
-    # directe BOOTAA64.EFI — en 1.1.17 ce chargeur n'a ni shim ni haché embarqué,
+    # directe BOOTAA64.EFI — ce chargeur n'a ni shim ni haché embarqué (1.1.17 comme 1.1.18),
     # grub.cfg le référence par nom). On utilise le grub-mkimage du build arm64
     # (même flux que l'amont) : le mkimage installé par les builds x86 reste
     # exactement celui des exécutions précédentes.
@@ -881,7 +882,7 @@ if cnt32:
 print('ia32 : aucune référence hachée dans l\'image officielle -> remplacement par nom uniquement')
 
 # --- UEFI arm64 : remplacement de BOOTAA64.EFI -----------------------------------
-# En 1.1.17, BOOTAA64.EFI EST le chargeur GRUB arm64 (pas de shim fbaa64) et rien
+# Vérifié en 1.1.17 et 1.1.18 : BOOTAA64.EFI EST le chargeur GRUB arm64, sans shim fbaa64, et rien
 # ne référence son haché dans l'image ; contrôle d'avenir identique au ia32.
 aa_off = read('BOOTAA64_officiel.efi')
 cnt64 = open(img_path, 'rb').read().count(hashlib.sha256(aa_off).digest())
@@ -1078,7 +1079,7 @@ step_assemble() {
 }
 
 step_checksums() {
-    CHECKSUMS=$B/SHA256SUMS-ventoy-sort-windows.txt
+    CHECKSUMS=$B/SHA256SUMS-Fork-windows.txt
     ( cd "$B"
       {
         sha256sum -b "$(basename "$ZIP")"

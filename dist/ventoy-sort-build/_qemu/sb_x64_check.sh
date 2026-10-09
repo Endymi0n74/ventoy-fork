@@ -11,7 +11,7 @@ rm -f "$SERIAL"
 bash "$Q/run_vm.sh" uefi-sb 5592 || exit 1
 ok=""
 for i in $(seq 1 25); do
-    grep -aqE "Ventoy [0-9][0-9.]*-ventoy-sort UEFI" "$SERIAL" 2>/dev/null && { ok=oui; break; }
+    grep -aqE "Ventoy [0-9][0-9.]*-(Fork|ventoy-sort) UEFI" "$SERIAL" 2>/dev/null && { ok=oui; break; }
     sleep 4
 done
 echo "menu affiché : ${ok:-NON}"

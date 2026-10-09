@@ -31,9 +31,9 @@
 #      WSL     :  wsl -d Ubuntu -- bash /mnt/d/Codex/ventoy/dist/ventoy-sort-build/build_ventoy_sort_linux.sh
 #
 #  Variables d'environnement (toutes optionnelles) :
-#      BASE_LINUX      archive Linux officielle          (def. dist/_dl/ventoy-1.1.17-linux.tar.gz,
+#      BASE_LINUX      archive Linux officielle          (def. dist/_dl/ventoy-1.1.18-linux.tar.gz,
 #                                                          téléchargée + sha256 vérifié si absente)
-#      FORK_VERSION    version inscrite dans le paquet    (def. dernier tag « v*-ventoy-sort » ;
+#      FORK_VERSION    version inscrite dans le paquet    (def. dernier tag « v*-Fork » ou « v*-ventoy-sort » ;
 #                     un « v » initial accepté et retiré)
 #      GRUB_TARBALL    source grub-2.04.tar.xz            (def. <ce dossier>/grub-2.04.tar.xz, sinon téléchargée)
 #      JOBS            parallélisme make                  (def. nproc)
@@ -72,9 +72,9 @@ SCRIPT_PATH=$(readlink -f "${BASH_SOURCE[0]}")
 B=$(dirname "$SCRIPT_PATH")                 # .../ventoy/dist/ventoy-sort-build
 REPO=$(cd -- "$B/../.." && pwd)             # .../ventoy
 
-BASE_LINUX=${BASE_LINUX:-/mnt/d/Codex/dist/_dl/ventoy-1.1.17-linux.tar.gz}
-BASE_LINUX_URL=${BASE_LINUX_URL:-https://github.com/ventoy/Ventoy/releases/download/v1.1.17/ventoy-1.1.17-linux.tar.gz}
-BASE_LINUX_PIN=${BASE_LINUX_PIN:-7fb4ed08cef6a6b4d39dd19260d8c80291a78dfdf9af7d461571e23cbbc43805}
+BASE_LINUX=${BASE_LINUX:-/mnt/d/Codex/dist/_dl/ventoy-1.1.18-linux.tar.gz}
+BASE_LINUX_URL=${BASE_LINUX_URL:-https://github.com/ventoy/Ventoy/releases/download/v1.1.18/ventoy-1.1.18-linux.tar.gz}
+BASE_LINUX_PIN=${BASE_LINUX_PIN:-d86ff9de63d94c8b8f1f6b14d23c55af4b88e8207bf2893890892a6a97b1ad54}
 GRUB_TARBALL=${GRUB_TARBALL:-$B/grub-2.04.tar.xz}
 GRUB_TARBALL_URL=${GRUB_TARBALL_URL:-https://github.com/ventoy/vtoytoolchain/releases/download/1.0/grub-2.04.tar.xz}
 JOBS=${JOBS:-$(nproc)}
@@ -117,7 +117,7 @@ SB_FTIME_SO=$SB_DIR/fixedtime.so
 
 # PE de l'image à re-signer avec la clé locale (x64+ia32+aa64 = sign_efi amont ;
 # BOOTX64/BOOTIA32/MokManager ne sont pas touchés — le shim Windows n'existe pas
-# en 1.1.17 — et BOOTAA64.EFI est REMPLACÉ par notre build GRUB arm64, signé
+# sur ce chemin (constaté en 1.1.17 comme en 1.1.18) — et BOOTAA64.EFI est REMPLACÉ par notre build GRUB arm64, signé
 # directement à l'étape mkimage)
 SB_IMAGE_TARGETS=(
     ::/ventoy/ventoy_x64.efi
@@ -368,7 +368,7 @@ Clé locale générée par le build (empreinte SHA-256 du certificat) :
     $SB_FP
 
 - recompilés puis signés : \`grubx64_real.efi\`, \`grubia32_real.efi\` et
-  \`BOOTAA64.EFI\` (chargeur GRUB arm64 — pas de shim sur ce chemin en 1.1.17)
+  \`BOOTAA64.EFI\` (chargeur GRUB arm64 — pas de shim sur ce chemin, 1.1.17 comme 1.1.18)
 - re-signés après modification ou pour remplacer la signature Ventoy :
   \`fbx64.efi\` (empreinte sha256 du chargeur x64 mise à jour),
   \`grubia32.efi\`, \`ventoy_{x64,ia32,aa64}.efi\`, \`iso9660_{x64,ia32,aa64}.efi\`,
@@ -549,7 +549,7 @@ step_preflight() {
     # Archive Linux officielle : téléchargée (sha256 épinglé) si absente.
     if [ ! -f "$BASE_LINUX" ]; then
         command -v curl >/dev/null 2>&1 || die "archive absente et curl indisponible : $BASE_LINUX"
-        log "téléchargement de $(basename "$BASE_LINUX") (release officielle v1.1.17)"
+        log "téléchargement de $(basename "$BASE_LINUX") (release officielle v1.1.18)"
         mkdir -p "$(dirname "$BASE_LINUX")"
         curl -fL --retry 3 -o "$BASE_LINUX" "$BASE_LINUX_URL"
         printf '%s  %s\n' "$BASE_LINUX_PIN" "$BASE_LINUX" | sha256sum -c --quiet - \
@@ -568,17 +568,18 @@ step_preflight() {
 
 detect_fork_version() {
     if [ -n "${FORK_VERSION:-}" ]; then
-        # un tag « vX.Y.Z-ventoy-sort » est aussi accepté : le « v » ne doit pas
-        # finir dans ventoy/version (regex \d+\.\d+\.\d+-ventoy-sort de
-        # check_release_pkg.py) ni dans le nom du tar.gz attendu par check_release.cmd.
+        # un tag « vX.Y.Z-Fork » (ou l'ancien « vX.Y.Z-ventoy-sort ») est aussi
+        # accepté : le « v » ne doit pas finir dans ventoy/version (regex
+        # \d+\.\d+\.\d+-(ventoy-sort|Fork) de check_release_pkg.py) ni dans le
+        # nom du tar.gz attendu par check_release.cmd.
         FORK_VERSION=${FORK_VERSION#v}
         GIT_TAG=v$FORK_VERSION
         return
     fi
     command -v git >/dev/null 2>&1 || die "FORK_VERSION non fourni et git indisponible"
     local tag
-    tag=$(git -C "$REPO" describe --tags --abbrev=0 --match 'v*-ventoy-sort' 2>/dev/null) \
-        || die "aucun tag « v*-ventoy-sort » dans $REPO : fournir FORK_VERSION=..."
+    tag=$(git -C "$REPO" describe --tags --abbrev=0 --match 'v*-Fork' --match 'v*-ventoy-sort' 2>/dev/null) \
+        || die "aucun tag « v*-Fork » / « v*-ventoy-sort » dans $REPO : fournir FORK_VERSION=..."
     FORK_VERSION=${tag#v}
     GIT_TAG=$tag
     GIT_COMMIT=$(git -C "$REPO" rev-parse --short HEAD)
@@ -766,7 +767,7 @@ step_mkimage() {
 
     # UEFI arm64 BOOTAA64.EFI — commande reprise à l'identique de install.sh
     # (branche « arm64 » : liste all_modules_arm64_uefi, même prefix, sortie
-    # directe BOOTAA64.EFI — en 1.1.17 ce chargeur n'a ni shim ni haché embarqué,
+    # directe BOOTAA64.EFI — ce chargeur n'a ni shim ni haché embarqué (1.1.17 comme 1.1.18),
     # grub.cfg le référence par nom). On utilise le grub-mkimage du build arm64
     # (même flux que l'amont) : le mkimage installé par les builds x86 reste
     # exactement celui des exécutions précédentes.
@@ -799,7 +800,7 @@ step_mkimage() {
 # Étape 5 — mise en place du paquet à partir de l'archive officielle
 # -------------------------------------------------------------------------------------
 step_stage_package() {
-    # Racine officielle de l'archive : « ./ventoy-1.1.17/ » (« sed » lit toute la
+    # Racine officielle de l'archive : « ./ventoy-1.1.18/ » (« sed » lit toute la
     # liste : « head » provoquerait un SIGPIPE interdit par pipefail).
     local base_root
     base_root=$(tar -tzf "$BASE_LINUX" | sed -n '1s|^\./\([^/]*\)/.*|\1|p')
@@ -833,7 +834,7 @@ step_stage_package() {
 # why Le paquet reprend par défaut TOUT le runtime de l'archive officielle, GUI
 # comprise (commentaire d'en-tête du script). Or les interfaces amont sont
 # dimensionnées pour une version de 6 caractères (« 1.0.53 ») : à 20 pt, celle
-# du fork en compte 17 (« 1.1.20-ventoy-sort ») et déborde du cadre. Les sources
+# du fork en a compté 18 (« 1.1.20-ventoy-sort »), au-delà du cadre. Les sources
 # ont été corrigées (fenêtre élargie, largeur du libellé revue, et pour Qt une
 # taille de police calculée à l'exécution) — voir dist/tests/test_gui_version_layout.py.
 # why Tant que la GUI n'est pas reconstruite, ces corrections restent invisibles
@@ -988,7 +989,7 @@ if cnt32:
 print('ia32 : aucune référence hachée dans l\'image officielle -> remplacement par nom uniquement')
 
 # --- UEFI arm64 : remplacement de BOOTAA64.EFI -----------------------------------
-# En 1.1.17, BOOTAA64.EFI EST le chargeur GRUB arm64 (pas de shim fbaa64) et rien
+# Vérifié en 1.1.17 et 1.1.18 : BOOTAA64.EFI EST le chargeur GRUB arm64, sans shim fbaa64, et rien
 # ne référence son haché dans l'image ; contrôle d'avenir identique au ia32.
 aa_off = read('BOOTAA64_officiel.efi')
 cnt64 = open(img_path, 'rb').read().count(hashlib.sha256(aa_off).digest())
@@ -1187,7 +1188,7 @@ step_assemble() {
 }
 
 step_checksums() {
-    CHECKSUMS=$B/SHA256SUMS-ventoy-sort-linux.txt
+    CHECKSUMS=$B/SHA256SUMS-Fork-linux.txt
     ( cd "$B"
       {
         sha256sum -b "$(basename "$TAR")"

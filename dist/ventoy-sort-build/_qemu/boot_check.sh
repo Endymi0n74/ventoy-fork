@@ -20,7 +20,7 @@ set -u
 Q=/mnt/d/Codex/ventoy/dist/ventoy-sort-build/_qemu
 cd "$Q" || exit 1
 
-MENU_RE='Ventoy [0-9][0-9.]*-ventoy-sort'
+MENU_RE='Ventoy [0-9][0-9.]*-(Fork|ventoy-sort)'
 SCENARIOS=("$@")
 [ ${#SCENARIOS[@]} -eq 0 ] && SCENARIOS=(bios uefi uefi-sb uefi-sb-nomok)
 

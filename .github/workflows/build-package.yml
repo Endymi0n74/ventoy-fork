@@ -39,7 +39,7 @@ jobs:
   windows-package:
     name: Windows binary package (WSL + MSVC) and upload
     # Prereleases are skipped: check_release_pkg.py pins ventoy/version to
-    # \d+\.\d+\.\d+-ventoy-sort, which an "-rc1" suffix fails by design. Dispatch
+    # \d+\.\d+\.\d+-(ventoy-sort|Fork), which an "-rc1" suffix fails by design. Dispatch
     # can still be used to force a build for a given tag.
     if: github.event_name != 'release' || github.event.release.prerelease == false
     # windows-2022 on purpose: the build pins /p:PlatformToolset=v143, which
@@ -75,7 +75,7 @@ jobs:
           $ver = $env:TAG.TrimStart('v')
           "VER=$ver" >> $env:GITHUB_OUTPUT
           "ZIP=ventoy-$ver-windows.zip" >> $env:GITHUB_OUTPUT
-          "SUMS=SHA256SUMS-ventoy-sort-windows.txt" >> $env:GITHUB_OUTPUT
+          "SUMS=SHA256SUMS-Fork-windows.txt" >> $env:GITHUB_OUTPUT
 
       - name: Refuse to sign without the documented MOK key
         env:
@@ -107,7 +107,7 @@ jobs:
           set -euo pipefail
           bash dist/tests/test_mok_import.sh
 
-      - name: Fetch and pin the official 1.1.17 baseline
+      - name: Fetch and pin the official 1.1.18 baseline
         shell: wsl-bash {0}
         run: |
           set -euo pipefail
@@ -115,9 +115,9 @@ jobs:
           # candidate); the build reads the very same file as BASE_ZIP, so one
           # download serves both.
           mkdir -p _dl
-          curl -fL --retry 3 -o _dl/ventoy-1.1.17-windows.zip \
-            https://github.com/ventoy/Ventoy/releases/download/v1.1.17/ventoy-1.1.17-windows.zip
-          echo "d250e97a7595fdac4f97debc630d7a8da942319274a76cb32384596b659dbaeb  _dl/ventoy-1.1.17-windows.zip" | sha256sum -c -
+          curl -fL --retry 3 -o _dl/ventoy-1.1.18-windows.zip \
+            https://github.com/ventoy/Ventoy/releases/download/v1.1.18/ventoy-1.1.18-windows.zip
+          echo "082c478e8c432e1ac653899fcf50e3a4077a2851bc6112b5ddd30545962164a9  _dl/ventoy-1.1.18-windows.zip" | sha256sum -c -
 
       - name: Build the Windows package
         shell: wsl-bash {0}
@@ -140,7 +140,7 @@ jobs:
           cd dist/ventoy-sort-build
           ./build_ventoy_sort_windows.sh \
             "FORK_VERSION=${{ env.TAG }}" \
-            "BASE_ZIP=$PWD/../../_dl/ventoy-1.1.17-windows.zip"
+            "BASE_ZIP=$PWD/../../_dl/ventoy-1.1.18-windows.zip"
 
       - name: Package checks (fingerprint / marker / baseline)
         shell: wsl-bash {0}

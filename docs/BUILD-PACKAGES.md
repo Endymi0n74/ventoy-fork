@@ -10,16 +10,14 @@ test) est décrite dans [RELEASE_NOTES.md](../RELEASE_NOTES.md). L’enrôlement
 la clé Secure Boot est détaillé dans
 [`PROCEDURE-SECURE-BOOT.md`](../dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md).
 
-> **À lire avant le prochain build (2026-10-09)** : les sources du fork portent
-> désormais upstream **v1.1.18** (merge `d6007cab`), alors que tout ce document
-> décrit le build sur la baseline officielle **1.1.17** — c’est celle du paquet
-> publié `v1.1.20-ventoy-sort`. Avant de reconstruire, ré-épingler la baseline
-> officielle 1.1.18 : URL + SHA-256 dans `.github/workflows/build-package*.yml`,
-> `BASE_ZIP`/`BASE_LINUX` des scripts de build, et les deux entrées de
+> **Baseline (mise à jour 2026-10-09)** : les sources du fork portent upstream
+> **v1.1.18** (merge `d6007cab`) et la baseline officielle est **ré-épinglée sur
+> 1.1.18** — URL + SHA-256 dans `.github/workflows/build-package*.yml`,
+> `BASE_ZIP`/`BASE_LINUX` des scripts de build, deux entrées de
 > `dist/check_release_pkg.py`. Le `grub.cfg` de 1.1.18 appelle `vt_timeout_lock`,
-> `vt_theme_lock`, `terminal_lock` et `lockfont`, qui n’existent que dans un GRUB
-> compilé depuis les sources 1.1.18. Voir aussi la section « Synchronisation
-> amont » de [UPSTREAM-FEATURES.md](UPSTREAM-FEATURES.md).
+> `vt_theme_lock`, `terminal_lock` et `lockfont`, absents d’un GRUB compilé depuis
+> 1.1.17 : c’est ce ré-épinglage qui les rend présents. Voir aussi la section
+> « Synchronisation amont » de [UPSTREAM-FEATURES.md](UPSTREAM-FEATURES.md).
 
 ## Vue d’ensemble
 
@@ -30,7 +28,7 @@ la clé Secure Boot est détaillé dans
 | Outillage | MSVC, superviseur PowerShell/WSL | GCC natif + cross `aarch64-linux-gnu` |
 | Script | `build_ventoy_sort_windows.sh` | `build_ventoy_sort_linux.sh` |
 | Sortie | `ventoy-<version>-windows.zip` | `ventoy-<version>-linux.tar.gz` |
-| Fichiers modifiés vs 1.1.17 | 5 sur 45 | 3 sur 137 |
+| Fichiers modifiés vs 1.1.18 | 5 sur 45 | 3 sur 137 |
 | Certificat MOK embarqué | `8A:78:E8:AC:…:25:AA:89` | identique |
 
 Le runner Linux est figé sur `ubuntu-24.04` et non `ubuntu-latest` : la version
@@ -69,43 +67,43 @@ Ils doivent former une paire valide. Ainsi, les builds locaux et le CI utilisent
 
 ### 2. Déclenchement automatique à la publication
 
-Publier une release stable avec la procédure habituelle, par exemple `dist\make_release.cmd <tag>`. Une fois la release publiée, GitHub Actions lance *Release package* sur un runner `windows-2022` ; celui-ci installe Ubuntu 24.04 dans WSL et reconstruit le zip depuis zéro, avec GRUB recompilé pour quatre cibles, exécutables MSVC et signatures Secure Boot. Le workflow ne s’exécute pas sur un simple push et ignore les prereleases. La version du paquet doit respecter le format stable `X.Y.Z-ventoy-sort`. Pour que le déclenchement automatique soit disponible, le workflow `.github/workflows/build-package.yml` doit être présent sur la branche par défaut du dépôt et le commit du tag doit contenir les scripts de build requis. Pour un ancien tag qui ne les contient pas, utiliser le déclenchement manuel ci-dessous avec `--ref master`.
+Publier une release stable avec la procédure habituelle, par exemple `dist\make_release.cmd <tag>`. Une fois la release publiée, GitHub Actions lance *Release package* sur un runner `windows-2022` ; celui-ci installe Ubuntu 24.04 dans WSL et reconstruit le zip depuis zéro, avec GRUB recompilé pour quatre cibles, exécutables MSVC et signatures Secure Boot. Le workflow ne s’exécute pas sur un simple push et ignore les prereleases. La version du paquet doit respecter le format stable `X.Y.Z-Fork`. Pour que le déclenchement automatique soit disponible, le workflow `.github/workflows/build-package.yml` doit être présent sur la branche par défaut du dépôt et le commit du tag doit contenir les scripts de build requis. Pour un ancien tag qui ne les contient pas, utiliser le déclenchement manuel ci-dessous avec `--ref master`.
 
-Le job télécharge et vérifie la baseline officielle 1.1.17 épinglée par SHA-256, exécute le banc d’import MOK, construit le paquet, puis lance les trois contrôles de `dist/check_release_pkg.py` : empreinte, marqueur du fork dans les chargeurs EFI et comparaison de l’inventaire/contenu à la baseline. Il vérifie aussi que le certificat MOK secret est bien celui embarqué dans l’image disque. **L’upload n’a lieu qu’après la réussite de toutes ces étapes.** Compter environ 45 à 50 minutes ; suivre le job *Windows binary package (WSL + MSVC) and upload* dans l’onglet **Actions**.
+Le job télécharge et vérifie la baseline officielle 1.1.18 épinglée par SHA-256, exécute le banc d’import MOK, construit le paquet, puis lance les trois contrôles de `dist/check_release_pkg.py` : empreinte, marqueur du fork dans les chargeurs EFI et comparaison de l’inventaire/contenu à la baseline. Il vérifie aussi que le certificat MOK secret est bien celui embarqué dans l’image disque. **L’upload n’a lieu qu’après la réussite de toutes ces étapes.** Compter environ 45 à 50 minutes ; suivre le job *Windows binary package (WSL + MSVC) and upload* dans l’onglet **Actions**.
 
 ### 3. Déclenchement manuel ou remplacement volontaire
 
 Pour construire ou relancer le paquet d’une release existante, installer et authentifier GitHub CLI (`gh auth login`), puis exécuter depuis un terminal :
 
 ```bash
-gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.2.0-ventoy-sort
+gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.1.18-Fork
 ```
 
-Remplacer `v1.2.0-ventoy-sort` par le tag stable voulu. Une release associée à ce tag doit déjà exister. `--ref master` sélectionne la branche contenant le workflow et les scripts ; vérifier qu’elle comprend les changements à publier. Les prereleases ne sont pas prises en charge, car leur suffixe échoue au contrôle de version du paquet.
+Remplacer `v1.1.18-Fork` par le tag stable voulu. Une release associée à ce tag doit déjà exister. `--ref master` sélectionne la branche contenant le workflow et les scripts ; vérifier qu’elle comprend les changements à publier. Les prereleases ne sont pas prises en charge, car leur suffixe échoue au contrôle de version du paquet.
 
 Par défaut, si `ventoy-<version>-windows.zip` est déjà présent, le workflow n’envoie rien et conserve les assets existants tels quels — cela protège les références des notes de version. La présence du zip déclenche ce comportement même si le fichier de sommes est absent. Pour envoyer ou réparer les deux assets ensemble, ou **remplacer délibérément** le paquet après un changement du build, passer `clobber=true` :
 
 ```bash
-gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.2.0-ventoy-sort -f clobber=true
+gh workflow run build-package.yml --repo Endymi0n74/ventoy-fork --ref master -f tag=v1.1.18-Fork -f clobber=true
 ```
 
-Le remplacement utilise `gh release upload --clobber` pour le zip et `SHA256SUMS-ventoy-sort-windows.txt`. Ne l’utiliser que si cette modification d’empreinte est voulue et que les notes de release seront mises à jour en conséquence.
+Le remplacement utilise `gh release upload --clobber` pour le zip et `SHA256SUMS-Fork-windows.txt`. Ne l’utiliser que si cette modification d’empreinte est voulue et que les notes de release seront mises à jour en conséquence.
 
 ### 4. Vérifier les assets publiés
 
-Après le succès du job, la release doit contenir `ventoy-<version>-windows.zip` et `SHA256SUMS-ventoy-sort-windows.txt`. Depuis la racine du dépôt, vérifier toute la release et appliquer les trois contrôles package à l’asset téléchargé :
+Après le succès du job, la release doit contenir `ventoy-<version>-windows.zip` et `SHA256SUMS-Fork-windows.txt`. Depuis la racine du dépôt, vérifier toute la release et appliquer les trois contrôles package à l’asset téléchargé :
 
 ```bat
-set "TAG=v1.2.0-ventoy-sort"
+set "TAG=v1.1.18-Fork"
 set "SKIP_SWEEP=1"
 dist\check_release.cmd
 ```
 
 `SKIP_SWEEP=1` omet seulement le sweep de performance ; l’étape 6 continue de contrôler chaque paquet présent. Les journaux de l’action donnent aussi le résultat des contrôles, l’égalité des empreintes du certificat (`embedded` / `supplied`) et la liste finale des assets.
 
-Pour créer une nouvelle release : `dist\make_release.cmd <tag>` (dry-run avec `set DRY_RUN=1`). Pour mettre à jour une release **existante** après déplacement de son tag, prévisualiser avec `set DRY_RUN=1`, puis passer `MOVE_TAG=1` et confirmer le nom exact : `set MOVE_TAG=1` puis `set CONFIRM_MOVE_TAG=v1.1.18-ventoy-sort`, et lancer `dist\make_release.cmd v1.1.18-ventoy-sort`. Le mode vérifie le tag distant et la release GitHub, refuse les releases immuables, brouillonne une release publiée le temps de l’opération, déplace le tag annoté, recrée les archives sources et `SHA256SUMS`, remplace uniquement les deux archives sources et `SHA256SUMS` (les autres assets sont conservés), et actualise les notes en conservant stable/prerelease et l’état draft/publié. **Attention :** `gh release upload --clobber` supprime l’ancien asset avant d’envoyer le nouveau ; aussi les trois assets sont-ils d’abord sauvegardés dans `DIST_DIR\.asset-backup` : si un envoi échoue en cours de route, les anciens assets sont **restaurés automatiquement** (un échec de cette sauvegarde arrête le script avant toute modification ; le dossier est conservé pour réparation manuelle). Après déplacement du tag, la release reste en brouillon pour permettre la reprise ; si elle était publiée initialement, elle devra ensuite être republiée manuellement après vérification. Avant un déplacement réel, lancer le workflow GitHub *Preflight move-tag* (onglet Actions, ou `gh workflow run preflight-move-tag.yml -f tag=<tag>`, avec `-f commit_sha=<head attendu>` en option) : il échoue fermement si le tag n’existe pas, si aucune release n’y est attachée (drafts compris), si celle-ci est immuable ou si la cible annoncée ne correspond pas au head de la branche ; le même contrôle verrouille le job release-e2e à chaque publication de release. Toujours prévisualiser avec `DRY_RUN=1`.
+Pour créer une nouvelle release : `dist\make_release.cmd <tag>` (dry-run avec `set DRY_RUN=1`). Pour mettre à jour une release **existante** après déplacement de son tag, prévisualiser avec `set DRY_RUN=1`, puis passer `MOVE_TAG=1` et confirmer le nom exact : `set MOVE_TAG=1` puis `set CONFIRM_MOVE_TAG=v1.1.18-Fork`, et lancer `dist\make_release.cmd v1.1.18-Fork`. Le mode vérifie le tag distant et la release GitHub, refuse les releases immuables, brouillonne une release publiée le temps de l’opération, déplace le tag annoté, recrée les archives sources et `SHA256SUMS`, remplace uniquement les deux archives sources et `SHA256SUMS` (les autres assets sont conservés), et actualise les notes en conservant stable/prerelease et l’état draft/publié. **Attention :** `gh release upload --clobber` supprime l’ancien asset avant d’envoyer le nouveau ; aussi les trois assets sont-ils d’abord sauvegardés dans `DIST_DIR\.asset-backup` : si un envoi échoue en cours de route, les anciens assets sont **restaurés automatiquement** (un échec de cette sauvegarde arrête le script avant toute modification ; le dossier est conservé pour réparation manuelle). Après déplacement du tag, la release reste en brouillon pour permettre la reprise ; si elle était publiée initialement, elle devra ensuite être republiée manuellement après vérification. Avant un déplacement réel, lancer le workflow GitHub *Preflight move-tag* (onglet Actions, ou `gh workflow run preflight-move-tag.yml -f tag=<tag>`, avec `-f commit_sha=<head attendu>` en option) : il échoue fermement si le tag n’existe pas, si aucune release n’y est attachée (drafts compris), si celle-ci est immuable ou si la cible annoncée ne correspond pas au head de la branche ; le même contrôle verrouille le job release-e2e à chaque publication de release. Toujours prévisualiser avec `DRY_RUN=1`.
 
-Exemple de job summary GO pour `v1.1.18-ventoy-sort` :
+Exemple de job summary GO pour `v1.1.18-Fork` :
 
 **Prérequis : clang et Python 3 uniquement.** Docker, WSL et une machine virtuelle ne sont pas nécessaires.
 
@@ -116,19 +114,19 @@ Trois contrôles manuels pour valider un paquet **reçu** (zip Windows ou tar.gz
 Ces trois contrôles sont **automatisés** dans `dist/check_release_pkg.py` (Python standard, sans WSL ni mtools — lit directement zip/tar/FAT16), lui-même appelé par `dist/check_release.cmd` à l'étape 6 quand la release contient des paquets (ou via `PKG_DIR=`) :
 
 ```bat
-python dist\check_release_pkg.py ventoy-1.1.18-ventoy-sort-windows.zip ventoy-…-linux.tar.gz
+python dist\check_release_pkg.py ventoy-1.1.18-Fork-windows.zip ventoy-…-linux.tar.gz
 ```
 
-La baseline officielle 1.1.17 y est identifiée par sha256 épinglé (`--baseline-dir` pour changer de dossier).
+La baseline officielle 1.1.18 y est identifiée par sha256 épinglé (`--baseline-dir` pour changer de dossier).
 
 ### 1. Empreintes
 
 ```bash
 # Archive seule (paquet téléchargé) : comparer au sha256 publié dans SHA256SUMS-…txt
-sha256sum ventoy-1.1.18-ventoy-sort-windows.zip      # ou ventoy-…-linux.tar.gz
+sha256sum ventoy-1.1.18-Fork-windows.zip      # ou ventoy-…-linux.tar.gz
 
 # Arborescence de build complète : tout le fichier doit passer
-sha256sum -c SHA256SUMS-ventoy-sort-windows.txt      # ou SHA256SUMS-ventoy-sort-linux.txt
+sha256sum -c SHA256SUMS-Fork-windows.txt      # ou SHA256SUMS-Fork-linux.txt
 ```
 
 `SHA256SUMS` référence aussi `pkg*/` et `work/` : `sha256sum -c` ne passe en entier que dans l’arborescence de build. Sur un paquet seul, le contrôle utile est la première ligne (l’archive elle-même) ; le manifeste `BUILD-MANIFEST-*.txt` publié avec la release consigne les empreintes détaillées.
@@ -138,17 +136,17 @@ sha256sum -c SHA256SUMS-ventoy-sort-windows.txt      # ou SHA256SUMS-ventoy-sort
 ```bash
 mkdir -p /tmp/vcheck && cd /tmp/vcheck
 # adapter le chemin si l’archive n’est pas dans le dossier courant :
-unzip -q ventoy-1.1.18-ventoy-sort-windows.zip                    # ou tar -xzf ventoy-…-linux.tar.gz
-P=ventoy-1.1.18-ventoy-sort
+unzip -q ventoy-1.1.18-Fork-windows.zip                    # ou tar -xzf ventoy-…-linux.tar.gz
+P=ventoy-1.1.18-Fork
 
-cat "$P/ventoy/version"                                              # 1.1.18-ventoy-sort
+cat "$P/ventoy/version"                                              # 1.1.18-Fork
 
 # BIOS : le marqueur n’est PAS cherchable dans core.img — grub-mkimage compresse
 # les modules (xz) à l’intérieur du core BIOS, le texte n’y figure pas en clair.
 # La preuve pour le BIOS passe par l’empreinte du fichier livré (le build étant
 # déterministe, toute modification du module changerait ces octets) :
 sha256sum "$P/boot/core.img.xz"
-# à comparer à la ligne « …/boot/core.img.xz » de SHA256SUMS-ventoy-sort-….txt
+# à comparer à la ligne « …/boot/core.img.xz » de SHA256SUMS-Fork-….txt
 
 # UEFI x64 / ia32 / arm64 : extraire les chargeurs de l’image disque
 xz -dc "$P/ventoy/ventoy.disk.img.xz" > vtoy.img
@@ -157,19 +155,19 @@ for f in grubx64_real.efi grubia32_real.efi BOOTAA64.EFI; do
     grep -aq "Ventoy img list count mismatch" "$f" \
         && echo "$f : marqueur OK" || echo "$f : MARQUEUR ABSENT"
 done
-mtype -i vtoy.img ::/grub/grub.cfg | grep VENTOY_VERSION             # set VENTOY_VERSION="1.1.18-ventoy-sort"
+mtype -i vtoy.img ::/grub/grub.cfg | grep VENTOY_VERSION             # set VENTOY_VERSION="1.1.18-Fork"
 ```
 
-**Critère de succès :** version `1.1.18-ventoy-sort`, la ligne `VENTOY_VERSION`, empreinte `core.img.xz` conforme à `SHA256SUMS`, et le marqueur dans **chaque chargeur EFI** (dans les PE, les modules GRUB ne sont pas compressés — contrairement au core BIOS — le texte y est donc cherchable tel quel). Deux réserves honnêtes : (a) le marqueur est **absent des payloads officiels** — c’est justement ce qui le distingue, mais le menu peut rester trié avec les payloads officiels (ils contiennent leur propre tri, moins prévisible) ; (b) les **zips Windows antérieurs à l’extension arm64** (par ex. l’archive empreintée `dafb5c09…`) contiennent encore le chargeur `BOOTAA64.EFI` officiel — pour ces archives-là, `MARQUEUR ABSENT` sur ce fichier est **attendu** ; les zip et tar.gz construits avec le bras arm64 le portent.
+**Critère de succès :** version `1.1.18-Fork`, la ligne `VENTOY_VERSION`, empreinte `core.img.xz` conforme à `SHA256SUMS`, et le marqueur dans **chaque chargeur EFI** (dans les PE, les modules GRUB ne sont pas compressés — contrairement au core BIOS — le texte y est donc cherchable tel quel). Deux réserves honnêtes : (a) le marqueur est **absent des payloads officiels** — c’est justement ce qui le distingue, mais le menu peut rester trié avec les payloads officiels (ils contiennent leur propre tri, moins prévisible) ; (b) les **zips Windows antérieurs à l’extension arm64** (par ex. l’archive empreintée `dafb5c09…`) contiennent encore le chargeur `BOOTAA64.EFI` officiel — pour ces archives-là, `MARQUEUR ABSENT` sur ce fichier est **attendu** ; les zip et tar.gz construits avec le bras arm64 le portent.
 
-### 3. Comparaison à la baseline officielle 1.1.17
+### 3. Comparaison à la baseline officielle 1.1.18
 
 Extraire l’archive officielle à côté du paquet puis comparer les arborescences :
 
 ```bash
 # côté officiel (adapter l’extraction à l’archive en votre possession)
-unzip -q ventoy-1.1.17-windows.zip -d off && mv off/ventoy-1.1.17 off/fork
-# ou, pour l’archive Linux : tar -xzf ventoy-1.1.17-linux.tar.gz -C off && mv off/ventoy-1.1.17 off/fork
+unzip -q ventoy-1.1.18-windows.zip -d off && mv off/ventoy-1.1.18 off/fork
+# ou, pour l’archive Linux : tar -xzf ventoy-1.1.18-linux.tar.gz -C off && mv off/ventoy-1.1.18 off/fork
 
 # côté paquet à vérifier (déjà extrait à l’étape 2, on le renomme simplement)
 mv "$P" fork
@@ -187,7 +185,7 @@ Toute autre ligne (fichier modifié en plus, manquant ou superflu) = paquet non 
 
 La procédure de build repose sur un superviseur PowerShell commun aux lanceurs Windows/Linux, qui évite de dépendre d’un `sleep infinity` externe et relance le build en cas d’arrêt brutal de WSL. Les détails, réglages et test CI sont consignés dans les [notes de version](../RELEASE_NOTES.md).
 
-Le dépôt contient un script unique qui régénère de zéro le paquet Windows complet à partir du code du fork et de l’archive officielle 1.1.17 — charge utiles GRUB recompilées (BIOS + UEFI64 + UEFI32 + UEFI arm64), exes Ventoy2Disk, image disque patchée, signatures Secure Boot avec la clé MOK locale — puis prouve sa propre reproductibilité :
+Le dépôt contient un script unique qui régénère de zéro le paquet Windows complet à partir du code du fork et de l’archive officielle 1.1.18 — charge utiles GRUB recompilées (BIOS + UEFI64 + UEFI32 + UEFI arm64), exes Ventoy2Disk, image disque patchée, signatures Secure Boot avec la clé MOK locale — puis prouve sa propre reproductibilité :
 
 - `dist/ventoy-sort-build/build_ventoy_sort_windows.sh` — le script (exécuté sous WSL) ;
 - `dist/ventoy-sort-build/build_ventoy_sort_windows.cmd` — le lanceur Windows, protégé par le superviseur WSL commun ; détails et réglages dans les [notes de version](../RELEASE_NOTES.md).
@@ -205,7 +203,7 @@ Le dépôt contient un script unique qui régénère de zéro le paquet Windows 
 
   (`gh` est un substitut facultatif à `curl` pour le téléchargement du tarball GRUB.)
 - **Windows : Visual Studio 2022** (BuildTools suffit) avec le composant **MSVC v143** — le script détecte MSBuild et impose `/Brepro`, `WholeProgramOptimization=false` et des répertoires de sortie dédiés.
-- L’**archive officielle** `ventoy-1.1.17-windows.zip` (variable `BASE_ZIP=`, voir le lanceur).
+- L’**archive officielle** `ventoy-1.1.18-windows.zip` (variable `BASE_ZIP=`, voir le lanceur).
 - ~2 Go d’espace disque ; **aucun espace dans le chemin** du dépôt (contrainte `OutDir` de MSBuild).
 - Réseau au premier build uniquement (tarball `grub-2.04.tar.xz` téléchargé puis conservé ; sinon passer `GRUB_TARBALL=`).
 - Au premier lancement, une **clé MOK** est générée dans `secureboot/` et réutilisée ensuite pour tous les builds ; elle n’est jamais incluse dans le paquet.
@@ -218,9 +216,9 @@ Préflight (outils, cross arm64, sbsigntool, clé MOK, shim de temps figé, dét
 2. **charges utiles GRUB** — `core.img`, `grubx64_real.efi`, `grubia32_real.efi`, `BOOTAA64.EFI` via les commandes `grub-mkimage` exactes de `install.sh` (listes `all_modules_legacy` / `all_modules_uefi` / `all_modules_arm64_uefi`), puis signature des trois chargeurs.
 3. **exes Ventoy2Disk** (Win32 + x64) — MSBuild `/Brepro`.
 4. **préparation du paquet** depuis l’archive officielle — les mtimes des cinq fichiers qui seront remplacés sont capturés.
-5. **patch de l’image disque + signatures Secure Boot** — remplacement des chargeurs x64/ia32 et de `BOOTAA64.EFI` (en 1.1.17, ce dernier est le chargeur GRUB arm64 lui-même, sans shim), empreinte x64 dans `fbx64.efi`, version dans `grub.cfg`, re-signature de la liste x64+ia32+aa64 (décompresser → signer → re-compresser pour les `.xz`), certificat `ENROLL_THIS_KEY_IN_MOKMANAGER.cer`, restaurations des horodatages FAT.
+5. **patch de l’image disque + signatures Secure Boot** — remplacement des chargeurs x64/ia32 et de `BOOTAA64.EFI` (le chargeur GRUB arm64 lui-même, sans shim : constaté en 1.1.17 comme en 1.1.18), empreinte x64 dans `fbx64.efi`, version dans `grub.cfg`, re-signature de la liste x64+ia32+aa64 (décompresser → signer → re-compresser pour les `.xz`), certificat `ENROLL_THIS_KEY_IN_MOKMANAGER.cer`, restaurations des horodatages FAT.
 6. **assemblage** — `core.img.xz` rembourré, mtimes officielles restaurées, `zip -q -r -X`.
-7. **empreintes + manifeste** — `SHA256SUMS-ventoy-sort-windows.txt` + `BUILD-MANIFEST-*.txt` (versions de la chaîne d’outils, empreintes).
+7. **empreintes + manifeste** — `SHA256SUMS-Fork-windows.txt` + `BUILD-MANIFEST-*.txt` (versions de la chaîne d’outils, empreintes).
 8. **vérifications finales** (voir ci-dessous).
 
 Le journal complet est écrit dans `run-full.log` (et `log-*.txt` par sous-composant). Variables utiles : `BASE_ZIP=`, `FORK_VERSION=`, `GRUB_TARBALL=`, `KEEP=1` (conserve les sources pour un rebuild plus rapide).
@@ -228,7 +226,7 @@ Le journal complet est écrit dans `run-full.log` (et `log-*.txt` par sous-compo
 ### Sorties
 
 - `ventoy-<version>-windows.zip` — le paquet ;
-- `SHA256SUMS-ventoy-sort-windows.txt` — empreintes du zip, des exes, des charges utiles, de l’image et du certificat ;
+- `SHA256SUMS-Fork-windows.txt` — empreintes du zip, des exes, des charges utiles, de l’image et du certificat ;
 - `BUILD-MANIFEST-<version>.txt` — chaîne d’outils et empreintes détaillées ;
 - `ventoy-sort-MOK.cer` + `PROCEDURE-SECURE-BOOT.md` — certificat public et procédure d’enrôlement MOK ;
 - `pkg/` (paquet extrait) et `secureboot/` (clé privée — **jamais** empaquetée).
@@ -258,13 +256,13 @@ Principe : **builder deux fois de suite** avec la même chaîne d’outils et co
 
    ```bash
    mkdir -p _ref
-   cp -a ventoy-*-windows.zip SHA256SUMS-ventoy-sort-windows.txt _ref/
+   cp -a ventoy-*-windows.zip SHA256SUMS-Fork-windows.txt _ref/
    ```
 
 3. Relancer **la même commande** du build, puis comparer :
 
    ```bash
-   diff _ref/SHA256SUMS-ventoy-sort-windows.txt SHA256SUMS-ventoy-sort-windows.txt
+   diff _ref/SHA256SUMS-Fork-windows.txt SHA256SUMS-Fork-windows.txt
    sha256sum _ref/ventoy-*-windows.zip ventoy-*-windows.zip
    ```
 
@@ -274,12 +272,12 @@ Le script `dist/ventoy-sort-build/_cmp_runs.sh`, qui automatisait cette comparai
 
 ```bash
 cp -a work/core.img work/grubx64_real.efi work/grubia32_real.efi work/BOOTAA64.EFI \
-      pkg/ventoy-1.1.18-ventoy-sort/Ventoy2Disk.exe \
-      pkg/ventoy-1.1.18-ventoy-sort/altexe/Ventoy2Disk_X64.exe \
-      pkg/ventoy-1.1.18-ventoy-sort/boot/core.img.xz \
-      pkg/ventoy-1.1.18-ventoy-sort/ventoy/ventoy.disk.img.xz \
-      pkg/ventoy-1.1.18-ventoy-sort/ventoy/version \
-      SHA256SUMS-ventoy-sort-windows.txt PROCEDURE-SECURE-BOOT.md \
+      pkg/ventoy-1.1.18-Fork/Ventoy2Disk.exe \
+      pkg/ventoy-1.1.18-Fork/altexe/Ventoy2Disk_X64.exe \
+      pkg/ventoy-1.1.18-Fork/boot/core.img.xz \
+      pkg/ventoy-1.1.18-Fork/ventoy/ventoy.disk.img.xz \
+      pkg/ventoy-1.1.18-Fork/ventoy/version \
+      SHA256SUMS-Fork-windows.txt PROCEDURE-SECURE-BOOT.md \
       ventoy-sort-MOK.cer _ref/
 ```
 
@@ -289,7 +287,7 @@ Référence sur la chaîne d’outils de référence (gcc 15.2, VS2022 v143, Ubu
 dafb5c09942a780e34c71daf5a5f17bd48d52c8929be9298dfb006b6e3373818  ventoy-1.1.18-ventoy-sort-windows.zip
 ```
 
-Avec le bras arm64 (remplacement et signature de `BOOTAA64.EFI` dans l’image), le zip de référence devient `cf50aa74d3b66e50e4aedcfeb7b5b2f2e543646d2aaf101ecf3d3eb934493501` ; l’empreinte ci-dessus reste celle du build **sans** bras arm64.
+Avec le bras arm64 (remplacement et signature de `BOOTAA64.EFI` dans l’image), le zip de référence devient `cf50aa74d3b66e50e4aedcfeb7b5b2f2e543646d2aaf101ecf3d3eb934493501` ; l’empreinte ci-dessus reste celle du build **sans** bras arm64. Ces deux empreintes précèdent la baseline 1.1.18 : les valeurs en vigueur figurent dans les `SHA256SUMS-Fork-*.txt` publiées avec la release.
 
 **Reproductibilité MSVC x64 vérifiée** : `/Brepro` est appliqué à la compilation (`ClCompile`) **et** au linker (`Link`). Le flag linker seul rendait les `.obj` variables (timestamp COFF de l’heure courante), ce qui propageait les écarts dans `.text`/`.rdata`/`.pdata` de l’EXE. Avec `/Brepro` aux deux étapes, deux rebuilds à froid au chemin exact du script donnent les 29 `.obj` et `Ventoy2Disk_X64.exe` identiques bit à bit ; aucun besoin de supprimer `/m` ni d’ajouter `/d1trimfile`. L’EXE retombe sur le hash publié `2243af58…`.
 
@@ -305,7 +303,7 @@ Un harnais QEMU (`dist/ventoy-sort-build/_qemu/`) permet en complément de véri
 
 ## Build reproductible du paquet Linux
 
-Le même principe existe pour le paquet Linux : le lanceur `.cmd` utilise le même superviseur PowerShell et bénéficie des mêmes reprises WSL. Un script unique régénère de zéro `ventoy-<version>-linux.tar.gz` à partir de l’archive officielle 1.1.17, couvrant **quatre** plateformes — BIOS (i386-pc), UEFI x64, UEFI ia32 **et UEFI arm64** — puis prouve sa propre reproductibilité :
+Le même principe existe pour le paquet Linux : le lanceur `.cmd` utilise le même superviseur PowerShell et bénéficie des mêmes reprises WSL. Un script unique régénère de zéro `ventoy-<version>-linux.tar.gz` à partir de l’archive officielle 1.1.18, couvrant **quatre** plateformes — BIOS (i386-pc), UEFI x64, UEFI ia32 **et UEFI arm64** — puis prouve sa propre reproductibilité :
 
 - `dist/ventoy-sort-build/build_ventoy_sort_linux.sh` — le script (exécuté sous WSL) ;
 - `dist/ventoy-sort-build/build_ventoy_sort_linux.cmd` — le lanceur Windows, protégé par le même superviseur WSL.
@@ -323,7 +321,7 @@ Différence assumée avec le packaging amont (`INSTALL/ventoy_pack.sh`, qui reco
       sbsigntool gcc-aarch64-linux-gnu
   ```
 
-- L’**archive officielle** `ventoy-1.1.17-linux.tar.gz` — téléchargée automatiquement et vérifiée contre un sha256 épinglé si absente (`BASE_LINUX=`/`BASE_LINUX_URL=`).
+- L’**archive officielle** `ventoy-1.1.18-linux.tar.gz` — téléchargée automatiquement et vérifiée contre un sha256 épinglé si absente (`BASE_LINUX=`/`BASE_LINUX_URL=`).
 - ~25 minutes et ~2 Go d’espace disque ; la clé MOK de `secureboot/` est réutilisée (générée au premier build, jamais empaquetée).
 
 ### Étapes du pipeline
@@ -334,9 +332,9 @@ Préflight (outils, cross arm64, sbsigntool, clé MOK, shim de temps figé, tél
 2. **charges utiles GRUB** — `core.img`, `grubx64_real.efi`, `grubia32_real.efi`, `BOOTAA64.EFI` via les commandes `grub-mkimage` exactes de `install.sh` (listes `all_modules_legacy` / `all_modules_uefi` / `all_modules_arm64_uefi`), puis signature des trois chargeurs.
 3. **préparation du paquet** depuis l’archive officielle — les mtimes des trois fichiers à remplacer sont capturés.
 4. **reconstruction optionnelle de la GUI Qt** (`GUI_REBUILD=1`) — ABI x86_64 validée contre la baseline, remplacement refusé si les symboles glibc/Qt requis sont plus récents.
-5. **patch de l’image disque + signatures Secure Boot** — remplacement des chargeurs x64/ia32 et de `BOOTAA64.EFI` (en 1.1.17, ce dernier est le chargeur GRUB arm64 lui-même, sans shim), empreinte x64 dans `fbx64.efi`, version dans `grub.cfg`, re-signature de tous les PE x64/ia32/arm64 concernés (`ventoy_*`, `iso9660_*`, `udf_*`, `vtoyutil_*`, `wimboot*` via décompresser → signer → re-compresser), certificat `ENROLL_THIS_KEY_IN_MOKMANAGER.cer`, restauration des horodatages FAT.
+5. **patch de l’image disque + signatures Secure Boot** — remplacement des chargeurs x64/ia32 et de `BOOTAA64.EFI` (le chargeur GRUB arm64 lui-même, sans shim : constaté en 1.1.17 comme en 1.1.18), empreinte x64 dans `fbx64.efi`, version dans `grub.cfg`, re-signature de tous les PE x64/ia32/arm64 concernés (`ventoy_*`, `iso9660_*`, `udf_*`, `vtoyutil_*`, `wimboot*` via décompresser → signer → re-compresser), certificat `ENROLL_THIS_KEY_IN_MOKMANAGER.cer`, restauration des horodatages FAT.
 6. **assemblage** — `core.img.xz` rembourré à 2047 secteurs, mtimes officielles restaurées, tar déterministe (`--sort=name --owner=0 --format=gnu`, `gzip -n`).
-7. **empreintes + manifeste** — `SHA256SUMS-ventoy-sort-linux.txt` + `BUILD-MANIFEST-*-linux.txt`.
+7. **empreintes + manifeste** — `SHA256SUMS-Fork-linux.txt` + `BUILD-MANIFEST-*-linux.txt`.
 8. **vérifications finales** (voir ci-dessous).
 
 ### La GUI Linux dans le paquet
@@ -362,7 +360,7 @@ Le second est le seul qui dise quelque chose de l’écran : il instancie la vra
 ### Sorties
 
 - `ventoy-<version>-linux.tar.gz` — le paquet ;
-- `SHA256SUMS-ventoy-sort-linux.txt` — empreintes de l’archive, des trois payloads, de `core.img` et des trois chargeurs, du certificat ;
+- `SHA256SUMS-Fork-linux.txt` — empreintes de l’archive, des trois payloads, de `core.img` et des trois chargeurs, du certificat ;
 - `BUILD-MANIFEST-<version>-linux.txt` — chaîne d’outils et empreintes détaillées ;
 - `pkg-linux/` (paquet extrait) et `secureboot/` (clé privée — **jamais** empaquetée).
 
@@ -417,7 +415,7 @@ Aucun « Ventoy img list count mismatch » ni blocage dans les logs. Deux limite
 
 ## Limites connues
 
-La validation couvre la logique du tri et sa parité structurelle avec le code de production. **Un démarrage réel depuis une clé USB avec le GRUB modifié n’a pas été validé**, et l’image ISO complète n’a pas été reconstruite. Le déploiement utilise les runtimes officiels v1.1.17, qui ne contiennent pas notre modification de GRUB.
+La validation couvre la logique du tri et sa parité structurelle avec le code de production. **Un démarrage réel depuis une clé USB avec le GRUB modifié n’a pas été validé**, et l’image ISO complète n’a pas été reconstruite. Le déploiement utilise les runtimes officiels v1.1.18, qui ne contiennent pas notre modification de GRUB.
 
 Les résultats de performance détaillés et les notes de version sont disponibles dans [PERF_FINDINGS.md](../PERF_FINDINGS.md) et [RELEASE_NOTES.md](../RELEASE_NOTES.md).
 

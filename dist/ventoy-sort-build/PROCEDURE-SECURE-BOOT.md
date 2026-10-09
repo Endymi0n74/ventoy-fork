@@ -7,7 +7,7 @@ Clé locale générée par le build (empreinte SHA-256 du certificat) :
     8A:78:E8:AC:D9:88:D6:1E:ED:FF:97:64:8A:82:0A:F1:87:E0:10:CA:83:E5:27:B9:FA:6C:E2:06:DF:25:AA:89
 
 - recompilés puis signés : `grubx64_real.efi`, `grubia32_real.efi` et
-  `BOOTAA64.EFI` (chargeur GRUB arm64 — pas de shim sur ce chemin en 1.1.17)
+  `BOOTAA64.EFI` (chargeur GRUB arm64 — pas de shim sur ce chemin, 1.1.17 comme 1.1.18)
 - re-signés après modification ou pour remplacer la signature Ventoy :
   `fbx64.efi` (empreinte sha256 du chargeur x64 mise à jour),
   `grubia32.efi`, `ventoy_{x64,ia32,aa64}.efi`, `iso9660_{x64,ia32,aa64}.efi`,

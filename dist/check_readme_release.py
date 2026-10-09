@@ -28,7 +28,7 @@
 #   python check_readme_release.py                # contrôles 1 à 5 (réseau)
 #   python check_readme_release.py --offline      # contrôle 1 seul, sans réseau
 #   python check_readme_release.py --strict-links # les liensexternes bloquent
-#   python check_readme_release.py --repo AUTRE/FORK --tag v1.1.20-ventoy-sort
+#   python check_readme_release.py --repo AUTRE/FORK --tag v1.1.18-Fork
 #
 # Codes de retour : 0 = PASS, 1 = au moins un FAIL.
 # Variables d'environnement : GH_TOKEN (ou GITHUB_TOKEN) pour élever le quota de
@@ -190,7 +190,7 @@ def controler_coherence(decls, out):
     return ok
 
 
-def controler_tag(decls, token, out):
+def controler_tag(decls, token, out, allow_newer=False):
     out("2. existence de la release annoncée")
     ok = True
     vus = sorted(set().union(*[d.tags_vus for d in decls]))
@@ -208,6 +208,10 @@ def controler_tag(decls, token, out):
             attendu = decls[0].tag
             if latest == attendu:
                 out("   [ok] /releases/latest pointe sur %s" % latest)
+            elif allow_newer:
+                out("   [ok] /releases/latest vaut %s, les README annoncent %s "
+                    "(toléré : publication de release, README à jour au prochain push)"
+                    % (latest, attendu))
             else:
                 out("   [FAIL] /releases/latest vaut %s mais les README annoncent "
                     "%s — mettre à jour les README" % (latest, attendu))
@@ -343,6 +347,10 @@ def main():
     ap.add_argument("--tag", default=None, help="tag attendu (défaut : lu dans le README)")
     ap.add_argument("--readme", action="append", default=None,
                     help="fichier à contrôler (défaut : README.md et README.fr.md)")
+    ap.add_argument("--allow-newer-release", action="store_true",
+                    help="tolère que /releases/latest soit plus récent que la release "
+                         "annoncée dans les README (cas d'un événement release : les "
+                         "paquets binaires se attachent après coup)")
     args = ap.parse_args()
 
     REPO_PAR_DEFAUT = args.repo
@@ -378,7 +386,7 @@ def main():
             release = json.loads(corps)
             out("   [ok] release %s (%d assets, publiée le %s)"
                 % (tag, len(release.get("assets", [])), release.get("published_at")))
-            tout_ok &= controler_tag(decls, token, out)
+            tout_ok &= controler_tag(decls, token, out, args.allow_newer_release)
             tout_ok &= controler_assets(decls[0], release, out)
             tout_ok &= controler_sommes(decls[0], release, token, out)
         tout_ok &= controler_liens(decls, token, out, args.strict_links)

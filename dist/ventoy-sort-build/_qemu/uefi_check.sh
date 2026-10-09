@@ -6,7 +6,7 @@ Q=/mnt/d/Codex/ventoy/dist/ventoy-sort-build/_qemu
 rm -f "$Q/serial-uefi.log"
 bash "$Q/run_vm.sh" uefi 5592 || exit 1
 sleep 34
-bash "$Q/shot.sh" 5592 "$Q/uefi_menu.png" "UEFI OVMF — menu Ventoy 1.1.18-ventoy-sort"
+bash "$Q/shot.sh" 5592 "$Q/uefi_menu.png" "UEFI OVMF — menu Ventoy 1.1.18-Fork"
 bash "$Q/mon.sh" 5592 "sendkey down" > /dev/null
 bash "$Q/mon.sh" 5592 "sendkey down" > /dev/null
 sleep 2

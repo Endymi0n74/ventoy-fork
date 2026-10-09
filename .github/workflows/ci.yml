@@ -70,7 +70,11 @@ jobs:
       - name: Check the release declared in the README
         env:
           GH_TOKEN: ${{ github.token }}
-        run: python3 dist/check_readme_release.py
+        # Au moment de la publication, les README annoncent encore la release
+        # précédente au sens de /releases/latest : les paquets binaires ne sont
+        # attachés qu'après coup. Seule cette égalité est tolérée alors ; tous
+        # les autres contrôles restent stricts, et le push suivant relit tout.
+        run: python3 dist/check_readme_release.py ${{ github.event_name == 'release' && '--allow-newer-release' || '' }}
 
   move-tag-bench:
     name: MOVE_TAG bench (offline, mocked git/gh)

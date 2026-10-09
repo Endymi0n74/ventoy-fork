@@ -11,7 +11,7 @@ rm -f "$SERIAL"
 bash "$Q/run_vm_a64.sh" 5594 sb || exit 1
 ok=""
 for i in $(seq 1 40); do
-    grep -aq "Ventoy 1.1.18-ventoy-sort AA64" "$SERIAL" 2>/dev/null && { ok=oui; break; }
+    grep -aq "Ventoy 1.1.18-Fork AA64" "$SERIAL" 2>/dev/null && { ok=oui; break; }
     sleep 5
 done
 echo "menu affiché : ${ok:-NON}"

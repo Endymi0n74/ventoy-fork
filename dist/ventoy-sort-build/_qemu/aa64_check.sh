@@ -8,7 +8,7 @@ bash "$Q/run_vm_a64.sh" 5594 || exit 1
 # attente du menu GRUB (TCG lent : jusqu'à 300 s)
 menu=""
 for i in $(seq 1 30); do
-    if tr -d '\033' < "$Q/serial-aa64.log" 2>/dev/null | grep -aq "Ventoy 1.1.18-ventoy-sort AA64"; then
+    if tr -d '\033' < "$Q/serial-aa64.log" 2>/dev/null | grep -aq "Ventoy 1.1.18-Fork AA64"; then
         menu="oui (après ~$((i * 10)) s)"
         break
     fi

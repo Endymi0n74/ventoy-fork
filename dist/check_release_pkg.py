@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # =====================================================================================
 # check_release_pkg.py — les 3 contrôles du guide « Vérification rapide d'un paquet »
-# (README.fr.md) appliqués aux PAQUETS publiés (ventoy-*-ventoy-sort-windows.zip /
-# ventoy-*-ventoy-sort-linux.tar.gz), sans WSL ni mtools (analyse directe des
+# (README.fr.md) appliqués aux PAQUETS publiés (ventoy-*-Fork-windows.zip /
+# ventoy-*-Fork-linux.tar.gz), sans WSL ni mtools (analyse directe des
 # structures zip/tar/FAT16 en Python standard) :
 #
 #   1. EMPREINTE   : sha256 de chaque archive, affiché et confronté à
-#                    SHA256SUMS-ventoy-sort-*.txt si présent à côté de l'archive
+#                    SHA256SUMS-Fork-*.txt si présent à côté de l'archive
 #   2. MARQUEUR    : « Ventoy img list count mismatch » cherché dans
 #                    boot/core.img.xz (décompressé, marqueur NON visible : le
 #                    core BIOS compresse ses modules -> preuve par empreinte)
 #                    et dans les chargeurs EFI grubx64_real.efi / grubia32_real.efi /
 #                    BOOTAA64.EFI extraits de ventoy/ventoy.disk.img.xz
-#   3. BASELINE    : inventaire des contenus vs l'archive OFFICIELLE 1.1.17
+#   3. BASELINE    : inventaire des contenus vs l'archive OFFICIELLE 1.1.18
 #                    (sha256 épinglés ici) : mêmes noms, exactement les fichiers
 #                    attendus modifiés, aucun manquant/superflu
 #
@@ -20,7 +20,7 @@
 #   python check_release_pkg.py <archive-du-paquet...> [--baseline-dir D]
 #     --baseline-dir : dossier des baselines officielles (défaut : ../_dl relatif
 #                      au script, sinon D:\Codex\dist\_dl)
-#   Optionnel : SHA256SUMS-ventoy-sort-windows.txt / SHA256SUMS-ventoy-sort-linux.txt
+#   Optionnel : SHA256SUMS-Fork-windows.txt / SHA256SUMS-Fork-linux.txt
 #   à côté de l'archive => contrôle automatique de la ligne de l'archive.
 #
 # Codes de retour : 0 = tous les contrôles PASS, 1 = au moins un FAIL.
@@ -37,16 +37,16 @@ import zipfile
 
 MARKER = b"Ventoy img list count mismatch"
 
-# Baselines officielles 1.1.17 (téléchargées une fois dans D:\Codex\dist\_dl).
+# Baselines officielles 1.1.18 (téléchargées une fois dans D:\Codex\dist\_dl).
 # Windows : zip ; Linux : tar.gz avec préfixe « ./ ».
 BASELINES = {
     "windows": {
-        "name": "ventoy-1.1.17-windows.zip",
-        "sha256": "d250e97a7595fdac4f97debc630d7a8da942319274a76cb32384596b659dbaeb",
+        "name": "ventoy-1.1.18-windows.zip",
+        "sha256": "082c478e8c432e1ac653899fcf50e3a4077a2851bc6112b5ddd30545962164a9",
     },
     "linux": {
-        "name": "ventoy-1.1.17-linux.tar.gz",
-        "sha256": "7fb4ed08cef6a6b4d39dd19260d8c80291a78dfdf9af7d461571e23cbbc43805",
+        "name": "ventoy-1.1.18-linux.tar.gz",
+        "sha256": "d86ff9de63d94c8b8f1f6b14d23c55af4b88e8207bf2893890892a6a97b1ad54",
     },
 }
 
@@ -257,7 +257,7 @@ def check_baseline(pkg, kind, base_dir):
     blpath = os.path.join(base_dir, bl["name"])
     if not os.path.isfile(blpath):
         print(f"    [skip] baseline absente : {blpath}")
-        print("           (télécharger l'archive officielle 1.1.17 pour ce contrôle)")
+        print("           (télécharger l'archive officielle 1.1.18 pour ce contrôle)")
         return True
     got = sha256_file(blpath)
     if got != bl["sha256"]:
@@ -325,7 +325,7 @@ def check_marker(pkg, kind):
         print("    [FAIL] ventoy/version absent")
         return False
     ver = version.decode("ascii", "replace").strip()
-    if re.fullmatch(r"\d+\.\d+\.\d+-ventoy-sort", ver):
+    if re.fullmatch(r"\d+\.\d+\.\d+-(?:ventoy-sort|Fork)", ver):
         print(f"    [ok] ventoy/version : {ver}")
     else:
         print(f"    [FAIL] ventoy/version inattendu : {ver!r}")
@@ -342,7 +342,7 @@ def check_fingerprint(archives):
         side = None
         kind = "linux" if a.endswith(".tar.gz") else "windows"
         cand = os.path.join(os.path.dirname(os.path.abspath(a)),
-                            f"SHA256SUMS-ventoy-sort-{kind}.txt")
+                            f"SHA256SUMS-Fork-{kind}.txt")
         if os.path.isfile(cand):
             want = None
             for line in open(cand, encoding="utf-8", errors="replace"):
@@ -359,7 +359,7 @@ def check_fingerprint(archives):
                 print(f"    [FAIL] empreinte != {os.path.basename(cand)} ({want[:16]}…)")
                 ok = False
         else:
-            print("    (pas de SHA256SUMS-ventoy-sort-*.txt à côté : empreinte affichée "
+            print("    (pas de SHA256SUMS-Fork-*.txt à côté : empreinte affichée "
                   "pour comparaison manuelle)")
     return ok
 
@@ -367,7 +367,7 @@ def check_fingerprint(archives):
 def main():
     ap = argparse.ArgumentParser(
         description="3 contrôles du guide (empreinte, marqueur, baseline) "
-                    "sur les paquets ventoy-sort publiés")
+                    "sur les paquets du fork publiés")
     ap.add_argument("archives", nargs="+")
     ap.add_argument("--baseline-dir", default=None)
     args = ap.parse_args()

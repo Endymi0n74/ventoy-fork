@@ -18,9 +18,9 @@ mkdir -p "$SBT"
 
 echo "== extraction des chargeurs du disque de test =="
 cd "$Q" || exit 1
-[ -d "$Q/pkg/ventoy-1.1.18-ventoy-sort" ] \
-    || unzip -qo "$B/ventoy-1.1.18-ventoy-sort-windows.zip" -d pkg
-xz -dc "$Q/pkg/ventoy-1.1.18-ventoy-sort/ventoy/ventoy.disk.img.xz" > /tmp/dbx_efi.img
+[ -d "$Q/pkg/ventoy-1.1.18-Fork" ] \
+    || unzip -qo "$B/ventoy-1.1.18-Fork-windows.zip" -d pkg
+xz -dc "$Q/pkg/ventoy-1.1.18-Fork/ventoy/ventoy.disk.img.xz" > /tmp/dbx_efi.img
 mcopy -n -i /tmp/dbx_efi.img ::/EFI/BOOT/BOOTX64.EFI      /tmp/dbx_bootx64.efi
 mcopy -n -i /tmp/dbx_efi.img ::/EFI/BOOT/grubx64_real.efi /tmp/dbx_grubx64.efi
 echo "sha256 brut BOOTX64.EFI      = $(sha256sum /tmp/dbx_bootx64.efi | awk '{print $1}')"
@@ -77,7 +77,7 @@ rm -f "$Q/serial-uefi-sb.log"
 bash "$Q/run_vm.sh" uefi-sb 5592 >/dev/null || exit 1
 ok=""
 for i in $(seq 1 25); do
-    grep -aq "Ventoy 1.1.18-ventoy-sort UEFI" "$Q/serial-uefi-sb.log" 2>/dev/null && { ok=oui; break; }
+    grep -aq "Ventoy 1.1.18-Fork UEFI" "$Q/serial-uefi-sb.log" 2>/dev/null && { ok=oui; break; }
     sleep 4
 done
 echo "menu affiché : ${ok:-NON}"

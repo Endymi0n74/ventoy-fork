@@ -9,7 +9,7 @@
 set -euo pipefail
 B=/mnt/d/Codex/ventoy/dist/ventoy-sort-build
 Q=$B/_qemu
-SRC=${1:-$B/ventoy-1.1.19-ventoy-sort-linux.tar.gz}
+SRC=${1:-$(ls -t "$B"/ventoy-*-Fork-linux.tar.gz | head -1)}
 [ -f "$SRC" ] || { echo "paquet absent : $SRC"; exit 1; }
 Q=${2:-$Q}
 case "$Q" in /*) ;; *) Q=$(realpath -m "$Q") ;; esac

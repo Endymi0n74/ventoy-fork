@@ -14,17 +14,17 @@ rem //      then restore its original draft/published state and set RELEASE_NOTE
 rem //      PRERELEASE=1 creates a prerelease (for RC/testing tags)
 rem //
 rem // Usage (from the repo root or the workspace root):
-rem //   dist\make_release.cmd v1.1.18-ventoy-sort
+rem //   dist\make_release.cmd v1.1.18-Fork
 rem //   set DRY_RUN=1
-rem //   dist\make_release.cmd v1.1.19-ventoy-sort-rc1   (no side effects)
+rem //   dist\make_release.cmd v1.1.18-Fork-rc1   (no side effects)
 rem //   set PRERELEASE=1
-rem //   dist\make_release.cmd v1.1.19-ventoy-sort-rc1
+rem //   dist\make_release.cmd v1.1.18-Fork-rc1
 rem //   set DRY_RUN=1
-rem //   dist\make_release.cmd v1.1.18-ventoy-sort
+rem //   dist\make_release.cmd v1.1.18-Fork
 rem //   set DRY_RUN=
 rem //   set MOVE_TAG=1
-rem //   set CONFIRM_MOVE_TAG=v1.1.18-ventoy-sort
-rem //   dist\make_release.cmd v1.1.18-ventoy-sort
+rem //   set CONFIRM_MOVE_TAG=v1.1.18-Fork
+rem //   dist\make_release.cmd v1.1.18-Fork
 rem //
 rem // Optional env: DIST_DIR (default: sibling "dist" of the repo,
 rem // i.e. ..\dist), RELEASE_TITLE (default "Ventoy <tag> (ventoy-fork)"),
@@ -39,7 +39,7 @@ rem // Requires: git, gh, python 3. Exits 0 on success.
 rem // ============================================================
 
 if "%~1"=="" (
-    echo Usage: %~nx0 ^<tag^>   e.g. v1.1.19-ventoy-sort-rc1
+    echo Usage: %~nx0 ^<tag^>   e.g. v1.1.18-Fork-rc1
     echo Env:   DRY_RUN=1, PRERELEASE=1, MOVE_TAG=1, CONFIRM_MOVE_TAG=^<exact tag^>, GH_REPO=owner/name, DIST_DIR=^<dir^>
     exit /b 1
 )

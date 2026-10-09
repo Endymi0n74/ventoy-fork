@@ -42,7 +42,7 @@
 #   REPRO_BASE_LINUX  pinned official Linux archive (default: the build
 #                     script downloads it and verifies its sha256)
 #   REPRO_GRUB_TARBALL  pinned grub-2.04.tar.xz (same default)
-#   REPRO_FORK_VERSION  version to stamp (default: latest v*-ventoy-sort tag)
+#   REPRO_FORK_VERSION  version to stamp (default: latest v*-Fork tag)
 #
 # Exit: 0 = packages identical, 1 = divergence or failed build, 2 = missing
 #       prerequisite (nothing was built).
@@ -76,9 +76,9 @@ ok "toolchain complete (gcc $(gcc -dumpversion), aarch64-linux-gnu-gcc, sbsignto
 
 FORK_VERSION=${REPRO_FORK_VERSION:-}
 if [ -z "$FORK_VERSION" ] && command -v git >/dev/null 2>&1; then
-    FORK_VERSION=$(git -C "$ROOT" describe --tags --abbrev=0 --match 'v*-ventoy-sort' 2>/dev/null | sed 's/^v//')
+    FORK_VERSION=$(git -C "$ROOT" describe --tags --abbrev=0 --match 'v*-Fork' --match 'v*-ventoy-sort' 2>/dev/null | sed 's/^v//')
 fi
-[ -n "$FORK_VERSION" ] || fatal "no FORK_VERSION: pass REPRO_FORK_VERSION=... (no v*-ventoy-sort tag found)"
+[ -n "$FORK_VERSION" ] || fatal "no FORK_VERSION: pass REPRO_FORK_VERSION=... (no v*-Fork tag found)"
 ok "version under test: $FORK_VERSION"
 
 # The base archive is pinned by the build script itself; when the caller hands

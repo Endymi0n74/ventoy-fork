@@ -31,7 +31,7 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 B=$(cd -- "$SCRIPT_DIR/../ventoy-sort-build" && pwd)
 SCRIPT=$B/build_ventoy_sort_windows.sh
 REAL_SB=$B/secureboot/ventoy-sort-MOK.cer     # pinned before B is reassigned
-PE=$(ls "$B"/pkg/ventoy-*-ventoy-sort/Ventoy2Disk.exe 2>/dev/null | head -1)
+PE=$(ls "$B"/pkg/ventoy-*-Fork/Ventoy2Disk.exe 2>/dev/null | head -1)
 
 FAIL=0
 skip_count=0

@@ -431,8 +431,9 @@ void Ventoy2DiskWindow::FillDeviceList(const QString &select)
 // Affiche une version dans un libelle en choisissant la plus grande taille de
 // police qui tient dans sa largeur. Le amont n'a jamais eu besoin de ca : ses
 // versions tiennent en 6-7 caracteres (« 1.0.53 »), mais celles du fork en
-// comptent 17 (« 1.1.20-ventoy-sort ») et debordaient du cadre. Plutot que de
-// figer une taille qui-convient-au-moment, on la calcule : aucune version
+// ont compte 18 (« 1.1.20-ventoy-sort ») et l'actuelle en compte 11
+// (« 1.1.18-Fork ») : elles debordaient du cadre. Plutot que de figer une
+// taille qui-convient-au-moment, on la calcule : aucune version
 // future ne pourra deborder, quelle que soit la police substituee par le
 // systeme.
 void Ventoy2DiskWindow::SetVersionLabel(QLabel *label, const char *ver)

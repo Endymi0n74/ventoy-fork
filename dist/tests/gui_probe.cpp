@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
 
-    const char *ver = (argc > 1) ? argv[1] : "1.1.20-ventoy-sort";
+    const char *ver = (argc > 1) ? argv[1] : "1.1.18-Fork";
     const char *out = (argc > 2) ? argv[2] : "ventoy2disk-render.png";
 
     QMainWindow win;

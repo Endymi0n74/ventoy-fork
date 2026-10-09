@@ -18,7 +18,7 @@ set -u
 HERE=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 REPO=$(cd -- "$HERE/../.." && pwd)
 
-VER=${1:-1.1.20-ventoy-sort}
+VER=${1:-1.1.18-Fork}
 OUT=${2:-$HERE/out/ventoy2disk-render.png}
 
 die() { printf 'test_gui_render: %s\n' "$1" >&2; exit "${2:-1}"; }

@@ -12,7 +12,7 @@ B=/mnt/d/Codex/ventoy/dist/ventoy-sort-build
 Q=$B/_qemu
 # ZIP : le paquet Windows à tester. Par défaut le plus récent ventoy-*-windows.zip
 # du dossier de build (ZIP=... pour en choisir un explicitement).
-Z=${ZIP:-$(ls -t "$B"/ventoy-*-ventoy-sort-windows.zip | head -1)}
+Z=${ZIP:-$(ls -t "$B"/ventoy-*-Fork-windows.zip | head -1)}
 echo "paquet testé : $(basename "$Z")"
 MODE=${1:-cli}
 

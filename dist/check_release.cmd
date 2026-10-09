@@ -13,7 +13,7 @@ rem //      archive the reference log into the release check dir
 rem //      (set SKIP_SWEEP=1 to skip - it takes several minutes)
 rem //   5. run the sort-test harness from the extraction (RC=0)
 rem //   6. if ventoy-sort package assets are present in the release
-rem //      (ventoy-*-ventoy-sort-windows.zip / -linux.tar.gz), or PKG_DIR=
+rem //      (ventoy-*-Fork-windows.zip / -linux.tar.gz), or PKG_DIR=
 rem //      points at local ones, run the 3 package checks of README.fr.md
 rem //      (fingerprint, fork marker, baseline diff) via check_release_pkg.py
 rem //      - skipped with a notice when there is no package to check
@@ -35,7 +35,7 @@ rem // removed on exit. Exits 0 on PASS, 1 on any failure.
 rem // ============================================================
 
 if not defined GH_REPO set "GH_REPO=Endymi0n74/ventoy-fork"
-if not defined TAG set "TAG=v1.1.17-ventoy-sort"
+if not defined TAG set "TAG=v1.1.18-Fork"
 
 set "WORKDIR=%TEMP%\check_release_%RANDOM%"
 
@@ -146,19 +146,19 @@ set "PKGLIST="
 set "PKGFOUND=0"
 if defined PKG_DIR if exist "%PKG_DIR%\*.zip" set "PKGFOUND=1"
 if defined PKG_DIR if exist "%PKG_DIR%\*.tar.gz" set "PKGFOUND=1"
-for %%A in ("%WORKDIR%\ventoy-*-ventoy-sort-windows.zip") do if exist "%%~A" set "PKGFOUND=1"
-for %%A in ("%WORKDIR%\ventoy-*-ventoy-sort-linux.tar.gz") do if exist "%%~A" set "PKGFOUND=1"
+for %%A in ("%WORKDIR%\ventoy-*-Fork-windows.zip") do if exist "%%~A" set "PKGFOUND=1"
+for %%A in ("%WORKDIR%\ventoy-*-Fork-linux.tar.gz") do if exist "%%~A" set "PKGFOUND=1"
 if "%PKGFOUND%"=="0" (
     echo [check_release] 6/6 no ventoy-sort package in the release assets ^(and no PKG_DIR=^) - package checks skipped.
     goto :after_pkg
 )
 echo [check_release] 6/6 running the 3 package checks (fingerprint / marker / baseline)...
 if defined PKG_DIR (
-    for %%A in ("%PKG_DIR%\ventoy-*-ventoy-sort-windows.zip") do if exist "%%~A" call :addpkg "%%~A"
-    for %%A in ("%PKG_DIR%\ventoy-*-ventoy-sort-linux.tar.gz") do if exist "%%~A" call :addpkg "%%~A"
+    for %%A in ("%PKG_DIR%\ventoy-*-Fork-windows.zip") do if exist "%%~A" call :addpkg "%%~A"
+    for %%A in ("%PKG_DIR%\ventoy-*-Fork-linux.tar.gz") do if exist "%%~A" call :addpkg "%%~A"
 )
-for %%A in ("%WORKDIR%\ventoy-*-ventoy-sort-windows.zip") do if exist "%%~A" call :addpkg "%%~A"
-for %%A in ("%WORKDIR%\ventoy-*-ventoy-sort-linux.tar.gz") do if exist "%%~A" call :addpkg "%%~A"
+for %%A in ("%WORKDIR%\ventoy-*-Fork-windows.zip") do if exist "%%~A" call :addpkg "%%~A"
+for %%A in ("%WORKDIR%\ventoy-*-Fork-linux.tar.gz") do if exist "%%~A" call :addpkg "%%~A"
 python "%~dp0check_release_pkg.py" %PKGLIST%
 set "PKGRC=%ERRORLEVEL%"
 if not "%PKGRC%"=="0" (

@@ -4,10 +4,10 @@
 chaque interface qui l'affiche.
 
 Origine du defaut : le amont suppose une version courte (« 1.0.53 », 6
-caracteres). Celle du fork en compte 17 (« 1.1.20-ventoy-sort »). Les
-libelles avaient une largeur fixe et une taille de police figee, dessinees
-pour la premiere et pas pour la seconde : le texte debordait par-dessus le
-cadenas et le style de partition.
+caracteres). Les versions du fork en ont compte 18 (« 1.1.20-ventoy-sort »)
+et l'actuelle en compte 11 (« 1.1.18-Fork »). Les libelles avaient une
+largeur fixe et une taille de police figee, dessinees pour une version
+courte : le texte debordait par-dessus le cadenas et le style de partition.
 
 Ce test ne compile ni n'execute aucune interface. Il mesure la largeur reelle
 de la chaine dans la police de l'interface (avances lues dans le TTF) et la
@@ -15,7 +15,7 @@ compare a la largeur declaree dans la source. Une largeur qui ne suffit plus
 est donc detectee sans avoir Qt, GTK ni un navigateur sous la main.
 
 Usage :
-    python3 dist/tests/test_gui_version_layout.py [--version 1.1.20-ventoy-sort]
+    python3 dist/tests/test_gui_version_layout.py [--version 1.1.18-Fork]
                                                    [--font /chemin/DejaVuSans-Bold.ttf]
 
 Code de sortie : 0 = tout tient, 1 = au moins un cadre trop etroit,
@@ -231,7 +231,7 @@ def check_webui(m, version):
 # --------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--version', default='1.1.20-ventoy-sort',
+    ap.add_argument('--version', default='1.1.18-Fork',
                     help='version a tester (defaut : celle du fork)')
     ap.add_argument('--font', default=None, help='police TTF gras')
     args = ap.parse_args()

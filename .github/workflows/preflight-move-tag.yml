@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing tag/release to move (e.g. v1.1.18-ventoy-sort)
+        description: Existing tag/release to move (e.g. v1.1.18-Fork)
         required: true
         type: string
       commit_sha:
