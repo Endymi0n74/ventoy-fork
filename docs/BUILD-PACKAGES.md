@@ -10,6 +10,17 @@ test) est décrite dans [RELEASE_NOTES.md](../RELEASE_NOTES.md). L’enrôlement
 la clé Secure Boot est détaillé dans
 [`PROCEDURE-SECURE-BOOT.md`](../dist/ventoy-sort-build/PROCEDURE-SECURE-BOOT.md).
 
+> **À lire avant le prochain build (2026-10-09)** : les sources du fork portent
+> désormais upstream **v1.1.18** (merge `d6007cab`), alors que tout ce document
+> décrit le build sur la baseline officielle **1.1.17** — c’est celle du paquet
+> publié `v1.1.20-ventoy-sort`. Avant de reconstruire, ré-épingler la baseline
+> officielle 1.1.18 : URL + SHA-256 dans `.github/workflows/build-package*.yml`,
+> `BASE_ZIP`/`BASE_LINUX` des scripts de build, et les deux entrées de
+> `dist/check_release_pkg.py`. Le `grub.cfg` de 1.1.18 appelle `vt_timeout_lock`,
+> `vt_theme_lock`, `terminal_lock` et `lockfont`, qui n’existent que dans un GRUB
+> compilé depuis les sources 1.1.18. Voir aussi la section « Synchronisation
+> amont » de [UPSTREAM-FEATURES.md](UPSTREAM-FEATURES.md).
+
 ## Vue d’ensemble
 
 | | Windows | Linux |
